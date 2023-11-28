@@ -7,6 +7,8 @@ import { AdminUrl } from '../../constant';
 import { useTranslation } from 'react-i18next';
 import Progress from '../../components/Progress';
 import moment from 'moment/moment';
+import { SafeAreaView } from 'react-native';
+import { Colors } from '../../constants/styles';
 
 const OrderdetailsScreen = ({ route }) => {
   const orderData = route.params
@@ -21,6 +23,7 @@ const OrderdetailsScreen = ({ route }) => {
   const formattedDate = `${month} ${day}`;
 
   return (
+    <SafeAreaView style={{ flex: 1, backgroundColor: Colors.whiteColor }} className="">
     <ScrollView className="">
 
       <View className="flex-row items-center justify-around px-2 py-6 mb-2 bg-white">
@@ -112,6 +115,7 @@ const OrderdetailsScreen = ({ route }) => {
         </View>
       </View>
     </ScrollView>
+    </SafeAreaView>
   )
 }
 

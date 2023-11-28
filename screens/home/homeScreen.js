@@ -257,7 +257,7 @@ const HomeScreen = () => {
                             })
                         }
                     </ScrollView>
-                </View >
+                </View>
             }</>
         )
     }
