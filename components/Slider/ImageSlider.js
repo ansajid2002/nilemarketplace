@@ -6,6 +6,8 @@ import { AdminUrl } from '../../constant';
 import { Dimensions } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { debounce } from 'lodash';
+import { SafeAreaView } from 'react-native';
+import { Colors } from '../../constants/styles';
 
 
 const ImageSlider = ({ route, navigation }) => {
@@ -50,7 +52,7 @@ const ImageSlider = ({ route, navigation }) => {
     }).current;
 
     return (
-        <View>
+        <SafeAreaView style={{ flex: 1, backgroundColor: Colors.whiteColor }}>
             {/* Header with back button */}
             <TouchableOpacity
                 onPress={debounce(() => navigation.goBack(), 500)}
@@ -67,7 +69,7 @@ const ImageSlider = ({ route, navigation }) => {
             >
                 <Ionicons name="arrow-back" size={30} color="black" />
             </TouchableOpacity>
-
+                
             <FlatList
                 data={images}
                 renderItem={({ item }) => <SlideItem item={item} heightCheck={height} redirect={''} />}
@@ -80,7 +82,7 @@ const ImageSlider = ({ route, navigation }) => {
                 viewabilityConfig={viewabilityConfig}
             />
             <Pagination data={images} scrollX={scrollX} index={index} />
-        </View>
+        </SafeAreaView>
     );
 };
 

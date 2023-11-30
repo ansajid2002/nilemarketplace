@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { SafeAreaView, View, Image, Dimensions, ScrollView, StatusBar, FlatList, StyleSheet, Text, ImageBackground, Alert, Button, ActivityIndicator } from "react-native";
+import { SafeAreaView, View, Image, Dimensions, ScrollView, StatusBar,share, FlatList, StyleSheet, Text, ImageBackground, Alert, Button, ActivityIndicator } from "react-native";
 import { Colors, Fonts, Sizes, } from "../../constants/styles";
 import { MaterialIcons, MaterialCommunityIcons, } from '@expo/vector-icons';
 import { Snackbar } from "react-native-paper";
@@ -20,6 +20,9 @@ import { BottomSheetModal, BottomSheetModalProvider } from '@gorhom/bottom-sheet
 import { useRef } from "react";
 import { useMemo } from "react";
 import { useCallback } from "react";
+import Icon from 'react-native-vector-icons/Ionicons';
+import search from "../../assets/images/icons/search-interface-symbol.png"
+import ShareProduct from "../../components/ShareProduct";
 
 const ProductDetailScreen = ({ navigation, route }) => {
     const dispatch = useDispatch()
@@ -311,44 +314,46 @@ const ProductDetailScreen = ({ navigation, route }) => {
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: Colors.whiteColor }}>
             <StatusBar translucent={false} backgroundColor={Colors.primaryColor} />
-            <HeaderBar title={''} goback={true} navigation={navigation} />
-            {/* <View className="flex-row  justify-between px-4 pt-3 pb-2 rounded-b-md">
-                <TouchableOpacity>
-                    <MaterialIcons
-                        name="arrow-back-ios"
-                        size={24}
-                        color={'#00008b'}
-                        onPress={debounce(() => navigation.pop(), 500)}
+            {/* <HeaderBar title={''} goback={true} navigation={navigation} /> */}
+            <View className="px-3 py-2" style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: 'white' }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                {
+                   <TouchableOpacity onPress={debounce(() =>navigation.pop(), 500)}>
+                        <Icon name="arrow-back" size={30} color="black" />
+                    </TouchableOpacity>
+                }
+
+            </View>
+            <View className="mr-1 " style={{ flexDirection: 'row', alignItems: 'center' }}>
+                
+                  <TouchableOpacity
+                  className="mr-3"
+                   onPress={debounce(() => {
+                        dispatch(changeSearchFocus(true))
+                        navigation.navigate("Search")
+                    }, 500)}>
+                        {/* <Icon name="search" size={26} color="black" style={{ marginRight: 10 }} /> */}
+                        <Image
+                        source={search}
+                        style={{ width: 30.0, height: 30.0, borderRadius: 20.0 }}
                     />
+                    </TouchableOpacity>
+                <TouchableOpacity className="-mt-1">
+
+            <ShareProduct product={singleData} />
+                
                 </TouchableOpacity>
-
-                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: "center" }}>
-                    <TouchableOpacity>
-                        <MaterialIcons
-                            name={inFavorite ? "favorite" : "favorite-border"}
-                            size={24}
-                            color={'#00008b'}
-                            onPress={debounce(handleToggleWishlist, 500)}
-                        />
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={() => handlePresentModalPress()}>
-                        <MaterialIcons
-                            name="share"
-                            size={24}
-                            color={'#00008b'}
-                            style={{ marginLeft: Sizes.fixPadding }}
-                        />
-                    </TouchableOpacity>
-                </View>
-
-            </View> */}
+                
+               
+            </View>
+        </View>
+            
+        
             <ScrollView>
                 <View >
                     <View className="relative">
                         <Slider singleData={singleData} />
                         <View className="flex-row justify-between items-center absolute right-5 bottom-5">
-                            {/* <Text style={styles.heading} > {cartItems.length} {t("items in Your Cart!")} 🛍</Text> */}
-                            <Text></Text>
                             <TouchableOpacity className="flex-row bg-white justify-center items-center p-3 border border-gray-200 rounded-full shadow-full" onPress={handlePresentModalPress}>
                                 <MaterialCommunityIcons name="information" size={14} color={'blue'} />
                                 <Text className="text-blue-800 text-[14px] ml-1 tracking-wider font-bold">{t("Details")}</Text>

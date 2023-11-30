@@ -1,8 +1,0 @@
-{
-    "greeting": "greeting in spanish",
-    "switchToSpanish": "Byt till spanska",
-    "switchToEnglish": "Byt till engelska",
-    "dynamicGreeting": "Hej, {{boldText}}!",
-    "Language" : "somalilang"
-  }
-  

@@ -33,8 +33,8 @@ export const CategoryPlaceholder = () => {
                     [1, 2, 3, 4, 5, 6, ].map((item, i) => {
                         return <View key={i} style={{ padding: 10 }}>
                             {/* Text Placeholder */}
-                            <ShimmerPlaceHolder width={100} height={100} style={{ borderRadius: 50 }} shimmerColors={['#ffcf87', '#ddd', '#ffcf87']} />
-                            <ShimmerPlaceHolder width={80} height={8} style={{ marginTop: 10 }} className="mx-auto rounded-sm" shimmerColors={['#ffcf87', '#ddd', '#ffcf87']} />
+                            <ShimmerPlaceHolder width={80} height={80} style={{ borderRadius: 50 }} shimmerColors={['#ffcf87', '#ddd', '#ffcf87']} />
+                            <ShimmerPlaceHolder width={70} height={8} style={{ marginTop: 10 }} className="mx-auto rounded-sm" shimmerColors={['#ffcf87', '#ddd', '#ffcf87']} />
                         </View>
                     })
                 }
@@ -42,10 +42,6 @@ export const CategoryPlaceholder = () => {
         </View>
     );
 };
-<<<<<<< HEAD
-=======
-
->>>>>>> 36ec303f42b5644c067aa8e71352990abeac2443
 const styles = StyleSheet.create({
     productContainer: {
         width: windowWidth / 2 - 10, // Adjust spacing as needed
