@@ -1,5 +1,3 @@
-import { useEffect } from "react";
-import { useState } from "react";
 import { StyleSheet } from "react-native";
 import { Dimensions } from "react-native";
 import { Text } from "react-native";
@@ -30,7 +28,7 @@ export const CategoryPlaceholder = () => {
             <ShimmerPlaceHolder className="w-1/2 mb-4 ml-4 h-4 rounded-sm" shimmerColors={['#ffcf87', '#ddd', '#ddd']} />
             <View className="flex flex-row flex-wrap justify-center gap-4">
                 {
-                    [1, 2, 3, 4, 5, 6, ].map((item, i) => {
+                    [1, 2, 3, 4, 5, 6,].map((item, i) => {
                         return <View key={i} style={{ padding: 10 }}>
                             {/* Text Placeholder */}
                             <ShimmerPlaceHolder width={100} height={100} style={{ borderRadius: 50 }} shimmerColors={['#ffcf87', '#ddd', '#ffcf87']} />
@@ -42,10 +40,6 @@ export const CategoryPlaceholder = () => {
         </View>
     );
 };
-<<<<<<< HEAD
-=======
-
->>>>>>> 36ec303f42b5644c067aa8e71352990abeac2443
 const styles = StyleSheet.create({
     productContainer: {
         width: windowWidth / 2 - 10, // Adjust spacing as needed

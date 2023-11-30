@@ -11,7 +11,7 @@ const ImageCarousel = () => {
     const [banners, setBanners] = useState([]);
     const scrollX = useRef(new Animated.Value(0)).current;
 
-    const blurhash = 'L6PZfSi_.AyE_3t7t7R**0o#DgR4';
+    // const blurhash = 'L6PZfSi_.AyE_3t7t7R**0o#DgR4';
 
     // Create an Animated.Value to control the dot scaling animation
     const dotScale = new Animated.Value(1);
@@ -96,7 +96,7 @@ const ImageCarousel = () => {
                     <Image
                         source={{ uri: `${AdminUrl}/uploads/Banners/${item.banner_url}` }}
                         style={{ width, height: 200 }}
-                        placeholder={blurhash}
+                        // placeholder={blurhash}
                         transition={1000}
                         contentFit='cover'
                     />
