@@ -1,0 +1,83 @@
+{
+  "expo": {
+    "name": "Nile Marketplace",
+    "slug": "nile-marketplace",
+    "version": "1.1.1",
+    "orientation": "portrait",
+    "icon": "./assets/images/mainicon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/images/mainlogovertical.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "plugins": [
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "The app accesses your photos to let you share them with your friends."
+        }
+      ],
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/images/mainicon.png",
+          "color": "#ffffff",
+          "sounds": [
+            "./assets/notifysound.mp3"
+          ]
+        }
+      ],
+      [
+        "expo-media-library",
+        {
+          "photosPermission": "Allow $(PRODUCT_NAME) to access your photos",
+          "savePhotosPermission": "Allow $(PRODUCT_NAME) to save photos",
+          "isAccessMediaLocationEnabled": "true"
+        }
+      ],
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera."
+        }
+      ]
+    ],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "bundleIdentifier": "com.render.nmp",
+      "buildNumber": "3",
+      "supportsTablet": true
+    },
+    "android": {
+      "package": "com.render.nmp",
+      "versionCode": 3,
+      "useNextNotificationsApi": true,
+      "config": {
+        "googleSignIn": {
+          "apiKey": "216641462687-7mv9inako2l7n3rmp5gq72qu8lquvnn0.apps.googleusercontent.com"
+        }
+      },
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/mainicon.png",
+        "backgroundColor": "#FFFFFF"
+      },
+      "googleServicesFile": "./google-services.json",
+      "permissions": [
+        "android.permission.RECORD_AUDIO",
+        "RECEIVE_BOOT_COMPLETED"
+      ]
+    },
+    "web": {
+      "favicon": "./assets/images/mainicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "6d967be9-80f6-4c34-8520-e8e53c626f9c"
+      }
+    },
+    "scheme": "nile"
+  }
+}

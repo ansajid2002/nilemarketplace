@@ -1,0 +1,211 @@
+{
+    "translations" : {
+        "greeting": {
+          "en": "Greetings in English",
+          "ar": "تحية باللغة العربية",
+          "fr": "Salutation en français",
+          "am": "ሠመረ በአማርኛ",
+          "sw": "Salamu kwa Kiswahili"
+        },
+        "switchToSpanish": {
+          "en": "Switch to Spanish",
+          "ar": "التبديل إلى الإسبانية",
+          "fr": "Passer à l'espagnol",
+          "am": "ለስፓንሽ ቀይር",
+          "sw": "Badilisha kuwa Kihispaniola"
+        },
+        "Search here...": {
+          "en": "Search here...",
+          "ar": "البحث هنا...",
+          "fr": "Chercher ici...",
+          "am": "ይፈልጉ እዚ...",
+          "sw": "Tafuta hapa..."
+        },
+        "Electronics": {
+            "en": "Electronics",
+            "ar": "الإلكترونيات",
+            "fr": "Électronique",
+            "am": "ኤሌክትሮኒክስ",
+            "sw": "Elektroniki"
+          },
+          "Fashion & Accessories": {
+            "en": "Fashion & Accessories",
+            "ar": "الأزياء والإكسسوارات",
+            "fr": "Mode et Accessoires",
+            "am": "ፋሽን እና አካል",
+            "sw": "Mitindo & Vifaa"
+          },
+         
+          "View All": {
+            "en": "View All",
+            "ar": "عرض الكل",
+            "fr": "Voir Tout",
+            "am": "ሁሉንም ይመልከቱ",
+            "sw": "Onyesha Yote"
+          },
+          "Fresh Recommendations": {
+            "en": "Fresh Recommendations",
+            "ar": "توصيات جديدة",
+            "fr": "Nouvelles Recommandations",
+            "am": "አዲስ አልበሞች",
+            "sw": "Mapendekezo Mpya"
+          },
+          "Jewelry and Accessories": {
+            "en": "Jewelry and Accessories",
+            "ar": "مجوهرات وإكسسوارات",
+            "fr": "Bijoux et Accessoires",
+            "am": "የወረቀት እና አካል",
+            "sw": "Vito na Vifaa",
+            "so": "Cilmi Baarista iyo Aakhiro"
+          },
+          "Home & Garden": {
+            "en": "Home & Garden",
+            "ar": "المنزل والحديقة",
+            "fr": "Maison et Jardin",
+            "am": "ቤት እና የተከራየበት",
+            "sw": "Nyumbani na Bustani",
+            "so": "Guri & Beeraha"
+          },
+          "SERVICES": {
+            "en": "Services",
+            "ar": "خدمات",
+            "fr": "Services",
+            "am": "አገልግሎቶች",
+            "sw": "Huduma",
+            "so": "Khidmadayada"
+          },
+          "Products": {
+            "en": "Products",
+            "ar": "منتجات",
+            "fr": "Produits",
+            "am": "ንግዶች",
+            "sw": "Bidhaa",
+            "so": "Biyo"
+          },
+          "Health & Beauty": {
+            "en": "Health & Beauty",
+            "ar": "الصحة والجمال",
+            "fr": "Santé et Beauté",
+            "am": "ጤና እና በዓል",
+            "sw": "Afya na Urembo",
+            "so": "Caafimaad & Cunto"
+          },
+          "Toys & Games": {
+            "en": "Toys & Games",
+            "ar": "ألعاب وألعاب",
+            "fr": "Jouets et Jeux",
+            "am": "ጥሪዎች እና ጨዋታዎች",
+            "sw": "Michezo & Michezo",
+            "so": "Dhacdooyin & Ciyaaro"
+          },
+    
+          "Handmade & Crafts": {
+            "en": "Handmade & Crafts",
+            "ar": "مصنوعة يدوياً وحرف",
+            "fr": "Artisanat et Artisanat",
+            "am": "ቅርስ እና ጭጭት",
+            "sw": "Zinazotengenezwa Kwa Mikono & Sanaa",
+            "so": "Isticmaalaha Keliya & Daboolka"
+          },
+          "Dating": {
+            "en": "Dating",
+            "ar": "مواعدة",
+            "fr": "Rencontres",
+            "am": "ጥቅምት",
+            "sw": "Tarehe",
+            "so": "Is-qorista"
+          },
+          "Feces": {
+            "en": "Feces",
+            "ar": "براز",
+            "fr": "Fèces",
+            "am": "ማጥፊያ",
+            "sw": "Feces",
+            "so": "Kululeec"
+          },
+          "Browse Categories": {
+            "en": "Browse Categories",
+            "ar": "تصفح الفئات",
+            "fr": "Parcourir les Catégories",
+            "am": "የቅንጅቶችን መድረሻ ያገኛሉ",
+            "sw": "Tafuta Jamii",
+            "so": "Ku duubo qaybaha"
+          },
+          "Music & Instruments": {
+            "en": "Music & Instruments",
+            "ar": "موسيقى وآلات",
+            "fr": "Musique et Instruments",
+            "am": "ሙዚቃ እና ትርቲ፣ ግራፊያዎች",
+            "sw": "Muziki & Vyombo",
+            "so": "Muusika & Qalabka"
+          },
+          "Legal Services": {
+            "en": "Legal Services",
+            "ar": "الخدمات القانونية",
+            "fr": "Services Juridiques",
+            "am": "ማህበራዊ አገልግሎቶች",
+            "sw": "Huduma za Kisheria",
+            "so": "Adeegyada Sharci"
+          },
+          "Share app": {
+            "en": "Share app",
+            "ar": "مشاركة التطبيق",
+            "fr": "Partager l'application",
+            "am": "መልእክት መልእክት",
+            "sw": "Shiriki programu",
+            "so": "Ugu Shidi Warbixinta"
+          },
+          "Logout": {
+            "en": "Logout",
+            "ar": "تسجيل الخروج",
+            "fr": "Se déconnecter",
+            "am": "ውጣ",
+            "sw": "Toka",
+            "so": "Dhisidda"
+          },
+          "Account Settings": {
+            "en": "Account Settings",
+            "ar": "إعدادات الحساب",
+            "fr": "Paramètres du compte",
+            "am": "የመለያ ቅንብሮች",
+            "sw": "Mipangilio ya Akaunti",
+            "so": "Dejinta Xisaabta"
+          },
+          "My Ads": {
+            "en": "My Ads",
+            "ar": "إعلاناتي",
+            "fr": "Mes annonces",
+            "am": "የእዚህ ዝርዝርዎች",
+            "sw": "Matangazo Yangu",
+            "so": "Ilaalooyadaan"
+          },
+          "About us": {
+            "en": "About us",
+            "ar": "عنا",
+            "fr": "À propos de nous",
+            "am": "ስለ እኛ",
+            "sw": "Kuhusu sisi",
+            "so": "Nagu saabsan"
+          },
+          "Contact us": {
+            "en": "Contact us",
+            "ar": "اتصل بنا",
+            "fr": "Nous contacter",
+            "am": "እኛን ያግኙ",
+            "sw": "Wasiliana nasi",
+            "so": "Nala soo xiriir"
+          },
+          "Language": {
+            "en": "Language",
+            "ar": "اللغة",
+            "fr": "Langue",
+            "am": "ቋንቋ",
+            "sw": "Lugha",
+            "so": "Luqadda"
+          }
+
+    
+      }
+}
+
+
