@@ -25,7 +25,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { toggleFavouriteProductslice } from '../store/slices/productSlice';
 import { addItemToWishlist, removeItemFromWishlist } from '../store/slices/wishlistSlice';
 import Animated from 'react-native-reanimated';
-
+import * as Sharing from 'expo-sharing';
 
 const ProductItem = ({ item }) => {
     const navigation = useNavigation();
@@ -152,7 +152,7 @@ const ProductItem = ({ item }) => {
     const [imageError, setImageError] = useState(false);
 
     return (
-        <TouchableComponent onPress={handlePress} > 
+        <TouchableComponent onPress={handlePress} >
             <View style={{ width: '100%', padding: 10 }} className="border border-gray-200">
                 <View>
                     {loading && (
@@ -191,32 +191,30 @@ const ProductItem = ({ item }) => {
                 <View style={{ padding: 1 }} className="py-2">
                     <Text numberOfLines={1}>{item?.ad_title}</Text>
 
-
-
                     <View className="gap-2" style={{ flexDirection: 'row', alignItems: 'center', paddingTop: 8 }}>
                         {discountPercentageSimple && discountPercentageSimple > 0 && (
                             <Text className="text-xl" style={{ color: 'green' }}>-{discountPercentageSimple?.toFixed(2)}%</Text>
                         )}
-                            <View className="flex-row  ">
-                                <Text className="text-[14px] ml-1 font-medium">{`${c_symbol} `}</Text>
-                        <Text className="text-gray-900 text-xl" style={{ fontWeight: 'bold' }}>
-                            {`${item.sellingprice % 1 === 0 ? Math.trunc(item.sellingprice) : item.sellingprice}`}
-                        </Text>
-                            </View>
+                        <View className="flex-row  ">
+                            <Text className="text-[14px] ml-1 font-medium">{`${c_symbol} `}</Text>
+                            <Text className="text-gray-900 text-xl" style={{ fontWeight: 'bold' }}>
+                                {`${item.sellingprice % 1 === 0 ? Math.trunc(item.sellingprice) : item.sellingprice}`}
+                            </Text>
+                        </View>
                     </View>
                     {
                         discountPercentageSimple !== 0 &&
-                    <View className="flex-row items-center">
-                        <Text className="text-gray-500 font-medium">List Price: </Text>
-                        <Text style={styles.mrpPrice} className="font-medium">
-                            {`$${item.mrp % 1 === 0 ? Math.trunc(item.mrp) : item.mrp}`}
-                        </Text>
-                    </View>
+                        <View className="flex-row items-center">
+                            <Text className="text-gray-500 font-medium">List Price: </Text>
+                            <Text style={styles.mrpPrice} className="font-medium">
+                                {`$${item.mrp % 1 === 0 ? Math.trunc(item.mrp) : item.mrp}`}
+                            </Text>
+                        </View>
                     }
 
-                    
-                    
-                    
+
+
+
                     <View style={{ flexDirection: 'row', alignItems: 'center', paddingTop: 5 }}>
                         <StarRating
                             enable={false}
@@ -247,9 +245,9 @@ const ProductListing = ({ title, productList }) => {
                 {
                     memoizedProductList ? memoizedProductList.map((item, index) => (
                         <View className="w-1/2">
-                           <ProductItem key={index} item={item} />
+                            <ProductItem key={index} item={item} />
                         </View>
-                        
+
                     )) : [1, 2, 3, 4].map(item =>
                         <View key={item} className="w-1/2 relative right-[1px]">
                             <ProductSkeleton />

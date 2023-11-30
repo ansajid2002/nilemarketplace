@@ -1,5 +1,3 @@
-import { useEffect } from "react";
-import { useState } from "react";
 import { StyleSheet } from "react-native";
 import { Dimensions } from "react-native";
 import { Text } from "react-native";
@@ -30,7 +28,7 @@ export const CategoryPlaceholder = () => {
             <ShimmerPlaceHolder className="w-1/2 mb-4 ml-4 h-4 rounded-sm" shimmerColors={['#ffcf87', '#ddd', '#ddd']} />
             <View className="flex flex-row flex-wrap justify-center gap-4">
                 {
-                    [1, 2, 3, 4, 5, 6, ].map((item, i) => {
+                    [1, 2, 3, 4, 5, 6,].map((item, i) => {
                         return <View key={i} style={{ padding: 10 }}>
                             {/* Text Placeholder */}
                             <ShimmerPlaceHolder width={80} height={80} style={{ borderRadius: 50 }} shimmerColors={['#ffcf87', '#ddd', '#ffcf87']} />
