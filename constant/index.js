@@ -6,10 +6,14 @@ import { TouchableOpacity, View } from 'react-native';
 import { Text } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { debounce } from 'lodash';
+// import {ADMINURL} from "@env"
 
-export const AdminUrl = "http://192.168.1.4:3001";
-// export const AdminUrl = "https://admin.nilegmp.com";
 
+// import Config from "react-native-config";
+// export const AdminUrl = "http://192.168.1.4:3001";
+export const AdminUrl = "https://admin.nilegmp.com";
+
+// export const AdminUrl = ADMINURL
 // api.js
 export async function getVariantsOfCatSubcat(category, subcategory, uniquepid) {
     try {

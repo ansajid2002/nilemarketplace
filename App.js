@@ -14,7 +14,6 @@ import onboardingScreen from "./screens/onboarding/onboardingScreen";
 import loginScreen from "./screens/auth/loginScreen";
 import registerScreen from "./screens/auth/registerScreen";
 import verificationScreen from "./screens/auth/verificationScreen";
-
 /////redux/////////////
 import { Provider } from 'react-redux';
 import { store } from "./store/index"

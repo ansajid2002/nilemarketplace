@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text } from 'react-native';
+import { View, Text,Image } from 'react-native';
 import NetInfo from '@react-native-community/netinfo';
+import noInternet from "../assets/images/icons/no-internet.png"
+import { TouchableOpacity } from 'react-native';
 
 export default function NoInternet() {
   const [isConnected, setIsConnected] = useState(true);
@@ -16,20 +18,31 @@ export default function NoInternet() {
   }, []);
 
   return (
-    <View style="flex: 1; justify-content: center; items-center">
+    <View className=" flex-1 flex-row mt-20 justify-center" >
       {isConnected ? (
-        <Text class="text-green-500 text-xl font-bold">
+        <View className="flex-row items-center justify-center">
+        <Text className="text-green-500 text-3xl font-bold">
           You are online!
         </Text>
+        </View>
       ) : (
-        <View class="p-6 bg-red-500 rounded-lg shadow-md">
-          <Text class="text-white text-xl font-bold mb-2">
+        <View className=" p-6  rounded-lg shadow-md ">
+        <View className="flex-row items-center justify-center mb-4">
+        <Image 
+                        source={noInternet}
+                        style={{ tintColor:"gray",width: 200.0, height: 200.0, borderRadius: 20.0 }}
+                    />
+        </View>
+          <Text className=" text-[26px] font-bold mb-4 text-center">
             No internet connection
           </Text>
-          <Text class="text-white">
+          <Text className=" text-base text-justify">
             Please check your network settings and ensure you are connected to
             the internet to continue shopping.
           </Text>
+          {/* <TouchableOpacity className="flex-row justify-center items-center">
+            <Text className="text-center bg-red-700 text-white rounded-md text-xl px-2 py-1.5 ">TRY AGAIN</Text>
+          </TouchableOpacity> */}
         </View>
       )}
     </View>

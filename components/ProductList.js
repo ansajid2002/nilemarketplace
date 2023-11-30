@@ -25,7 +25,6 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { toggleFavouriteProductslice } from '../store/slices/productSlice';
 import { addItemToWishlist, removeItemFromWishlist } from '../store/slices/wishlistSlice';
 import Animated from 'react-native-reanimated';
-import * as Sharing from 'expo-sharing';
 
 const ProductItem = ({ item }) => {
     const navigation = useNavigation();
@@ -40,7 +39,6 @@ const ProductItem = ({ item }) => {
     const { customerData } = useSelector((store) => store.userData);
     const customerId = customerData[0]?.customer_id;
     const dispatch = useDispatch();
-
 
     useEffect(() => {
         // Check if there's an item in wishlistItems with a matching uniquepid

@@ -4,7 +4,6 @@ import shareimg from "../assets/images/icons/share.png"
 import { AdminUrl } from '../constant';
 
 const ShareProduct = ({ product }) => {
-    console.log(product);
     const shareProduct = async () => {
         try {
           const sharedMessage = `Check out this product: ${product.ad_title}\n\nProduct URL: ${AdminUrl}/product-detail?product=${product.prod_slug}&uniqueid=${product.uniquepid}`;

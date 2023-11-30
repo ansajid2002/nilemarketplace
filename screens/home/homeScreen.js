@@ -135,7 +135,7 @@ const HomeScreen = () => {
             }}
         >
             <StatusBar translucent={false} backgroundColor={Colors.primaryColor} />
-            <ScrollView >
+            <ScrollView showsVerticalScrollIndicator={false} >
                 <LinearGradient
                     colors={['#ffc363', '#fff', '#fff']}
                 >

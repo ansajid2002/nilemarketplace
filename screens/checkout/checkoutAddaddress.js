@@ -239,7 +239,7 @@ const CheckoutAddaddress = ({ route, navigation }) => {
 
                     <View className=" m-2 flex-1">
                         <Text className=" text-base mb-1 font-semibold tracking-wide">First Name</Text>
-                        <TextInput className="text-base border  flex-1 px-3 py-2 bg-white rounded-md tracking-wider focus:shadow-md max-h-12"
+                        <TextInput className="text-[14px] border  flex-1 px-3 py-2 bg-white rounded-md tracking-wider focus:shadow-md h-10"
                             value={values.given_name_address}
                             style={[
                                 touched.given_name_address && errors.given_name_address && { borderColor: 'red', borderWidth: 1 },
@@ -256,7 +256,7 @@ const CheckoutAddaddress = ({ route, navigation }) => {
                     </View>
                     <View className=" m-2 flex-1">
                         <Text className=" text-base mb-1 font-semibold tracking-wide">Last Name</Text>
-                        <TextInput className="text-base border  flex-1 px-3 py-2 bg-white rounded-md tracking-wider focus:shadow-md max-h-12"
+                        <TextInput className="text-[14px] border  flex-1 px-3 py-2 bg-white rounded-md tracking-wider focus:shadow-md h-10"
                             value={values.family_name_address}
                             style={[
                                 touched.family_name_address && errors.family_name_address && { borderColor: 'red', borderWidth: 1 },
@@ -275,7 +275,7 @@ const CheckoutAddaddress = ({ route, navigation }) => {
 
                 <View className="m-3">
                     <Text className="  text-base mb-1 font-semibold tracking-wide">Email Address</Text>
-                    <TextInput className="text-base   flex-1 px-3 py-2 bg-white rounded-md tracking-wider focus:shadow-md"
+                    <TextInput className="text-[14px] h-10   flex-1 px-3 py-2 bg-white rounded-md tracking-wider focus:shadow-md"
                         value={values.email_address}
                         style={[
                             touched.email_address && errors.email_address ? { borderColor: 'red', borderWidth: 1 } : { borderColor: 'black', borderWidth: 1 },
@@ -299,23 +299,9 @@ const CheckoutAddaddress = ({ route, navigation }) => {
                     }}>Mobile Number</Text>
 
 
-                    {/* <TextInput
-                        placeholder='+91'
-                        placeholderTextColor={COLORS.black}
-                        keyboardType='numeric'
-                        style={{
-                            width: "12%",
-                            borderRightWidth: 1,
-                            borderLeftColor: COLORS.grey,
-                            height: "100%"
-                        }}
-                        value={phone_code}
-                        onChangeText={(value) => {
-                            updateState({ phone_code: value });
-                        }} /> */}
-
+                   
                     <TextInput
-                        className="text-base border flex-1 px-3 py-2 bg-white rounded-md tracking-wider focus:shadow-md"
+                        className="text-[14px] border flex-1 h-10 px-3 py-2 bg-white rounded-md tracking-wider focus:shadow-md"
                         placeholder='Enter your phone number'
                         placeholderTextColor={COLORS.black}
                         keyboardType='numeric'
@@ -336,7 +322,7 @@ const CheckoutAddaddress = ({ route, navigation }) => {
                 </View>
                 <View className="m-3">
                     <Text className="  text-base mb-1 font-semibold tracking-wide">Apartment, unit etc.</Text>
-                    <TextInput className="text-base border flex-1 px-3 py-2 bg-white rounded-md tracking-wider focus:shadow-md"
+                    <TextInput className="text-[14px] border flex-1 px-3 py-2 bg-white rounded-md tracking-wider focus:shadow-md h-10"
                         value={values.apt_address}
                         style={[
                             touched.apt_address && errors.apt_address ? { borderColor: 'red', borderWidth: 1 } : { borderColor: 'black', borderWidth: 1 },
@@ -384,7 +370,7 @@ const CheckoutAddaddress = ({ route, navigation }) => {
 
                 <View className="m-3">
                     <Text className=" text-base mb-1 font-semibold tracking-wide">Country</Text>
-                    <TextInput className="text-base border  flex-1 px-3 py-2 bg-white rounded-md tracking-wider focus:shadow-md"
+                    <TextInput className="text-[14px] border  flex-1 px-3 py-2 bg-white rounded-md tracking-wider focus:shadow-md h-10"
                         value={values.country_address}
                         style={[
                             touched.country_address && errors.country_address ? { borderColor: 'red', borderWidth: 1 } : { borderColor: 'black', borderWidth: 1 },
@@ -402,7 +388,7 @@ const CheckoutAddaddress = ({ route, navigation }) => {
 
                 <View className="m-3">
                     <Text className="  text-base mb-1 font-semibold tracking-wide">Postcode / ZIP</Text>
-                    <TextInput className="text-base border  flex-1 px-3 py-2 bg-white rounded-md tracking-wider focus:shadow-md"
+                    <TextInput className="text-[14px] border h-10  flex-1 px-3 py-2 bg-white rounded-md tracking-wider focus:shadow-md"
                         value={values.zip_address}
                         style={[
                             touched.zip_address && errors.zip_address ? { borderColor: 'red', borderWidth: 1 } : { borderColor: 'black', borderWidth: 1 },
@@ -420,7 +406,7 @@ const CheckoutAddaddress = ({ route, navigation }) => {
                 </View>
                 <View className="m-3">
                     <Text className="  text-base mb-1 font-semibold tracking-wide">Town/City</Text>
-                    <TextInput className="text-base border  flex-1 px-3 py-2 bg-white rounded-md tracking-wider focus:shadow-md"
+                    <TextInput className="text-[14px] border h-10  flex-1 px-3 py-2 bg-white rounded-md tracking-wider focus:shadow-md"
                         value={values.city_address}
                         style={[
                             touched.city_address && errors.city_address ? { borderColor: 'red', borderWidth: 1 } : { borderColor: 'black', borderWidth: 1 },
@@ -438,7 +424,7 @@ const CheckoutAddaddress = ({ route, navigation }) => {
                 </View>
                 <View className="m-3">
                     <Text className="  text-base mb-1 font-semibold tracking-wide" >Subregion</Text>
-                    <TextInput className="text-base border  flex-1 px-3 py-2 bg-white rounded-md tracking-wider focus:shadow-md"
+                    <TextInput className="text-[14px] border h-10  flex-1 px-3 py-2 bg-white rounded-md tracking-wider focus:shadow-md"
                         value={values.subregion_address}
                         style={[
                             touched.subregion_address && errors.subregion_address ? { borderColor: 'red', borderWidth: 1 } : { borderColor: 'black', borderWidth: 1 },
@@ -456,7 +442,7 @@ const CheckoutAddaddress = ({ route, navigation }) => {
                 </View>
                 <View className="m-3">
                     <Text className="  text-base mb-1 font-semibold tracking-wide" >Region</Text>
-                    <TextInput className="text-base border  flex-1 px-3 py-2 bg-white rounded-md tracking-wider focus:shadow-md"
+                    <TextInput className="text-[14px] border h-10  flex-1 px-3 py-2 bg-white rounded-md tracking-wider focus:shadow-md"
                         value={values.region_address}
                         style={[
                             touched.region_address && errors.region_address ? { borderColor: 'red', borderWidth: 1 } : { borderColor: 'black', borderWidth: 1 },
@@ -480,7 +466,7 @@ const CheckoutAddaddress = ({ route, navigation }) => {
                         placeholder="Write here..."
                         // style={styles.textFieldWrapStyle}
                         selectionColor={Colors.primaryColor}
-                        className=" text-base border  flex-1 px-3 py-2 mb-4 bg-white tracking-wider rounded-md focus:shadow-md"
+                        className=" text-[14px] border  flex-1 px-3 py-2 mb-4 bg-white tracking-wider rounded-md focus:shadow-md h-10"
                         multiline={true}
                         numberOfLines={5}
                         textAlignVertical="top"
@@ -500,7 +486,7 @@ const CheckoutAddaddress = ({ route, navigation }) => {
 
                 </View>
                 <TouchableOpacity onPress={debounce(handleSubmit, 500)} className="bg-[#00008b] mb-4 mx-4 rounded-md">
-                    <Text className=" text-2xl m-2 text-white text-center font-bold tracking-widest">{t("Save")}</Text>
+                    <Text className=" text-2xl m-2 mt-1 text-white text-center font-bold tracking-widest">{t("Save")}</Text>
                 </TouchableOpacity>
             </ScrollView>
         </SafeAreaView>
