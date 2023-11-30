@@ -42,6 +42,10 @@ export const CategoryPlaceholder = () => {
         </View>
     );
 };
+<<<<<<< HEAD
+=======
+
+>>>>>>> 36ec303f42b5644c067aa8e71352990abeac2443
 const styles = StyleSheet.create({
     productContainer: {
         width: windowWidth / 2 - 10, // Adjust spacing as needed

@@ -151,7 +151,6 @@ const ProductItem = ({ item }) => {
     const [loading, setLoading] = useState(true);
     const [imageError, setImageError] = useState(false);
 
-
     return (
         <TouchableComponent onPress={handlePress} > 
             <View style={{ width: '100%', padding: 10 }} className="border border-gray-200">

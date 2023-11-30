@@ -257,7 +257,7 @@ const HomeScreen = () => {
                             })
                         }
                     </ScrollView>
-                </View >
+                </View>
             }</>
         )
     }
@@ -321,7 +321,7 @@ const HomeScreen = () => {
                                                         <Text numberOfLines={2} style={styles.categoryText} className="mt-4">
                                                             {t(`${item.subcategory_name}`)}
                                                         </Text>
-                                                    </View >
+                                                    </View>
                                                 </TouchableOpacity>
                                             )
                                         })}
