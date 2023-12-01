@@ -52,7 +52,8 @@ const ImageSlider = ({ route, navigation }) => {
     }).current;
 
     return (
-        <SafeAreaView style={{ flex: 1, backgroundColor: Colors.whiteColor }}>
+        <SafeAreaView className="mt-8 " style={{ flex: 1, }}>
+            
             {/* Header with back button */}
             <TouchableOpacity
                 onPress={debounce(() => navigation.goBack(), 500)}

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { SafeAreaView, View, Image, Dimensions, ScrollView, StatusBar,share, FlatList, StyleSheet, Text, ImageBackground, Alert, Button, ActivityIndicator } from "react-native";
+import { SafeAreaView, View, Image, Dimensions, ScrollView, StatusBar,Share, FlatList, StyleSheet, Text, ImageBackground, Alert, Button, ActivityIndicator } from "react-native";
 import { Colors, Fonts, Sizes, } from "../../constants/styles";
 import { MaterialIcons, MaterialCommunityIcons, } from '@expo/vector-icons';
 import { Snackbar } from "react-native-paper";
@@ -22,7 +22,10 @@ import { useMemo } from "react";
 import { useCallback } from "react";
 import Icon from 'react-native-vector-icons/Ionicons';
 import search from "../../assets/images/icons/search-interface-symbol.png"
-import ShareProduct from "../../components/ShareProduct";
+// import ShareProduct from "../../components/ShareProduct";
+import shareimg from "../../assets/images/icons/share.png"
+// import { AdminUrl } from '../../constant';
+
 
 const ProductDetailScreen = ({ navigation, route }) => {
     const dispatch = useDispatch()
@@ -193,6 +196,45 @@ const ProductDetailScreen = ({ navigation, route }) => {
         }
     };
 
+    const ShareProduct = ({ product }) => {
+        const shareProduct = async () => {
+    
+            console.log("SAJID ");
+            try {
+                const sharedMessage = `Check out this product: ${product.ad_title}\n\nProduct URL: https://stg.nilegmp.com/product-detail?product=${product.prod_slug}&uniqueid=${product.uniquepid}`;
+           
+              const result = await Share.share({
+                title: product.adtitle,
+                message: sharedMessage,
+                url: product.productURL, // URL to the product details page on your e-commerce website
+              });
+    
+                if (result.action === Share.sharedAction) {
+                    if (result.activityType) {
+                        // Shared via activity type
+                        console.log(`Shared via ${result.activityType}`);
+                    } else {
+                        // Shared
+                        console.log('Shared');
+                    }
+                } else if (result.action === Share.dismissedAction) {
+                    // Dismissed
+                    console.log('Share dismissed');
+                }
+            } catch (error) {
+                console.error('Error sharing:', error.message);
+            }
+        };
+        return (
+            <TouchableOpacity onPress={shareProduct}>
+            {/* <Text>ssssa</Text> */}
+                <Image
+                    source={shareimg}
+                    style={{ width: 30.0, height: 30.0, borderRadius: 20.0 }}
+                />    
+            </TouchableOpacity>
+        );
+    }
     const handleIncrement = async (itemId, item) => {
         try {
             dispatch(incrementItem(item));
@@ -339,7 +381,7 @@ const ProductDetailScreen = ({ navigation, route }) => {
                     />
                     </TouchableOpacity>
                 <TouchableOpacity className="-mt-1">
-
+                    {/* <Text>s</Text> */}
             <ShareProduct product={singleData} />
                 
                 </TouchableOpacity>
@@ -518,11 +560,11 @@ const ProductDetailScreen = ({ navigation, route }) => {
                                         className="  ">
                                         <Text className="text-4xl ml-3 font-bold text-white">-</Text>
                                     </TouchableOpacity>}
-                                <Text className="text-white text-lg font-semibold">{IsMatchedCartProduct?.added_quantity} {t("Added")}</Text>
+                                <Text className="text-white text-base font-semibold">{IsMatchedCartProduct?.added_quantity} {t("Added")}</Text>
                                 <TouchableOpacity onPress={(() => handleIncrement(IsMatchedCartProduct?.uniquepid, IsMatchedCartProduct))}
                                     className=""
                                 >
-                                    <Text className="text-3xl mr-3 font-bold text-white" >+</Text>
+                                    <Text className="text-3xl  mr-3 font-bold text-white" >+</Text>
                                 </TouchableOpacity>
                             </View>
                             <View className="   flex-1 items-center justify-center  border border-gray-200 ">
@@ -532,8 +574,8 @@ const ProductDetailScreen = ({ navigation, route }) => {
                                         navigation.navigate("Cart")
                                     }, 500)}>
                                     <View className=" flex-row items-center ">
-                                        <Text className="text-[#00008b] text-lg font-bold">{t("Go To Cart")}</Text>
-                                        <Text className="mt-1"><MaterialCommunityIcons name="chevron-right" size={24} color={"#00008b"} className="" /></Text>
+                                        <Text className="text-[#00008b] text-base font-bold">{t("Go To Cart")}</Text>
+                                        <Text className=""><MaterialCommunityIcons name="chevron-right" size={24} color={"#00008b"} className="" /></Text>
                                     </View>
                                 </TouchableOpacity>
                             </View>
@@ -563,12 +605,17 @@ const ProductDetailScreen = ({ navigation, route }) => {
                     <Text className="text-xl font-medium">
                         {t('Posted By')}
                     </Text>
+                    <TouchableOpacity
+                                            onPress={debounce(() => navigation.push('UserProfile', { item: singleData }), 500)}
+                                            >
+
                     <Text
-                        onPress={debounce(() => navigation.push('UserProfile', { item: singleData }), 500)}
                         style={{ ...Fonts.primaryColor14Bold }}
                     >
                         {t('View Profile')}
                     </Text>
+                    </TouchableOpacity>
+
                 </View>
                 <View style={{ marginTop: Sizes.fixPadding, flexDirection: 'row', alignItems: 'center' }}>
                     <Image

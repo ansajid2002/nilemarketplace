@@ -257,10 +257,10 @@ const SearchScreen = ({ navigation }) => {
                     <View className=" items-center">
                         <Image
                             source={{ uri: `${AdminUrl}/uploads/CatgeoryImages/${item.category_image_url}` }}
-                            style={{ width: 50.0, height: 50.0, resizeMode: 'contain' }}
+                            style={{ width: 70.0, height: 60.0, resizeMode: 'contain' }}
                             className=""
                         />
-                        <Text className="text-[12px] px-2 pt-2 pb-1  text-[#1b1b52] text-center font-medium">{t(`${item.category_name}`)}</Text>
+                        <Text className="text-[11px] px-2 pt-2 pb-1  text-[#1b1b52] text-center font-medium">{t(`${item.category_name}`)}</Text>
                     </View>
                 </TouchableOpacity>
             );

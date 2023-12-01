@@ -6,7 +6,6 @@ import { AdminUrl } from '../constant';
 const ShareProduct = ({ product }) => {
     const shareProduct = async () => {
         try {
-          const sharedMessage = `Check out this product: ${product.ad_title}\n\nProduct URL: ${AdminUrl}/product-detail?product=${product.prod_slug}&uniqueid=${product.uniquepid}`;
           
           const result = await Share.share({
             title: product.adtitle,
@@ -33,10 +32,10 @@ const ShareProduct = ({ product }) => {
 
     return (
         <TouchableOpacity onPress={shareProduct}>
-            <Image
+            {/* <Image
                 source={shareimg}
                 style={{ width: 30.0, height: 30.0, borderRadius: 20.0 }}
-            />    
+            />     */}
         </TouchableOpacity>
     );
 };

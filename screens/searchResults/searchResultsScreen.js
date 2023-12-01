@@ -143,7 +143,7 @@ const SearchResultsScreen = ({ navigation, route }) => {
                 <TouchableOpacity
                     onPress={debounce(() => navigation.push('ProductDetail', item), 500)}
                     style={styles.productContainer}
-                    className='relative  shadow-md    border mr-2'
+                    className='relative  shadow-sm   border mr-2'
                 >
                     <View className="  border-gray-200 p-2 "
                         style={styles.image}>

@@ -191,11 +191,11 @@ const ProductItem = ({ item }) => {
 
                     <View className="gap-2" style={{ flexDirection: 'row', alignItems: 'center', paddingTop: 8 }}>
                         {discountPercentageSimple && discountPercentageSimple > 0 && (
-                            <Text className="text-xl" style={{ color: 'green' }}>-{discountPercentageSimple?.toFixed(2)}%</Text>
+                            <Text className="text-lg" style={{ color: 'green' }}>-{discountPercentageSimple?.toFixed(2)}%</Text>
                         )}
                         <View className="flex-row  ">
                             <Text className="text-[14px] ml-1 font-medium">{`${c_symbol} `}</Text>
-                            <Text className="text-gray-900 text-xl" style={{ fontWeight: 'bold' }}>
+                            <Text className="text-gray-900 text-lg" style={{ fontWeight: 'bold' }}>
                                 {`${item.sellingprice % 1 === 0 ? Math.trunc(item.sellingprice) : item.sellingprice}`}
                             </Text>
                         </View>
@@ -242,8 +242,8 @@ const ProductListing = ({ title, productList }) => {
             <View style={styles.productContainer}>
                 {
                     memoizedProductList ? memoizedProductList.map((item, index) => (
-                        <View className="w-1/2">
-                            <ProductItem key={index} item={item} />
+                        <View key={index} className="w-1/2">
+                            <ProductItem  item={item} />
                         </View>
 
                     )) : [1, 2, 3, 4].map(item =>

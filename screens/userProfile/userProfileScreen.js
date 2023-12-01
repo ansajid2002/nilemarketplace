@@ -6,6 +6,8 @@ import { AdminUrl } from '../../constant';
 import ProductListing from '../../components/ProductList';
 import FullPageLoader from '../../components/FullPageLoader';
 import { useSelector } from 'react-redux';
+import { SafeAreaView } from 'react-native';
+import { Colors } from '../../constants/styles';
 
 const UserProfileScreen = ({ navigation, route }) => {
     let circuls = [];
@@ -87,7 +89,10 @@ const UserProfileScreen = ({ navigation, route }) => {
 
 
     return (
-        VendorProductList ? <ScrollView>
+        VendorProductList ? 
+        <SafeAreaView style={{ flex: 1, backgroundColor: Colors.whiteColor }}>
+
+        <ScrollView>
             <View style={{ width: '100%', height: '100%', backgroundColor: 'white' }}>
                 <View style={{ width: '100%' }}>
                     <ProfileBody
@@ -110,7 +115,7 @@ const UserProfileScreen = ({ navigation, route }) => {
                     <ProductListing title={'All Products'} productList={VendorProductList || []} />
                 </View>
             </View>
-        </ScrollView> : <FullPageLoader />
+        </ScrollView></SafeAreaView> : <FullPageLoader />
     );
 
 
