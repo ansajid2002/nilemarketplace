@@ -600,14 +600,14 @@ const CategoriesItemsScreen = React.memo(({ navigation, route }) => {
 
     function categoryInfo() {
         return (
-            <View style={{ flex: 1 }}>
+            <View className="px-1" style={{ flex: 1 }}>
 
                 <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                    <TouchableOpacity className="w-[85px]"
+                    <TouchableOpacity className="w-[90px]"
                         onPress={debounce(() => {
                             setSelectedsubcategory(t('All'));
                         }, 500)}>
-                        <View className={`h-[70px] w-[70px] border border-gray-200 shadow-sm  rounded-full mx-auto duration-300 overflow-hidden
+                        <View className={`h-[80px] w-[80px] border border-gray-200 shadow-sm  rounded-full mx-auto duration-300 overflow-hidden
                                 ${selectedCategory === t("All") ? ' border-gray-600 border-2 ' : ''}`}>
                             <Image resizeMode="contain" className={`rounded-full w-full h-full  ${selectedCategory === t("All") ? '  ' : ' scale-90'} `} source={require('../../assets/images/allproducts.png')} />
                         </View>
@@ -620,12 +620,12 @@ const CategoriesItemsScreen = React.memo(({ navigation, route }) => {
                     </TouchableOpacity>
                     {
                         singleData.subcategories?.filter((item) => selectedCategory === item.subcategory_name).map((item, index) => (
-                            <TouchableOpacity className={`w-[90px] mx-1  `}
+                            <TouchableOpacity className={`w-[90px] `}
                                 onPress={debounce(() => {
                                     setSelectedsubcategory(item.subcategory_name);
                                 }, 500)}
                                 key={index}>
-                                <View className={`h-[70px] w-[70px] border border-gray-200 shadow-sm  rounded-full mx-auto duration-300 overflow-hidden
+                                <View className={`h-[80px] w-[80px] border border-gray-200 shadow-sm rounded-full mx-auto duration-300 overflow-hidden
                                 ${selectedCategory === item.subcategory_name ? ' border-gray-600 border-2 ' : ''}`} >
                                     {/* <Image className={`rounded-full w-full h-full  ${selectedCategory === item ? ' scale-110 ' : ''} `} source={require('../../assets/images/mobiles/mobile11.png')} /> */}
 
@@ -648,12 +648,12 @@ const CategoriesItemsScreen = React.memo(({ navigation, route }) => {
                     }
                     {
                         singleData.subcategories?.filter((item) => selectedCategory !== item.subcategory_name).map((item, index) => (
-                            <TouchableOpacity className={`w-[90px] mx-1  `}
+                            <TouchableOpacity className={`w-[90px]   `}
                                 onPress={debounce(() => {
                                     setSelectedsubcategory(item.subcategory_name);
                                 }, 500)}
                                 key={index}>
-                                <View className={`h-[70px] w-[70px] border border-gray-200 shadow-sm  rounded-full mx-auto duration-300 overflow-hidden
+                                <View className={`h-[80px] w-[80px] border border-gray-200 shadow-sm  rounded-full mx-auto duration-300 overflow-hidden
                                 ${selectedCategory === item.subcategory_name ? ' border-gray-600 border-2 ' : ''}`} >
                                     {/* <Image className={`rounded-full w-full h-full  ${selectedCategory === item ? ' scale-110 ' : ''} `} source={require('../../assets/images/mobiles/mobile11.png')} /> */}
 

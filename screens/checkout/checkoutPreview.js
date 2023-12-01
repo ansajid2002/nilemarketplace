@@ -287,7 +287,7 @@ const CheckoutPreview = ({ route, navigation }) => {
 
           <View className=" flex-1 ml-5 " >
 
-            <Text numberOfLines={2} className="text-lg font-medium">
+            <Text numberOfLines={2} className="text-base font-medium">
               {item?.ad_title}
             </Text>
 
@@ -315,7 +315,11 @@ const CheckoutPreview = ({ route, navigation }) => {
               }
 
             </View>
-            <Text className="text-[14px] text-gray-600 my-0.5">{t("Expected Delivery By : ")}<Text className="text-[#00008b] font-medium text-base">{formattedDate}</Text></Text>
+            <View className="flex-row items-center">
+
+            <Text className="text-[13px] text-gray-600 my-0.5">{t("Expected Delivery By : ")}</Text>
+            <Text className="text-[#00008b] font-medium text-[15px]">{formattedDate}</Text>
+            </View>
           </View>
 
           <View>
@@ -343,7 +347,7 @@ const CheckoutPreview = ({ route, navigation }) => {
       <View className="bg-white p-2">
         <Text className="text-[18px] font-medium mb-2 mx-1">{t("Delivery Address")}</Text>
 
-        <View className=" rounded-lg shadow-lg px-3">
+        <View className=" rounded-lg shadow-sm px-3 py-1">
           <Text className="text-[16px] font-medium tracking-wider">{given_name_address} {family_name_address}</Text>
 
           <Text className="text-[16px] my-0.5 ">{apt_address}</Text>
