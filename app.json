@@ -2,7 +2,7 @@
   "expo": {
     "name": "Nile Marketplace",
     "slug": "nile-marketplace",
-    "version": "1.1.1",
+    "version": "1.1.2",
     "orientation": "portrait",
     "icon": "./assets/images/mainicon.png",
     "userInterfaceStyle": "light",
@@ -53,7 +53,7 @@
     },
     "android": {
       "package": "com.render.nmp",
-      "versionCode": 3,
+      "versionCode": 4,
       "useNextNotificationsApi": true,
       "config": {
         "googleSignIn": {

@@ -138,7 +138,7 @@ const MyOrdersScreen = ({ navigation }) => {
     return (
       <View >
         <CustomHeader cartCount={cartCount} />
-        <View className="flex justify-center w-full h-screen items-center">
+        <View className="flex justify-center w-full h-full items-center">
           <Image resizeMode="contain" source={require("../../assets/images/no-records.png")} style={{ width: 200, height: 200 }} />
           <Text>{t("You haven't ordered anything.")}</Text>
           <TouchableOpacity onPress={() => navigation.navigate("Home")}>
@@ -159,7 +159,10 @@ const MyOrdersScreen = ({ navigation }) => {
       {
         !loading ?
           ordersData.length === 0 ? (
+            <SafeAreaView style={{ flex: 1, backgroundColor: Colors.whiteColor }} className="">
+            
             <EmptyOrdersMessage />
+            </SafeAreaView>
           ) : (
             <SafeAreaView style={{ flex: 1, backgroundColor: Colors.whiteColor }} className="">
 

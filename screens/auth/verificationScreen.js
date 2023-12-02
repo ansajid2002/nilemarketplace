@@ -93,7 +93,7 @@ const VerificationScreen = ({ navigation, route }) => {
                     await AsyncStorage.setItem('customerData', JSON.stringify(responseData.user));
                     // await AsyncStorage.setItem('loggedid', responseData.loggedid);
                     dispatch(updateCustomerData(responseData?.user))
-                    navigation.navigate('BottomTabBar')
+                    navigation.navigate('Home')
 
                 } else if (responseData.status === 401) {
                     Alert.alert("Error", responseData.message, [

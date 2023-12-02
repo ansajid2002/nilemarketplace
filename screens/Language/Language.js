@@ -65,8 +65,8 @@ const Language = ({ navigation }) => {
           <TouchableOpacity
             onPress={debounce(() => handleRadioButtonPress(item.langcode), 500)}
             style={{
-              width: 20,
-              height: 20,
+              width: 21,
+              height: 21,
               borderWidth: 1,
               borderColor: isSelected ? '#00008B' : 'gray',
               borderRadius: 16,
@@ -109,7 +109,7 @@ const Language = ({ navigation }) => {
     <SafeAreaView style={{ flex: 1, backgroundColor: Colors.whiteColor }} className="">
 
       <HeaderBar goback={true} title={'Select Language'} navigation={navigation} />
-      <View className="mt-2">
+      <View className="mt-3  h-full">
 
         <FlatList
           data={languagestodisplay}

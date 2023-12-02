@@ -215,14 +215,14 @@ const CheckoutAddaddress = ({ route, navigation }) => {
                 <View>
                     {
                         locationloader ?
-                            <TouchableOpacity className="flex-row px-4 border-b border-t  border-gray-300 py-2.5">
+                            <TouchableOpacity className="flex-row px-4 border-b border-t  border-gray-300 py-2.5 h-14">
 
                                 <View className="bg-white  flex-row items-center">
                                     <ActivityIndicator size="large" color="#00008b" />
                                     <Text className="text-gray-400 ml-2 text-[14px]">{t("Fetching Location Data")}...</Text>
                                 </View></TouchableOpacity> :
 
-                            <TouchableOpacity className="flex-row px-4 border-b border-t  border-gray-300 py-4 " onPress={debounce(() => checkLocationPermission(), 500)}>
+                            <TouchableOpacity className="flex-row px-4 border-b border-t items-center  border-gray-300 py-4 h-14" onPress={debounce(() => checkLocationPermission(), 500)}>
                                 <MaterialCommunityIcons
                                     name="crosshairs-gps"
                                     size={20}

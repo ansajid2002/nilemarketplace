@@ -18,6 +18,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { useTranslation } from "react-i18next";
 import { AdminUrl } from "../../constant";
 import Animated, { useSharedValue } from 'react-native-reanimated';
+import { CategorysidebarPlaceholder } from "../../components/Skeleton";
 
 const SearchScreen = ({ navigation }) => {
     const dispatch = useDispatch();
@@ -123,7 +124,7 @@ const SearchScreen = ({ navigation }) => {
         return (<>
             <TouchableWithoutFeedback >
                 <Animated.View className="flex-row flex-1">
-                    <View className="w-[26%]  bg-[#fb76011e] mr-2 ">
+                    <View className="w-[25%]  bg-[#fb76011e] mr-2 ">
                         <FlatList showsVerticalScrollIndicator={false}
                             data={productsData}
                             renderItem={renderitem}
@@ -272,6 +273,8 @@ const SearchScreen = ({ navigation }) => {
             <TouchableWithoutFeedback >
                 <View className="flex-row flex-1">
                     <View className="w-[25%]  bg-[#ffc363]/50 mr-2 ">
+                        {
+                            productsData ? 
                         <FlatList showsVerticalScrollIndicator={false}
                             data={productsData}
                             renderItem={renderitem}
@@ -289,11 +292,17 @@ const SearchScreen = ({ navigation }) => {
                                     </View>
                                 </TouchableOpacity>
                             )}
-                        />
+                        /> :
+                        <CategorysidebarPlaceholder/>
+                                                }
+
                     </View>
                     <View className="w-[70%]  bg-[white]">
                         <Text className="text-center mb-2 font-medium text-lg">{t("Shop By Category")}</Text>
                         <ScrollView className="flex-1 ">
+                        {
+                            productsData ? 
+                        
                             <View className="flex-row flex-wrap mb-4">
                                 {
                                     (selectedcategory === t("Featured")) ?
@@ -341,6 +350,8 @@ const SearchScreen = ({ navigation }) => {
                                         })
                                 }
                             </View>
+                            : <CategorysidebarPlaceholder/>
+                        }
                         </ScrollView>
                     </View>
                 </View>
