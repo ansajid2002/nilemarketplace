@@ -18,7 +18,7 @@ export default function NoInternet() {
   }, []);
 
   return (
-    <View className=" flex-1 flex-row mt-20 justify-center" >
+    <View className=" flex-1 flex-row mt-10 justify-center" >
       {isConnected ? (
         <View className="flex-row items-center justify-center">
         <Text className="text-green-500 text-3xl font-bold">

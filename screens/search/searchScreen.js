@@ -71,7 +71,7 @@ const SearchScreen = ({ navigation }) => {
 
 
     const { t } = useTranslation();
-    const [selectedcategory, setSelectedcategory] = useState("Featured");
+    const [selectedcategory, setSelectedcategory] = useState(t("Featured"));
     const [subcategoriesdatatoshow, setSubcategoriesdatatoshow] = useState();
 
     const handlesubcategoriesdata = useCallback(
@@ -130,7 +130,7 @@ const SearchScreen = ({ navigation }) => {
                             renderItem={renderitem}
                             keyExtractor={item => item.category_id}
                             ListHeaderComponent={() => (
-                                <TouchableOpacity onPress={debounce(() => setSelectedcategory("Featured"), 500)}
+                                <TouchableOpacity onPress={debounce(() => setSelectedcategory(t("Featured")), 500)}
                                     className={`pb-2.5 pt-1.5 ${selectedcategory === t("Featured") ? "border-[#ff7701] border-l-4 bg-white" : "border-b border-gray-300"}`}>
                                     <View className=" items-center">
                                         <Image

@@ -48,7 +48,7 @@
     ],
     "ios": {
       "bundleIdentifier": "com.render.nmp",
-      "buildNumber": "6",
+      "buildNumber": "8",
       "supportsTablet": true
     },
     "android": {
