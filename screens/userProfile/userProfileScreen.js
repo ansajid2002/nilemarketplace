@@ -89,33 +89,34 @@ const UserProfileScreen = ({ navigation, route }) => {
 
 
     return (
-        VendorProductList ? 
-        <SafeAreaView style={{ flex: 1, backgroundColor: Colors.whiteColor }}>
+        VendorProductList ?
+            <SafeAreaView style={{ flex: 1, backgroundColor: Colors.whiteColor }}>
 
-        <ScrollView>
-            <View style={{ width: '100%', height: '100%', backgroundColor: 'white' }}>
-                <View style={{ width: '100%' }}>
-                    <ProfileBody
-                        name={`${vendorInfo?.vendorname}`}
-                        accountName={`${vendorInfo?.brand_name} - Brand`}
-                        profileImage={imageUrl || null}
-                        followers={vendorInfo?.followers}
-                        reviews={35131}
-                        post={VendorProductList && VendorProductList?.length}
-                    />
-                    <ProfileButtons
-                        id={0}
-                        name={`${vendorInfo?.vendorname}`}
-                        accountName={`${vendorInfo?.brand_name} - Brand`}
-                        profileImage={imageUrl || null}
-                        phone={`${vendorInfo?.country_code} ${vendorInfo?.mobile_number}`}
-                    />
-                </View>
-                <View className="mt-4">
-                    <ProductListing title={'All Products'} productList={VendorProductList || []} />
-                </View>
-            </View>
-        </ScrollView></SafeAreaView> : <FullPageLoader />
+                <ScrollView>
+                    <View style={{ width: '100%', height: '100%', backgroundColor: 'white' }}>
+                        <View style={{ width: '100%' }}>
+                            <ProfileBody
+                                name={`${vendorInfo?.vendorname}`}
+                                accountName={`${vendorInfo?.brand_name} - Brand`}
+                                profileImage={imageUrl || null}
+                                followers={vendorInfo?.followers}
+                                reviews={35131}
+                                post={VendorProductList && VendorProductList?.length}
+                            />
+                            <ProfileButtons
+                                id={0}
+                                name={`${vendorInfo?.vendorname}`}
+                                accountName={`${vendorInfo?.brand_name} - Brand`}
+                                profileImage={imageUrl || null}
+                                data={vendorInfo || {}}
+                                phone={`${vendorInfo?.country_code} ${vendorInfo?.mobile_number}`}
+                            />
+                        </View>
+                        <View className="mt-4">
+                            <ProductListing title={'All Products'} productList={VendorProductList || []} />
+                        </View>
+                    </View>
+                </ScrollView></SafeAreaView> : <FullPageLoader />
     );
 
 

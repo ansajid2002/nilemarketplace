@@ -60,6 +60,8 @@ import Carttab from './components/Carttab';
 import Bottomsearch from './screens/search/Bottomsearch';
 import productDetailScreen from "./screens/productDetail/productDetailScreen";
 import { BackHandler, Text, ToastAndroid } from 'react-native';
+import Inbox from './screens/Inbox/inbox';
+import InboxChatScreen from './screens/Inbox/InboxChatScreen';
 
 ///////////////////////////////////////FORM SCREENS///////////////////////////////////////
 
@@ -208,6 +210,8 @@ const App = () => {
 
             <Stack.Screen name="Home" component={HomeTabs} />
             <Stack.Screen name="Notification" component={NotificationsScreen} />
+            <Stack.Screen name="Inbox" component={Inbox} />
+            <Stack.Screen name="InboxChatScreen" component={InboxChatScreen} />
 
           </Stack.Navigator>
 

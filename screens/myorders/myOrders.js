@@ -19,6 +19,7 @@ const MyOrdersScreen = ({ navigation }) => {
   const { customerData } = useSelector((store) => store.userData)
   const { reviewItems } = useSelector((store) => store.reviews)
 
+
   const [cartCount] = useState(cartItems?.length);
   const dispatch = useDispatch()
   const { t } = useTranslation()
@@ -160,14 +161,14 @@ const MyOrdersScreen = ({ navigation }) => {
         !loading ?
           ordersData.length === 0 ? (
             <SafeAreaView style={{ flex: 1, backgroundColor: Colors.whiteColor }} className="">
-            
-            <EmptyOrdersMessage />
+
+              <EmptyOrdersMessage />
             </SafeAreaView>
           ) : (
             <SafeAreaView style={{ flex: 1, backgroundColor: Colors.whiteColor }} className="">
 
-            <FlatList ListHeaderComponent={<CustomHeader cartCount={cartCount} />} data={ordersData} renderItem={renderitem} keyExtractor={(item) => item.order_id} />
-          </SafeAreaView>) : <FullPageLoader />
+              <FlatList ListHeaderComponent={<CustomHeader cartCount={cartCount} />} data={ordersData} renderItem={renderitem} keyExtractor={(item) => item.order_id} />
+            </SafeAreaView>) : <FullPageLoader />
       }
     </View>
   );

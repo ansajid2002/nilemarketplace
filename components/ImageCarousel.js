@@ -19,12 +19,12 @@ const ImageCarousel = () => {
     useEffect(() => {
         const fetchBanners = () => {
             // Replace 'backendBannersUrl' with the actual endpoint to fetch banners
-            const backendBannersUrl = `${AdminUrl}/api/getBanners`;
+            const backendBannersUrl = `${AdminUrl}/api/getBannersMobile`;
 
             axios.get(backendBannersUrl)
                 .then((response) => {
                     // Filter banners with non-empty 'banner_url' before updating the state
-                    const filteredBanners = response.data.filter(item => item.banner_url);
+                    const filteredBanners = response.data.filter(item => item.mobilebanner_url);
                     setBanners(filteredBanners);
                 })
                 .catch((error) => {
@@ -94,7 +94,7 @@ const ImageCarousel = () => {
                 keyExtractor={(item) => item.id.toString()} // Make sure to use a string for key
                 renderItem={({ item, index }) => (
                     <Image
-                        source={{ uri: `${AdminUrl}/uploads/Banners/${item.banner_url}` }}
+                        source={{ uri: `${AdminUrl}/uploads/MobileBanners/${item.mobilebanner_url}` }}
                         style={{ width, height: 200 }}
                         // placeholder={blurhash}
                         transition={1000}

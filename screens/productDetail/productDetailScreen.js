@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { SafeAreaView, View, Image, Dimensions, ScrollView, StatusBar,Share, FlatList, StyleSheet, Text, ImageBackground, Alert, Button, ActivityIndicator } from "react-native";
+import { SafeAreaView, View, Image, Dimensions, ScrollView, StatusBar, Share, FlatList, StyleSheet, Text, ImageBackground, Alert, Button, ActivityIndicator } from "react-native";
 import { Colors, Fonts, Sizes, } from "../../constants/styles";
 import { MaterialIcons, MaterialCommunityIcons, } from '@expo/vector-icons';
 import { Snackbar } from "react-native-paper";
@@ -198,17 +198,17 @@ const ProductDetailScreen = ({ navigation, route }) => {
 
     const ShareProduct = ({ product }) => {
         const shareProduct = async () => {
-    
+
             console.log("SAJID ");
             try {
                 const sharedMessage = `Check out this product: ${product.ad_title}\n\nProduct URL: https://stg.nilegmp.com/product-detail?product=${product.prod_slug}&uniqueid=${product.uniquepid}`;
-           
-              const result = await Share.share({
-                title: product.adtitle,
-                message: sharedMessage,
-                url: product.productURL, // URL to the product details page on your e-commerce website
-              });
-    
+
+                const result = await Share.share({
+                    title: product.adtitle,
+                    message: sharedMessage,
+                    url: product.productURL, // URL to the product details page on your e-commerce website
+                });
+
                 if (result.action === Share.sharedAction) {
                     if (result.activityType) {
                         // Shared via activity type
@@ -227,11 +227,11 @@ const ProductDetailScreen = ({ navigation, route }) => {
         };
         return (
             <TouchableOpacity onPress={shareProduct}>
-            {/* <Text>ssssa</Text> */}
+                {/* <Text>ssssa</Text> */}
                 <Image
                     source={shareimg}
                     style={{ width: 30.0, height: 30.0, borderRadius: 20.0 }}
-                />    
+                />
             </TouchableOpacity>
         );
     }
@@ -358,39 +358,39 @@ const ProductDetailScreen = ({ navigation, route }) => {
             <StatusBar translucent={false} backgroundColor={Colors.primaryColor} />
             {/* <HeaderBar title={''} goback={true} navigation={navigation} /> */}
             <View className="px-3 py-2" style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: 'white' }}>
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                {
-                   <TouchableOpacity onPress={debounce(() =>navigation.pop(), 500)}>
-                        <Icon name="arrow-back" size={30} color="black" />
-                    </TouchableOpacity>
-                }
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    {
+                        <TouchableOpacity onPress={debounce(() => navigation.pop(), 500)}>
+                            <Icon name="arrow-back" size={30} color="black" />
+                        </TouchableOpacity>
+                    }
 
-            </View>
-            <View className="mr-1 " style={{ flexDirection: 'row', alignItems: 'center' }}>
-                
-                  <TouchableOpacity
-                  className="mr-3"
-                   onPress={debounce(() => {
-                        dispatch(changeSearchFocus(true))
-                        navigation.navigate("Search")
-                    }, 500)}>
+                </View>
+                <View className="mr-1 " style={{ flexDirection: 'row', alignItems: 'center' }}>
+
+                    <TouchableOpacity
+                        className="mr-3"
+                        onPress={debounce(() => {
+                            dispatch(changeSearchFocus(true))
+                            navigation.navigate("Search")
+                        }, 500)}>
                         {/* <Icon name="search" size={26} color="black" style={{ marginRight: 10 }} /> */}
                         <Image
-                        source={search}
-                        style={{ width: 30.0, height: 30.0, borderRadius: 20.0 }}
-                    />
+                            source={search}
+                            style={{ width: 30.0, height: 30.0, borderRadius: 20.0 }}
+                        />
                     </TouchableOpacity>
-                <TouchableOpacity className="-mt-1">
-                    {/* <Text>s</Text> */}
-            <ShareProduct product={singleData} />
-                
-                </TouchableOpacity>
-                
-               
+                    <TouchableOpacity className="-mt-1">
+                        {/* <Text>s</Text> */}
+                        <ShareProduct product={singleData} />
+
+                    </TouchableOpacity>
+
+
+                </View>
             </View>
-        </View>
-            
-        
+
+
             <ScrollView>
                 <View >
                     <View className="relative">
@@ -436,10 +436,10 @@ const ProductDetailScreen = ({ navigation, route }) => {
                             {/* <Text className="text-base">Category : </Text></Text> */}
 
                             {
-                                singleData?.additionaldescription.length > 0 ? <View >
+                                singleData?.additionaldescription && singleData?.additionaldescription.length > 0 ? <View >
                                     <Text className="font-bold text-base mb-2">Description</Text>
                                     <Text className="leading-5">
-                                        {singleData.additionaldescription}
+                                        {singleData?.additionaldescription}
                                     </Text>
                                 </View> : <Text className="italic">No Description Available</Text>
                             }
@@ -594,7 +594,7 @@ const ProductDetailScreen = ({ navigation, route }) => {
         const { brand_logo, brand_name } = singleData?.vendorInfo
         let imageUrl = placeholderImageUrl; // Default to the placeholder image URL
 
-        if (brand_logo?.images[0]) {
+        if (brand_logo && brand_logo?.images[0]) {
             // If brand logo image exists, use its URL
             imageUrl = `${AdminUrl}/uploads/vendorBrandLogo/${brand_logo?.images[0]}`;
         }
@@ -606,14 +606,13 @@ const ProductDetailScreen = ({ navigation, route }) => {
                         {t('Posted By')}
                     </Text>
                     <TouchableOpacity
-                                            onPress={debounce(() => navigation.push('UserProfile', { item: singleData }), 500)}
-                                            >
-
-                    <Text
-                        style={{ ...Fonts.primaryColor14Bold }}
+                        onPress={debounce(() => navigation.push('UserProfile', { item: singleData }), 500)}
                     >
-                        {t('View Profile')}
-                    </Text>
+                        <Text
+                            style={{ ...Fonts.primaryColor14Bold }}
+                        >
+                            {t('View Profile')}
+                        </Text>
                     </TouchableOpacity>
 
                 </View>
@@ -630,20 +629,6 @@ const ProductDetailScreen = ({ navigation, route }) => {
         )
     }
 
-    function productDescription(singleData) {
-        const { additionaldescription } = singleData
-        return (
-            <View style={{ margin: Sizes.fixPadding * 1.0, }}>
-                <Text style={{ marginBottom: Sizes.fixPadding }} className="text-xl font-medium">
-                    {t('Description')}
-                </Text>
-                <Text>{additionaldescription}</Text>
-                {/* <Text style={{ textAlign: 'justify', ...Fonts.grayColor12Medium }}>
-                    {extraDescription}
-                </Text> */}
-            </View>
-        )
-    }
 
     function divider() {
         return (

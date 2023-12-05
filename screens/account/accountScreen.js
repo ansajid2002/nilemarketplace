@@ -50,7 +50,7 @@ const AccountScreen = ({ navigation }) => {
                                         contentContainerStyle={{ paddingBottom: Sizes.fixPadding * 1.0, }}
                                     >
                                         {accountInfo()}
-                                       
+
                                         {accountOptions()}
                                         {logoutOption()}
                                     </ScrollView>
@@ -133,8 +133,8 @@ const AccountScreen = ({ navigation }) => {
         return (
             <TouchableOpacity
                 activeOpacity={0.9}
-                
-                className="px-4 py-4"
+
+                className="ml-2 px-4 py-4"
                 style={{ flexDirection: 'row', alignItems: 'center' }}
             >
                 <Image
@@ -144,7 +144,7 @@ const AccountScreen = ({ navigation }) => {
                 />
                 <TouchableOpacity onPress={debounce(() => setShowLogoutDialog(true), 500)}>
 
-                <Text style={{ marginLeft: Sizes.fixPadding, ...Fonts.primaryColor14SemiBold }}>{t("Logout")}</Text>
+                    <Text style={{ marginLeft: Sizes.fixPadding, ...Fonts.primaryColor14SemiBold }}>{t("Logout")}</Text>
                 </TouchableOpacity>
             </TouchableOpacity>
         )
@@ -161,6 +161,12 @@ const AccountScreen = ({ navigation }) => {
                 })}
                 {divider()}
                 {accountOptionsSort({
+                    icon: <MaterialIcons name="forward-to-inbox" color={Colors.blackColor} size={20} />,
+                    option: 'Inbox',
+                    navigateTo: customerData?.length > 0 ? 'Inbox' : "Login"
+                })}
+                {divider()}
+                {accountOptionsSort({
                     icon: <MaterialIcons name="map" color={Colors.blackColor} size={20} />,
                     option: `${t("Manage Address")}`,
                     navigateTo: customerData?.length > 0 ? 'Checkout Address' : "Login"
@@ -170,7 +176,7 @@ const AccountScreen = ({ navigation }) => {
                     icon: <MaterialIcons name="store" size={20} color={Colors.blackColor} />,
                     option: 'Become a Seller'
                 })}
-                
+
 
                 {divider()}
                 {accountOptionsSort({
@@ -238,7 +244,7 @@ const AccountScreen = ({ navigation }) => {
             return (
                 <TouchableOpacity
                     activeOpacity={0.9}
-                    
+
                     style={{ flexDirection: 'row', alignItems: 'center', margin: Sizes.fixPadding * 2.0 }}
                 >
                     {icon}
@@ -268,11 +274,11 @@ const AccountScreen = ({ navigation }) => {
         return (
             <TouchableOpacity
                 activeOpacity={0.9}
-              
+
                 style={{ flexDirection: 'row', alignItems: 'center', margin: Sizes.fixPadding * 2.0, }}
             >
                 {icon}
-                <TouchableOpacity   onPress={debounce(() => {
+                <TouchableOpacity onPress={debounce(() => {
                     setLoading(true)
                     navigation.push(navigateTo, navigateTo == "EditProfile" && customerData)
                     setLoading(false)

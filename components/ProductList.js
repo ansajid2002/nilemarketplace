@@ -2,9 +2,7 @@ import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import {
     View,
     Text,
-    Image,
     StyleSheet,
-    Dimensions,
     TouchableOpacity,
     TouchableNativeFeedback,
     Platform,
@@ -150,8 +148,8 @@ const ProductItem = ({ item }) => {
     const [imageError, setImageError] = useState(false);
 
     return (
-        <TouchableComponent onPress={handlePress} >
-            <View style={{ width: '100%', padding: 10 }} className="border border-gray-200">
+        <TouchableComponent onPress={handlePress}>
+            <View style={{ padding: 5 }} className="border w-full border-gray-200">
                 <View>
                     {loading && (
                         <ActivityIndicator size="large" color="gray" style={styles.loadingIndicator} />
@@ -243,7 +241,7 @@ const ProductListing = ({ title, productList }) => {
                 {
                     memoizedProductList ? memoizedProductList.map((item, index) => (
                         <View key={index} className="w-1/2">
-                            <ProductItem  item={item} />
+                            <ProductItem item={item} />
                         </View>
 
                     )) : [1, 2, 3, 4].map(item =>

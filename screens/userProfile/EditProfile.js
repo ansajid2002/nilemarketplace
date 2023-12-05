@@ -82,6 +82,7 @@ const EditProfile = ({ route, navigation }) => {
         setloader(true)
         // Check if required fields are empty
         if (!userProfile.given_name || !userProfile.family_name || !userProfile.email || !userProfile.phone_number) {
+            setloader(false)
             Alert.alert('Error', 'Please fill in all required fields');
             return;
         }
@@ -89,6 +90,8 @@ const EditProfile = ({ route, navigation }) => {
         // Validate email format
         const emailPattern = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
         if (!emailPattern.test(userProfile.email)) {
+            setloader(false)
+
             Alert.alert('Error', 'Please enter a valid email address');
             return;
         }
@@ -128,6 +131,8 @@ const EditProfile = ({ route, navigation }) => {
         } catch (error) {
             // Handle any exceptions or network errors
             Alert.alert('Error', error.message);
+        } finally {
+            setloader(false)
         }
 
     };
@@ -227,7 +232,7 @@ const EditProfile = ({ route, navigation }) => {
 
     return (
         !loader ?
-        <SafeAreaView style={{ flex: 1, backgroundColor: Colors.whiteColor }} className="">
+            <SafeAreaView style={{ flex: 1, backgroundColor: Colors.whiteColor }} className="">
 
                 <ScrollView>
                     <View style={{ flex: 1, backgroundColor: 'white' }}>

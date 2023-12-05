@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text,Image } from 'react-native';
+import { View, Text, Image } from 'react-native';
 import NetInfo from '@react-native-community/netinfo';
 import noInternet from "../assets/images/icons/no-internet.png"
-import { TouchableOpacity } from 'react-native';
 
 export default function NoInternet() {
   const [isConnected, setIsConnected] = useState(true);
@@ -21,18 +20,18 @@ export default function NoInternet() {
     <View className=" flex-1 flex-row mt-10 justify-center" >
       {isConnected ? (
         <View className="flex-row items-center justify-center">
-        <Text className="text-green-500 text-3xl font-bold">
-          You are online!
-        </Text>
+          <Text className="text-green-500 text-3xl font-bold">
+            You are online!
+          </Text>
         </View>
       ) : (
         <View className=" p-6  rounded-lg shadow-md ">
-        <View className="flex-row items-center justify-center mb-4">
-        <Image 
-                        source={noInternet}
-                        style={{ tintColor:"gray",width: 200.0, height: 200.0, borderRadius: 20.0 }}
-                    />
-        </View>
+          <View className="flex-row items-center justify-center mb-4">
+            <Image
+              source={noInternet}
+              style={{ tintColor: "gray", width: 200.0, height: 200.0, borderRadius: 20.0 }}
+            />
+          </View>
           <Text className=" text-[26px] font-bold mb-4 text-center">
             No internet connection
           </Text>

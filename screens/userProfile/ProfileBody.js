@@ -68,7 +68,7 @@ export const ProfileBody = ({
     );
 };
 
-export const ProfileButtons = ({ phone }) => {
+export const ProfileButtons = ({ phone, data }) => {
     const navigation = useNavigation();
     const [follow, setFollow] = useState(follow);
 
@@ -103,18 +103,20 @@ export const ProfileButtons = ({ phone }) => {
                         </Text>
                     </View>
                 </TouchableOpacity>
-                <View
-                    style={{
-                        width: '42%',
-                        height: 35,
-                        borderWidth: 1,
-                        borderColor: '#DEDEDE',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        borderRadius: 5,
-                    }}>
-                    <Text>Write a Review</Text>
-                </View>
+                <TouchableOpacity style={{ width: '42%' }} onPress={debounce(() => navigation.push('InboxChatScreen', { data }), 300)}>
+                    <View
+                        style={{
+                            width: '100%',
+                            height: 35,
+                            borderWidth: 1,
+                            borderColor: '#DEDEDE',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            borderRadius: 5,
+                        }}>
+                        <Text>Message Seller</Text>
+                    </View>
+                </TouchableOpacity>
                 <View
                     style={{
                         width: '10%',
