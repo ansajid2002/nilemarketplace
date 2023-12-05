@@ -126,19 +126,19 @@ const Checkoutaddress = ({ navigation }) => {
                       <View>
                         <Text className="text-lg font-semibold tracking-wider">{given_name_address} {family_name_address}</Text>
 
-                        <Text className="text-base ">{apt_address}</Text>
+                        <Text className="text-[15px] ">{apt_address}</Text>
                         {/* <Text className="text-base">{street}</Text> */}
-                        <Text className="text-base">{city_address}</Text>
+                        <Text className="text-[15px]">{city_address}</Text>
                         {
                           region_address && subregion_address &&
-                          <Text className="text-base">{`${region_address}, ${subregion_address}`}</Text>
+                          <Text className="text-[15px] line-clamp-1">{`${region_address}, ${subregion_address}`}</Text>
                         }
                         <Text className="text-base">{country_address}</Text>
-                        <Text className="text-base">{zip_address}</Text>
+                        <Text className="text-[15px]">{zip_address}</Text>
                         <Text className="text-base">{country_address}</Text>
                         {
                           phone_address &&
-                          <Text className="text-base">{`Phone Number: ${phone_address}`}</Text>
+                          <Text className="text-[15px]">{`Phone Number: ${phone_address}`}</Text>
                         }
                       </View>
 
