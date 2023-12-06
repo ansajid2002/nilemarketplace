@@ -1,8 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, FlatList } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, FlatList, SafeAreaView } from 'react-native';
 import { AdminUrl, HeaderBar } from '../../constant';
 import { useSelector } from 'react-redux';
 import moment from 'moment/moment';
+import { MaterialIcons } from "@expo/vector-icons";
 
 const InboxChatScreen = ({ route, navigation }) => {
     const vendorData = route.params?.data || null;
@@ -15,7 +16,7 @@ const InboxChatScreen = ({ route, navigation }) => {
     const flatListRef = useRef(null);
 
 
-
+    // console.log(messages,"messages");
     useEffect(() => {
         fetchConversations();
     }, [customerId, vendorData?.id]);
@@ -109,22 +110,73 @@ const InboxChatScreen = ({ route, navigation }) => {
         flatListRef.current.scrollToEnd({ animated: true });
     }, [newMessage]);
 
+
+    // Function to get relative date
+    const getFormattedDate = (messageDate) => {
+        const date = moment(messageDate);
+        return date.format('MMMM DD, YYYY');
+    };
+
+    // Function to get relative date
+    const getRelativeDate = (messageDate) => {
+        const currentDate = moment();
+        const date = moment(messageDate);
+
+        if (currentDate.isSame(date, 'day')) {
+            return 'TODAY';
+        } else if (currentDate.clone().subtract(1, 'day').isSame(date, 'day')) {
+            return 'YESTERDAY';
+        } else if (currentDate.diff(date, 'days') < 7) {
+            return date.format('dddd'); // Display day of the week
+        } else {
+            return getFormattedDate(messageDate); // Display formatted date
+        }
+    };
+
+    // Group messages by date
+    const groupedMessages = messages.reduce((grouped, message) => {
+        const relativeDate = getRelativeDate(message.timestamp);
+        if (!grouped[relativeDate]) {
+            grouped[relativeDate] = [];
+        }
+        grouped[relativeDate].push(message);
+        return grouped;
+    }, {});
+
+    // Output the grouped messages
+    //   console.log(groupedMessages);
+
+
+    const messageGroups = Object.entries(groupedMessages).map(([date, messages], index) => ({
+        id: index.toString(),
+        date,
+        messages,
+    }));
+
     return (
-        <View style={{ flex: 1 }}>
+        <SafeAreaView style={{
+            flex: 1,
+            backgroundColor: "white",
+        }} >
             {vendorData && <HeaderBar title={vendorData?.brand_name || ''} goback={true} navigation={navigation} cartEnable={false} searchEnable={false} />}
             <View style={{ flex: 1, padding: 10 }}>
                 <FlatList
+
+                    showsVerticalScrollIndicator={false}
                     ref={flatListRef}
-                    data={messages}
+                    data={messageGroups}
                     keyExtractor={(item, index) => index.toString()}
                     renderItem={({ item }) => (
-                        <View style={{ flexDirection: item.sender === 'customer' ? 'row-reverse' : 'row', marginBottom: 10 }}>
-                            <View
-                                className={`flex-row p-4 ${item.sender === 'customer' ? 'bg-green-300' : 'bg-white'} rounded-md`}
-                            >
-                                <Text className="mr-2">{item.text}</Text>
-                                <Text className="relative -bottom-2 items-end" style={{ color: '#000', fontSize: 12 }}>{moment(item.timestamp.toLocaleString()).format('LT')}</Text>
-                            </View>
+                        <View >
+                            <Text className="font-medium mt-6 mb-2" style={{ textAlign: 'center', marginVertical: 10, fontSize: 18 }}>{item.date}</Text>
+                            {item.messages.map((message, index) => (
+                                <View key={index.toString()} style={{ flexDirection: message.sender === 'customer' ? 'row-reverse' : 'row', marginBottom: 10 }}>
+                                    <View className="items-center" style={{ flexDirection: 'row', padding: 10, backgroundColor: message.sender === 'customer' ? '#25D366' : 'rgb(230,230,230)', borderRadius: 6 }}>
+                                        <Text style={{ marginRight: 6 }}>{message.text}</Text>
+                                        <Text style={{ color: 'rgb(100,100,100)', fontSize: 12 }}>{moment(message.timestamp).format('LT')}</Text>
+                                    </View>
+                                </View>
+                            ))}
                         </View>
                     )}
                     onContentSizeChange={() => flatListRef.current.scrollToEnd({ animated: true })}
@@ -140,12 +192,19 @@ const InboxChatScreen = ({ route, navigation }) => {
                         keyboardType='web-search'
                         onChangeText={(text) => setNewMessage(text)}
                     />
-                    <TouchableOpacity onPress={handleSendMessage} style={{ marginLeft: 10, padding: 8, backgroundColor: '#5cb85c', borderRadius: 5 }}>
-                        <Text style={{ color: 'white' }}>Send</Text>
+                    <TouchableOpacity onPress={handleSendMessage} style={{ marginLeft: 10, padding: 8, backgroundColor: '#25D366', borderRadius: 5 }}>
+                        {/* <Text style={{ color: 'white' }}>Send</Text> */}
+                        <MaterialIcons
+                            className=""
+                            name="send"
+                            color="white"
+                            size={25}
+
+                        />
                     </TouchableOpacity>
                 </View>
             </View>
-        </View>
+        </SafeAreaView>
     );
 };
 
