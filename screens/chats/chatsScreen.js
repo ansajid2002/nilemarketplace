@@ -344,7 +344,8 @@ const ChatsScreen = ({ navigation }) => {
 
 
                         {/* <Text className="text-base text-gray-600 my-0.5">Published By : <Text className="text-black">{`${item?.vendorInfo?.vendorname}`}</Text></Text> */}
-                        <Text className="text-[14px] text-gray-600 my-0.5">{t("Expected Deliver By : ")}<Text className="text-[#00008b] font-medium text-base">{formattedDate}</Text></Text>
+                        <Text className="text-[14px] text-gray-600 mt-1">{t("Expected Delivery By : ")}</Text>
+                        <Text className="text-[#00008b] font-medium text-base">{formattedDate}</Text>
                     </View>
 
                 </TouchableOpacity>
