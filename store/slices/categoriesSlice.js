@@ -34,11 +34,7 @@ const newArr = categoryData.map((singleobj, index) => {
     };
 });
 
-const categoryNames = categoryData.map(category => category.category);
 
-const subcategoryNames = categoryData.reduce((subcategoryArray, category) => {
-    return subcategoryArray.concat(category.subcategories);
-}, []);
 
 const initialState = {
     categoriesData: newArr
@@ -49,9 +45,7 @@ export const categoriesSlice = createSlice({
     name: "categoriesSlice",
     initialState: initialState,
     reducers: {
-        // toggleFavourite: (state) => {
-        //     state.inFavourite = !state.inFavourite;
-        //   },
+       
 
         toggleFavourite: (state, action) => {
             const { id } = action.payload;

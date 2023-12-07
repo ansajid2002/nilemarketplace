@@ -55,7 +55,6 @@ const ProductsList = ({ navigation }) => {
         numColumns={2}
         keyExtractor={item => item.category_id}
         ListHeaderComponent={() => (
-          // <Text className="text-2xl font-bold px-3 py-5 border border-gray-300 bg-gray-300">{t('All Categories')}</Text>
           <View className="mb-2">
           <HeaderBar title={'All Categories'} goback={true} navigation={navigation} searchEnable={true} />
           </View>

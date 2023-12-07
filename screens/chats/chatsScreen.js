@@ -33,6 +33,28 @@ const ChatsScreen = ({ navigation }) => {
     const cartItems = useSelector((state) => state.cart.cartItems);
 
     useEffect(() => {
+        const getAllProducts = async () => {
+            try {
+                console.log(`${AdminUrl}/api/getProductsData`);
+                const response = await fetch(`${AdminUrl}/api/getProductsData`);
+                console.log(response, "response");
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                const data = await response.json();
+                console.log("data");
+                console.log(data);
+                console.log("data");
+                // Log the data
+                //   dispatch(updateproductsList(data));
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        };
+        getAllProducts()
+    }, [])
+
+    useEffect(() => {
         // Check if cartItems have been loaded successfully
         if (cartItems) {
             setLoading(false)

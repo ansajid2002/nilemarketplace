@@ -1,6 +1,3 @@
-// ios 216641462687-0vgml3eh21399khfqk6avahgmis7sgo2.apps.googleusercontent.com
-// android 216641462687-7mv9inako2l7n3rmp5gq72qu8lquvnn0.apps.googleusercontent.com
-// web 216641462687-a2ut20irksvqdes9n9gfgs21p8hp1kq4.apps.googleusercontent.com
 import React, { useState, useEffect, memo } from "react";
 import {
     StyleSheet,
@@ -29,7 +26,7 @@ import { useCallback } from "react";
 import { useMemo } from "react";
 import InCart from "../../components/inCart";
 import { AntDesign } from '@expo/vector-icons';
-import { CategoryPlaceholder } from "../../components/Skeleton";
+import { CategoryPlaceholder, ServicesPlaceholder } from "../../components/Skeleton";
 import NoLogin from "../../components/NoLogin";
 
 
@@ -39,33 +36,21 @@ const HomeScreen = () => {
     const [newArrivals, setNewArrivals] = useState(null)
     const [recommendedProductsFetched, setRecommendedProductsFetched] = useState(false);
     const [newArrivalsFetched, setNewArrivalsFetched] = useState(false);
-    const [error, setError] = useState(null);
-    const [loading, setLoading] = useState(true);
+
+    const [servicesData, setServicesData] = useState(null)
+    const [productCatData, setProductCatData] = useState(null)
+
 
     const navigation = useNavigation();
-
     const { t } = useTranslation()
     const { customerData } = useSelector((store) => store.userData)
     const cartItems = useSelector((state) => state.cart.cartItems);
     const { productsList } = useSelector((store) => store.products)
 
     const customerId = customerData[0]?.customer_id
-    const { categoriesData } = useSelector((store) => store.categories);
-
-
-    const productscategories = useMemo(() => {
-        return categoriesData.filter((singleservice) => singleservice.category_type === "Products");
-    }, [categoriesData]);
-
-    const productssubcategories = useMemo(() => {
-        return productscategories?.map((single) => single.subcategories).flat() || [];
-    }, [productscategories]);
-
-    // Now you can use productssubcategories in your component
 
     const fetchRecommendedProducts = useCallback(async () => {
-        setLoading(true);
-        setError(null);
+        
 
         try {
             const recommendedResponse = await fetch(`${AdminUrl}/api/recommendedProducts/${customerId}`);
@@ -75,16 +60,11 @@ const HomeScreen = () => {
             const recommendedData = await recommendedResponse.json();
             setRecommendedProducts(recommendedData);
         } catch (error) {
-            setError(error.message || 'An error occurred while fetching recommended products.');
-        } finally {
-            setLoading(false);
-        }
+           console.log(error);
+        } 
     }, [customerId]);
 
     const fetchNewArrivals = useCallback(async () => {
-        setLoading(true);
-        setError(null);
-
         try {
             const newArrivalsResponse = await fetch(`${AdminUrl}/api/newArrivals/${customerId}`);
             if (!newArrivalsResponse.ok) {
@@ -94,8 +74,6 @@ const HomeScreen = () => {
             setNewArrivals(newArrivalsData);
         } catch (error) {
             setError(error.message || 'An error occurred while fetching new arrivals.');
-        } finally {
-            setLoading(false);
         }
     }, [customerId]);
 
@@ -103,28 +81,67 @@ const HomeScreen = () => {
     const memoizedFetchRecommendedProducts = useMemo(() => fetchRecommendedProducts, [fetchRecommendedProducts]);
     const memoizedFetchNewArrivals = useMemo(() => fetchNewArrivals, [fetchNewArrivals]);
 
+    const getservicesData = async () => {
+        try {
+            const response = await fetch(`${AdminUrl}/api/getServicesData`);
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            const data = await response.json();
+            setServicesData(data)
+            // Log the data
+            //   dispatch(updateproductsList(data));
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    };
+    const getProductsData = async () => {
+        try {
+            const response = await fetch(`${AdminUrl}/api/getProductsData`);
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            const data = await response.json();
+            setProductCatData(data)
+            // Log the data
+            //   dispatch(updateproductsList(data));
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    };
+
+    useEffect(() => {
+        if (!servicesData && productCatData?.length > 0) {
+            getservicesData()
+        }
+    }, [servicesData, productCatData])
+
+    useEffect(() => {
+
+        if (!productCatData) {
+            getProductsData()
+        }
+
+    }, [productCatData])
+
     useEffect(() => {
         // Trigger the fetch for recommended products only if customerId exists and is not null
-        if (customerId && !recommendedProductsFetched) {
+        if (customerId && !recommendedProductsFetched && servicesData?.length > 0) {
             memoizedFetchRecommendedProducts();
             setRecommendedProductsFetched(true); // Mark data as fetched
         }
-    }, [customerId, recommendedProductsFetched, memoizedFetchRecommendedProducts]);
+    }, [customerId, recommendedProductsFetched, memoizedFetchRecommendedProducts, servicesData]);
 
     // Use another useEffect for new arrivals
     useEffect(() => {
         // Trigger the fetch for new arrivals only if customerId exists and is not null
-        if (customerId && !newArrivalsFetched) {
+        if (customerId && !newArrivalsFetched && recommendedProdutcs?.length > 0) {
             memoizedFetchNewArrivals();
             setNewArrivalsFetched(true); // Mark data as fetched
         }
-    }, [customerId, newArrivalsFetched, memoizedFetchNewArrivals]);
+    }, [customerId, newArrivalsFetched, memoizedFetchNewArrivals, recommendedProdutcs]);
 
-
-    const servicesData = categoriesData.filter((singleservice) => {
-        return singleservice.category_type === "Services";
-    });
-
+    ////////////////////////////////////////////////////////////////////
 
     return (
         <SafeAreaView
@@ -200,7 +217,7 @@ const HomeScreen = () => {
                         !customerId && <ProductListing title="Recommended Products" productList={productsList.slice(0, 10)} />
                     }
                     {
-                        customerData.length > 0 && <>
+                        customerData?.length > 0 && <>
                             <ProductListing title="Recommended Products" productList={recommendedProdutcs} />
                             <ProductListing title="New Arrivals" productList={newArrivals} />
                         </>
@@ -215,10 +232,12 @@ const HomeScreen = () => {
 
     function browseServicesInfo() {
         return (
-            <>{
+            <View style={{ marginBottom: Sizes.fixPadding, marginTop: Sizes.fixPadding * 2.0, marginHorizontal: Sizes.fixPadding * 1.0, }}>
+            
+            {
 
-                categoriesData.length > 0 &&
-                <View style={{ marginBottom: Sizes.fixPadding, marginTop: Sizes.fixPadding * 2.0, marginHorizontal: Sizes.fixPadding * 1.0, }}>
+                !servicesData ? <ServicesPlaceholder/> :
+                    <>
                     <View className="flex flex-row justify-between items-center mt-2 mb-4 mx-2">
                         <Text className="text-lg font-bold text-gray-900">
                             {t('Browse Services')}
@@ -233,7 +252,7 @@ const HomeScreen = () => {
                     </View>
                     <ScrollView horizontal showsHorizontalScrollIndicator={false} className=" ">
                         {
-                            servicesData.map((item, index) => {
+                            servicesData?.map((item, index) => {
                                 return (
                                     <TouchableOpacity key={index} className=" mx-4 my-4"
                                         activeOpacity={0.9}
@@ -257,8 +276,9 @@ const HomeScreen = () => {
                             })
                         }
                     </ScrollView>
-                </View>
-            }</>
+                    </>
+                
+            }</View>
         )
     }
 
@@ -275,7 +295,7 @@ const HomeScreen = () => {
         return (
             <View style={{ marginBottom: Sizes.fixPadding, marginTop: Sizes.fixPadding * 2.0, marginHorizontal: Sizes.fixPadding * 1.0, }}>
                 {
-                    categoriesData.length === 0 ? (
+                    !productCatData ? (
                         <CategoryPlaceholder />
                     ) :
                         <>
@@ -295,17 +315,17 @@ const HomeScreen = () => {
                                     <AntDesign name="arrowright" size={24} color="black" />
 
                                 </Link> */}
-                            </View> 
+                            </View>
                             <ScrollView horizontal className="grid grid-rows-3 gap-5 h-[350px]" showsHorizontalScrollIndicator={false}>
-                                {chunkArray(productssubcategories, 2)?.map((rowItems, rowIndex) => (
+                                {productCatData && chunkArray(productCatData, 2)?.map((rowItems, rowIndex) => (
                                     <View key={rowIndex} className="grid grid-cols-2 gap-2">
                                         {rowItems?.map((item, itemIndex) => {
-                                            const { subcategory_name } = item
+                                            const { category_name } = item
                                             return (
                                                 <TouchableOpacity key={itemIndex} className="mr-1.5 w-[100px] h-[100px]"
                                                     activeOpacity={0.9}
                                                     onPress={debounce(() => {
-                                                        navigation.push('CategoriesItems', { item: productscategories.find((single) => single.category_id === item.parent_category_id), subcategory_name })
+                                                        navigation.push('CategoriesItems',{ item, subcategory_name: t("All") })
                                                     }, 500)}
                                                     style={styles.categoryWrapStyle}
                                                 >
@@ -313,13 +333,13 @@ const HomeScreen = () => {
                                                         <View style={styles.categoryImageWrapStyle} className="border border-gray-200 ">
                                                             <Image
                                                                 resizeMode="contain"
-                                                                source={{ uri: `${AdminUrl}/uploads/SubcategoryImages/${item.subcategory_image_url}` }}
+                                                                source={{ uri: `${AdminUrl}/uploads/CatgeoryImages/${item.category_image_url}` }}
                                                                 style={{ width: 100.0, height: 100.0, resizeMode: 'contain' }}
                                                                 className="rounded-full"
                                                             />
                                                         </View>
                                                         <Text numberOfLines={2} style={styles.categoryText} className="mt-4">
-                                                            {t(`${item.subcategory_name}`)}
+                                                            {t(`${category_name}`)}
                                                         </Text>
                                                     </View>
                                                 </TouchableOpacity>
@@ -453,7 +473,7 @@ const styles = StyleSheet.create({
         fontSize: 12,
         textAlign: 'center',
         marginTop: 5,
-        fontWeight:"500",
+        fontWeight: "500",
     },
 });
 
