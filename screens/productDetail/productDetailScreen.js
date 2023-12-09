@@ -867,7 +867,9 @@ const ProductDetailScreen = ({ navigation, route }) => {
 
 const priceSection = (discountPercentageSimple, mrp, sellingprice, c_symbol) => {
     return <>
-        <View className={`flex-row ${discountPercentageSimple > 50 && 'bg-green-100/60  py-2= mx-2 mb-2 mt-2'} border border-b-4 border-gray-200 border-l-0 border-r-0 border-t-0 rounded-md items-end justify-between`}>
+        <View>
+
+        <View className={`flex-row ${discountPercentageSimple > 50 && 'bg-green-100/60  py-2 mx-2 mb-2'}    rounded-md items-end justify-between`}>
             <View>
                 {
                     discountPercentageSimple > 50 && <Text className="font-bold ml-3 text-green-700 tracking-wide">
@@ -876,7 +878,12 @@ const priceSection = (discountPercentageSimple, mrp, sellingprice, c_symbol) => 
                     </Text>
                 }
 
-                <View className="mx-4">
+                
+            
+            </View>
+            
+        </View>
+        <View className="mx-4">
 
                  <View className="gap-2 flex-row items-center">
                         {discountPercentageSimple && discountPercentageSimple > 0 && (
@@ -892,15 +899,13 @@ const priceSection = (discountPercentageSimple, mrp, sellingprice, c_symbol) => 
                     {
                         discountPercentageSimple !== 0 &&
                         <View className="flex-row items-center mb-2">
-                            <Text className="text-gray-500 font-medium text-base">List Price: </Text>
-                            <Text style={styles.mrpPrice} className="font-medium text-base">
+                            <Text className="text-gray-500 font-medium text-[14px] line-through">List Price: </Text>
+                            <Text style={styles.mrpPrice} className="font-medium text-base line-through text-gray-500">
                                 {`$${mrp % 1 === 0 ? Math.trunc(mrp) : mrp}`}
                             </Text>
                         </View>
                     }
                 </View>
-            
-            </View>
         </View>
     </>
 }

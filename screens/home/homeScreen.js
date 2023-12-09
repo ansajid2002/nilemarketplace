@@ -95,9 +95,9 @@ const HomeScreen = () => {
             console.error('Error:', error);
         }
     };
-    const getProductsData = async () => {
+    const getCatgeory = async () => {
         try {
-            const response = await fetch(`${AdminUrl}/api/getProductsData`);
+            const response = await fetch(`${AdminUrl}/api/getCatgeory`);
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }
@@ -111,18 +111,18 @@ const HomeScreen = () => {
     };
 
     useEffect(() => {
+        if (!productCatData) {
+            getCatgeory()
+        }
+    }, [productCatData])
+
+    
+    useEffect(() => {
         if (!servicesData && productCatData?.length > 0) {
             getservicesData()
         }
     }, [servicesData, productCatData])
 
-    useEffect(() => {
-
-        if (!productCatData) {
-            getProductsData()
-        }
-
-    }, [productCatData])
 
     useEffect(() => {
         // Trigger the fetch for recommended products only if customerId exists and is not null
@@ -160,10 +160,6 @@ const HomeScreen = () => {
                         <View
                             className="px-2 flex-1"
                             style={{
-                                // backgroundColor: "#00008b",
-                                // padding: 10,
-                                // flexDirection: "row",
-                                // alignItems: "center",
                             }}
                         >
                             <TouchableOpacity
@@ -256,10 +252,10 @@ const HomeScreen = () => {
                                 return (
                                     <TouchableOpacity key={index} className=" mx-4 my-4"
                                         activeOpacity={0.9}
-                                        onPress={debounce(() => navigation.push('CategoriesItems', { item, subcategory_name: t("All") }), 500)}
+                                       
                                         style={styles.categoryWrapStyle}
                                     >
-                                        <View style={styles.categoryImageWrapStyle} className="border border-gray-200">
+                                        <TouchableOpacity  onPress={debounce(() => navigation.push('CategoriesItems', { categoryId:item.category_id,categoryName:item.category_name, subcategory_name: t("All") }), 500)} style={styles.categoryImageWrapStyle} className="border border-gray-200">
                                             <Image
                                                 resizeMode="contain"
                                                 source={{ uri: `${AdminUrl}/uploads/CatgeoryImages/${item.category_image_url}` }}
@@ -267,7 +263,7 @@ const HomeScreen = () => {
                                                 className="rounded-full"
 
                                             />
-                                        </View>
+                                        </TouchableOpacity>
                                         <Text numberOfLines={2} style={styles.categoryText} className="text-[12px]">
                                             {t(`${item.category_name}`)}
                                         </Text>
@@ -324,20 +320,22 @@ const HomeScreen = () => {
                                             return (
                                                 <TouchableOpacity key={itemIndex} className="mr-1.5 w-[100px] h-[100px]"
                                                     activeOpacity={0.9}
-                                                    onPress={debounce(() => {
-                                                        navigation.push('CategoriesItems',{ item, subcategory_name: t("All") })
-                                                    }, 500)}
+                                                   
                                                     style={styles.categoryWrapStyle}
                                                 >
                                                     <View style={styles.categoryWrapStyle} className="mb-10">
-                                                        <View style={styles.categoryImageWrapStyle} className="border border-gray-200 ">
+                                                        <TouchableOpacity
+                                                         onPress={debounce(() => {
+                                                        navigation.push('CategoriesItems',{  categoryId:item.category_id,categoryName:item.category_name, subcategory_name: t("All") })
+                                                    }, 500)}
+                                                     style={styles.categoryImageWrapStyle} className="border border-gray-200 ">
                                                             <Image
                                                                 resizeMode="contain"
                                                                 source={{ uri: `${AdminUrl}/uploads/CatgeoryImages/${item.category_image_url}` }}
                                                                 style={{ width: 100.0, height: 100.0, resizeMode: 'contain' }}
                                                                 className="rounded-full"
                                                             />
-                                                        </View>
+                                                        </TouchableOpacity>
                                                         <Text numberOfLines={2} style={styles.categoryText} className="mt-4">
                                                             {t(`${category_name}`)}
                                                         </Text>
@@ -469,8 +467,8 @@ const styles = StyleSheet.create({
         position: 'absolute', // Use absolute positioning for the icon
     },
     categoryText: {
-        width: 80,
-        fontSize: 12,
+        width: 90,
+        fontSize: 10,
         textAlign: 'center',
         marginTop: 5,
         fontWeight: "500",

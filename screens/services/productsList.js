@@ -1,35 +1,46 @@
-import { View, Text, TouchableOpacity } from 'react-native'
-import React from 'react'
-import { useSelector } from 'react-redux';
+import { View, Text, TouchableOpacity, ScrollView } from 'react-native'
+import React,{useState,useEffect} from 'react'
 import { FlatList } from 'react-native-gesture-handler';
-import { MaterialCommunityIcons } from "react-native-vector-icons"
 import { useTranslation } from 'react-i18next';
 import { debounce } from 'lodash';
 import { HeaderBar } from '../../constant';
-import { AdminUrl } from '../../constant';
 import { Image } from 'react-native';
-import { Dimensions } from 'react-native';
 import { SafeAreaView } from 'react-native';
 import { Colors } from '../../constants/styles';
+import { AdminUrl } from '../../constant';
+import { ProductcategoryPlaceholder } from '../../components/Skeleton';
+
 
 const ProductsList = ({ navigation }) => {
 
+  const [productCatData, setProductCatData] = useState(null)
   const { t } = useTranslation();
-  //////////////////////REDUX/////////////////////////////////////
-  const { categoriesData } = useSelector((store) => store.categories)
+  const getCatgeory = async () => {
+    try {
+        const response = await fetch(`${AdminUrl}/api/getCatgeory`);
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        const data = await response.json();
+        setProductCatData(data)
+        // Log the data
+        //   dispatch(updateproductsList(data));
+    } catch (error) {
+        console.error('Error:', error);
+    }
+};
 
-  const servicesData = categoriesData
-    .filter((singleservice) => singleservice.category_type === "Products")
-
+useEffect(() => {
+    if (!productCatData) {
+        getCatgeory()
+    }
+}, [productCatData])
 
   const renderitem = ({ item }) => {
     return (
 
       <TouchableOpacity
-        // onPress={debounce(() => navigation.push('serviceDetail', item), 500)}
-        onPress={debounce(() => navigation.push('CategoriesItems', { item: item, subcategory_name: t("All") }), 500)}
-
-        // onPress={debounce(() => navigation.push('CategoriesItems', { item: productscategories.find((single) => single.category_id === item.parent_category_id), subcategory_name }), 500)}
+        onPress={debounce(() => navigation.push('CategoriesItems', { categoryId:item.category_id,categoryName:item.category_name, subcategory_name: t("All") }), 500)}
         className={`flex-1 `}
 
       >
@@ -49,8 +60,12 @@ const ProductsList = ({ navigation }) => {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: Colors.whiteColor }} className="">
+    {
+      productCatData ? 
+
+    
     <FlatList
-        data={servicesData}
+        data={productCatData}
         renderItem={renderitem}
         numColumns={2}
         keyExtractor={item => item.category_id}
@@ -61,7 +76,16 @@ const ProductsList = ({ navigation }) => {
         )}
        
         stickyHeaderIndices={[0]} // Index of the header component
-      />
+      /> :
+      <View>
+      <View className="mb-2">
+          <HeaderBar title={'All Categories'} goback={true} navigation={navigation} searchEnable={true} />
+          </View>
+          <ScrollView>
+      <ProductcategoryPlaceholder/>
+          </ScrollView>
+      </View>
+    }
 </SafeAreaView>  )
 }
 

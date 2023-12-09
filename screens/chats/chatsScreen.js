@@ -4,23 +4,22 @@ import { Colors, Fonts, Sizes, } from "../../constants/styles";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { FlatList } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
-// import { incrementItem, decrementItem, deleteItem } from '../../store/slices/CartSlice';
 import { removeItem, incrementItem, decrementItem, addItem } from '../../store/slices/cartSlice';
 import { debounce } from 'lodash';
 import { AdminUrl, HeaderBar, getVariantsOfCatSubcat } from '../../constant';
 import emptyCart from "../../assets/images/icons/empty-cart.png"
-import { changetabbarIndex } from '../../store/slices/counterslice';
 import { useTranslation } from 'react-i18next';
 import { toggleFavouriteProductslice } from '../../store/slices/productSlice';
 import { addItemToWishlist } from '../../store/slices/wishlistSlice';
 import { Alert } from 'react-native';
-import { useRef } from 'react';
-import FullPageLoader from '../../components/FullPageLoader';
-import { ActivityIndicator } from 'react-native';
+import FullPageLoader from "../../components/FullPageLoader";
+import Animated from 'react-native-reanimated';
 
 const ChatsScreen = ({ navigation }) => {
     const [loading, setLoading] = useState(true)
     const { customerData } = useSelector((store) => store.userData)
+    const [imageError, setImageError] = useState(false);
+
 
     const [inFavorite, setinFavorite] = useState(false);
 
@@ -35,18 +34,11 @@ const ChatsScreen = ({ navigation }) => {
     useEffect(() => {
         const getAllProducts = async () => {
             try {
-                console.log(`${AdminUrl}/api/getProductsData`);
                 const response = await fetch(`${AdminUrl}/api/getProductsData`);
-                console.log(response, "response");
                 if (!response.ok) {
                     throw new Error(`HTTP error! Status: ${response.status}`);
                 }
                 const data = await response.json();
-                console.log("data");
-                console.log(data);
-                console.log("data");
-                // Log the data
-                //   dispatch(updateproductsList(data));
             } catch (error) {
                 console.error('Error:', error);
             }
@@ -304,7 +296,10 @@ const ChatsScreen = ({ navigation }) => {
     function header() {
         const myCart = t("My Cart")
         return (
+            <View>
             <HeaderBar title={myCart} goback={false} cartEnable={false} navigation={navigation} />
+            <View className="border-t border-gray-400"></View>
+            </View>
         )
     }
 
@@ -319,7 +314,25 @@ const ChatsScreen = ({ navigation }) => {
                     onPress={debounce(() => navigation.push('ProductDetail', item), 500)}
                 >
                     <View style={{ width: 110, overflow: 'hidden' }} className="m-auto ">
-                        <Image resizeMode='contain' source={{ uri: `${AdminUrl}/uploads/UploadedProductsFromVendors/${item?.images[0]}` }} style={{ width: '100%', height: undefined, aspectRatio: 4 / 4 }} className="rounded-md" />
+                        
+
+
+                        <Image
+                        resizeMode="contain"
+                        source={
+    imageError || !item?.images || item.images.length === 0
+      ? require('../../assets/noimage.jpg')
+      : { uri: `${AdminUrl}/uploads/UploadedProductsFromVendors/${item.images[0]}` }
+  }
+
+                        style={{ width: '100%', height: undefined, aspectRatio: 4 / 4 }} className="rounded-md"
+
+                        onError={() => {
+                            setLoading(false);
+                            setImageError(true);
+                        }}
+                    />
+
                         <View style={styles.container} className=" mt-1 rounded-md">
                             <View style={styles.buttonContainer} className="mx-auto">
                                 {item?.added_quantity == 1 ?
@@ -366,8 +379,11 @@ const ChatsScreen = ({ navigation }) => {
 
 
                         {/* <Text className="text-base text-gray-600 my-0.5">Published By : <Text className="text-black">{`${item?.vendorInfo?.vendorname}`}</Text></Text> */}
-                        <Text className="text-[14px] text-gray-600 mt-1">{t("Expected Delivery By : ")}</Text>
+                        <View className="flex-row items-center">
+
+                        <Text className="text-[14px] text-gray-600 mt-1">{t("Expected  By : ")}</Text>
                         <Text className="text-[#00008b] font-medium text-base">{formattedDate}</Text>
+                        </View>
                     </View>
 
                 </TouchableOpacity>

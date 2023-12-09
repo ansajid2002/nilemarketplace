@@ -13,6 +13,7 @@ import ProductListing from "../../components/ProductList";
 import { Image } from "react-native";
 import { loaderOff, loaderOn } from "../../store/slices/counterslice";
 import { ActivityIndicator } from "react-native";
+import { SubcategoryPlaceholder } from "../../components/Skeleton";
 const { width } = Dimensions.get('window');
 // import { currencyConverter } from "../Currency/currencyScreen";
 
@@ -20,15 +21,34 @@ const { width } = Dimensions.get('window');
 const CategoriesItemsScreen = React.memo(({ navigation, route }) => {
     const { currencyCode } = useSelector((store) => store.selectedCurrency)
     const { c_symbol } = useSelector((store) => store.selectedCurrency)
-
+    const [subcategoriesToShow, setSubcategoriesToShow] = useState(null)
+    const [productsDataBackend, setProducts] = useState(null)
+    const categoryid = route.params.categoryId
+    console.log("route.params start");
+    console.log(route.params);
+    console.log("route.params end");
 
     const { t } = useTranslation()
-    const singleData = route.params.item;
 
 
-    const categoriesList = singleData.subcategories?.map((singlesuncategory) => {
-        return singlesuncategory.subcategory_name
-    })
+    const getSubcatDataByCatId = async () => {
+        try {
+            const response = await fetch(`${AdminUrl}/api/getSubcategorygroupByCatId?catId=${categoryid}`);
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            const data = await response.json();
+
+            if (data) {
+                setSubcategoriesToShow(data.subcategories);
+            }
+
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    };
+
+   
 
     const [isOpen, setIsOpen] = useState(false);
     const [filterlabel, setFilterlabel] = useState()
@@ -36,6 +56,7 @@ const CategoriesItemsScreen = React.memo(({ navigation, route }) => {
     const [subcategoryData, setSubcategoryData] = useState([])
     // const { loaderstate } = useSelector((store) => store.bottomtabbar)
     const [showLoading, setShowLoading] = useState(true);
+    const [selectedsubcategory, setSelectedsubcategory] = useState('All');
 
     const togglePickeropen = (label) => {
         setFilterlabel(label)
@@ -160,52 +181,26 @@ const CategoriesItemsScreen = React.memo(({ navigation, route }) => {
 
     //////////////////////REDUX//////////////////////////////////////
     const dispatch = useDispatch()
-
-    // dispatch(loaderOn())
-    const [selectedsubcategory, setSelectedsubcategory] = useState(route.params.subcategory_name ? route.params.subcategory_name : t("All"));
-
-    const filterProductsBySubcategory = () => {
-        if (selectedsubcategory === t("All")) {
-            return subcategoryData; // Return all products
-        } else {
-            return subcategoryData.filter((singleproduct) => {
-                return singleproduct.slug_subcat === selectedsubcategory.replace(/[^\w\s]/g, "")
-                    .replace(/\s/g, "");
-            });
-        }
-    }
-
-    // --------------------------------OLD CODE--------------------------------
-    //     const categoryProducts = productsList.filter((product) => {
-    //         return (
-    //             product.category === singleData.category_name
-    //         );
-    //     });
-
-    // const filterProductsBySubcategory = () => {
-    //     if (selectedsubcategory === "All") {
-    //         return categoryProducts; // Return all products
-    //     } else {
-    //         return categoryProducts.filter((singleproduct) => {
-    //             return singleproduct.subcategory === selectedsubcategory;
-    //         });
-    //     }
-    // }
-
+    console.log(route.params.categoryName);
     ////////////////Here we get the products of subcategory using API//////////////////////////////// 
     const getProductsbysubcategory = async (subcategoryname) => {
+        setProducts(null)
         try {
             const response = await fetch(`${AdminUrl}/api/getProductBySubcategories?subcat=${subcategoryname.replace(/[^\w\s]/g, "")
-                .replace(/\s/g, "")}&currency=${currencyCode}`);
+                .replace(/\s/g, "")}&currency=${currencyCode}&category=${route.params.categoryName.replace(/[^\w\s]/g, "")
+                    .replace(/\s/g, "")}`);
 
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }
 
             const data = await response.json();
+            console.log(" get product by subcategory name");
+            console.log(data);
+            console.log(" get product by subcategory name");
 
-            setSubcategoryData((prevData) => [...prevData, ...data.AllProducts]);
-
+            // setSubcategoryData((prevData) => [...prevData, ...data.AllProducts]);
+            setProducts(data?.AllProducts)
             // You can dispatch or process the data here as needed.
         } catch (error) {
             console.error('Error:', error);
@@ -213,15 +208,7 @@ const CategoriesItemsScreen = React.memo(({ navigation, route }) => {
     };
 
 
-    useEffect(() => {
-        const timeout = setTimeout(() => {
-            setShowLoading(false);
-        }, 1500); // 5 seconds
-
-        return () => clearTimeout(timeout);
-    }, []);
-
-
+   
 
     const discountThresholds = {
         "70%": 0.7,
@@ -276,7 +263,8 @@ const CategoriesItemsScreen = React.memo(({ navigation, route }) => {
         const sortBy = filterparameters["Sort By"] && filterparameters["Sort By"][0];
         const discountFilter = filterparameters["Discount"] && filterparameters["Discount"][0];
         const priceFilter = filterparameters["Price"]
-        let filteredProducts = filterProductsBySubcategory();
+        // let filteredProducts = filterProductsBySubcategory();
+        let filteredProducts = []
 
         if (sortBy) {
             filteredProducts = sortProducts(filteredProducts, sortBy);
@@ -292,20 +280,44 @@ const CategoriesItemsScreen = React.memo(({ navigation, route }) => {
         return filteredProducts;
     };
 
+
+    // const filterProductsBySubcategory = () => {
+    //     if (selectedsubcategory === t("All")) {
+    //         return subcategoryData; // Return all products
+    //     } else {
+    //         return subcategoryData.filter((singleproduct) => {
+    //             return singleproduct.slug_subcat === selectedsubcategory.replace(/[^\w\s]/g, "")
+    //                 .replace(/\s/g, "");
+    //         });
+    //     }
+    // }
+
+    // useEffect(() => {
+    //     if (subcategoryData.length === 0) {
+    //         // dispatch(loaderOn())
+    //         categoriesList?.map((single) => {
+    //             getProductsbysubcategory(single.trim())
+    //         })
+    //         // dispatch(loaderOff())
+    //     }
+    //     else {
+    //         console.log("NOT FOUND");
+    //     }
+
+    // }, [selectedsubcategory])
+
     useEffect(() => {
-        if (subcategoryData.length === 0) {
-            // dispatch(loaderOn())
-            categoriesList?.map((single) => {
-                getProductsbysubcategory(single.trim())
-            })
-            // dispatch(loaderOff())
+        if (!subcategoriesToShow) {
+            getSubcatDataByCatId()
         }
-        else {
-            console.log("NOT FOUND");
+    }, [subcategoriesToShow])
+
+    useEffect(() => {
+        if (!productsDataBackend ) {
+            getProductsbysubcategory('All')
+
         }
-
-    }, [])
-
+    }, [productsDataBackend])
     useEffect(() => {
         updateState({ availableProducts: filterapplied() })
     }, [filterparameters])
@@ -321,32 +333,32 @@ const CategoriesItemsScreen = React.memo(({ navigation, route }) => {
     const updateState = (data) => setState((state) => ({ ...state, ...data }))
 
     const {
-        selectedCategory,
-        showCategoriesOptions,
-        showLocationsOptions,
         availableProducts,
         showSnackBar,
         snackBarMsg,
     } = state;
 
-    useEffect(() => {
-        if (subcategoryData) {
-            const filteredProducts = filterProductsBySubcategory();
-            const updatedAvailableProducts = filteredProducts.length === 0
-                ? subcategoryData.filter((singleproduct) => singleproduct.subcategory === selectedsubcategory)
-                : filteredProducts;
+    // useEffect(() => {
+    //     if (subcategoryData) {
+    //         // const filteredProducts = filterProductsBySubcategory();
+    //         // const updatedAvailableProducts = filteredProducts.length === 0
+    //         //     ? subcategoryData.filter((singleproduct) => singleproduct.subcategory === selectedsubcategory)
+    //         //     : filteredProducts;
 
-            updateState({
-                availableProducts: updatedAvailableProducts,
-                selectedCategory: selectedsubcategory,
-            });
-            setFilterparameters([])
-        }
-        dispatch(loaderOff())
-    }, [selectedsubcategory, subcategoryData]);
+    //         // updateState({
+    //         //     availableProducts: updatedAvailableProducts,
+    //         //     selectedCategory: selectedsubcategory,
+    //         // });
+    //         setFilterparameters([])
+    //     }
+    //     dispatch(loaderOff())
+    // }, [selectedsubcategory, subcategoryData]);
 
 
-
+    const handleSubcategoryProduct = (subcat_name) => {
+        setSelectedsubcategory(subcat_name)
+        getProductsbysubcategory(subcat_name)
+    }
 
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: Colors.whiteColor }}>
@@ -565,19 +577,19 @@ const CategoriesItemsScreen = React.memo(({ navigation, route }) => {
         return (
 
             <View>
-                {showLoading ? (
+                {!productsDataBackend ? (
                     <View className="flex-row items-center  m-auto mt-24">
                         <ActivityIndicator size="large" color="#00008b" />
                         {/* <Text className="text-gray-400 ml-2 text-[14px]">Fetching Location Data...</Text> */}
                     </View>
-                ) : availableProducts.length === 0 ? (
+                ) : productsDataBackend.length === 0 ? (
                     <View className="mt-10">
                         <Image resizeMode="contain" className="h-[150px] w-[150px] mx-auto" source={require('../../assets/images/empty-folder.png')} />
                         <Text className="text-center text-xl ">{t("No Product Found !")}</Text>
                     </View>
                 ) : (
                     <View>
-                        <ProductListing title={selectedCategory} productList={availableProducts} />
+                        <ProductListing title={selectedsubcategory} productList={productsDataBackend} />
                     </View>
                 )}
             </View>
@@ -601,81 +613,68 @@ const CategoriesItemsScreen = React.memo(({ navigation, route }) => {
     function categoryInfo() {
         return (
             <View className="px-1" style={{ flex: 1 }}>
+            
+            
 
                 <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                {
+                    subcategoriesToShow ?  
+
+                <>
                     <TouchableOpacity className="w-[90px]"
                         onPress={debounce(() => {
-                            setSelectedsubcategory(t('All'));
+                            handleSubcategoryProduct('All');
                         }, 500)}>
                         <View className={`h-[80px] w-[80px] border border-gray-200 shadow-sm  rounded-full mx-auto duration-300 overflow-hidden
-                                ${selectedCategory === t("All") ? ' border-gray-600 border-2 ' : ''}`}>
-                            <Image resizeMode="contain" className={`rounded-full w-full h-full  ${selectedCategory === t("All") ? '  ' : ' scale-90'} `} source={require('../../assets/images/allproducts.png')} />
+                                ${selectedsubcategory === t("All") ? ' border-gray-600 border-2 ' : ''}`}>
+                            <Image resizeMode="contain" className={`rounded-full w-full h-full  ${selectedsubcategory === t("All") ? '  ' : ' scale-90'} `} source={require('../../assets/images/allproducts.png')} />
                         </View>
                         <Text
 
                             // style={{ marginHorizontal: Sizes.fixPadding, marginTop: Sizes.fixPadding, ...Fonts.blackColor12SemiBold }}
-                            className={`text-center text-[12px] mt-1.5 px-1 py-0.5  ${selectedCategory === t("All") ? 'font-bold  text-[13px]  rounded-lg ' : ''}`}
+                            className={`text-center text-[12px] mt-1.5 px-1 py-0.5  ${selectedsubcategory === t("All") ? 'font-bold  text-[13px]  rounded-lg ' : ''}`}
 
                         >{t("All")}</Text>
                     </TouchableOpacity>
-                    {
-                        singleData.subcategories?.filter((item) => selectedCategory === item.subcategory_name).map((item, index) => (
+                    
+                        {
+
+                        subcategoriesToShow?.map((item, index) => (
                             <TouchableOpacity className={`w-[90px] `}
                                 onPress={debounce(() => {
-                                    setSelectedsubcategory(item.subcategory_name);
+                                    handleSubcategoryProduct(item.subcategory_name);
                                 }, 500)}
                                 key={index}>
                                 <View className={`h-[80px] w-[80px] border border-gray-200 shadow-sm rounded-full mx-auto duration-300 overflow-hidden
-                                ${selectedCategory === item.subcategory_name ? ' border-gray-600 border-2 ' : ''}`} >
-                                    {/* <Image className={`rounded-full w-full h-full  ${selectedCategory === item ? ' scale-110 ' : ''} `} source={require('../../assets/images/mobiles/mobile11.png')} /> */}
+                                ${selectedsubcategory === item.subcategory_name ? ' border-gray-600 border-2 ' : ''}`} >
+                                    {/* <Image className={`rounded-full w-full h-full  ${selectedsubcategory === item ? ' scale-110 ' : ''} `} source={require('../../assets/images/mobiles/mobile11.png')} /> */}
 
                                     <Image
                                         source={{ uri: `${AdminUrl}/uploads/SubcategoryImages/${item.subcategory_image_url}` }}
                                         style={{ resizeMode: 'contain' }}
-                                        className={`rounded-full w-full h-full  ${selectedCategory === item.subcategory_name ? ' scale-100 ' : ' scale-90'}`}
+                                        className={`rounded-full w-full h-full  ${selectedsubcategory === item.subcategory_name ? ' scale-100 ' : ' scale-90'}`}
                                     />
                                 </View>
                                 <Text
                                     numberOfLines={2}
                                     // style={{ marginHorizontal: Sizes.fixPadding, marginTop: Sizes.fixPadding, ...Fonts.blackColor12SemiBold }}
-                                    className={`text-center text-[11px] mt-1.5 px-1 py-0.5  ${selectedCategory === item.subcategory_name ? 'font-bold  text-[13px]  rounded-sm ' : ''}`}
+                                    className={`text-center text-[11px] mt-1.5 px-1 py-0.5  ${selectedsubcategory === item.subcategory_name ? 'font-bold  text-[13px]  rounded-sm ' : ''}`}
 
                                 >
                                     {t(`${item.subcategory_name}`)}
                                 </Text>
                             </TouchableOpacity>
-                        ))
-                    }
-                    {
-                        singleData.subcategories?.filter((item) => selectedCategory !== item.subcategory_name).map((item, index) => (
-                            <TouchableOpacity className={`w-[90px]   `}
-                                onPress={debounce(() => {
-                                    setSelectedsubcategory(item.subcategory_name);
-                                }, 500)}
-                                key={index}>
-                                <View className={`h-[80px] w-[80px] border border-gray-200 shadow-sm  rounded-full mx-auto duration-300 overflow-hidden
-                                ${selectedCategory === item.subcategory_name ? ' border-gray-600 border-2 ' : ''}`} >
-                                    {/* <Image className={`rounded-full w-full h-full  ${selectedCategory === item ? ' scale-110 ' : ''} `} source={require('../../assets/images/mobiles/mobile11.png')} /> */}
+                        )) 
+                    }</>
 
-                                    <Image
-                                        source={{ uri: `${AdminUrl}/uploads/SubcategoryImages/${item.subcategory_image_url}` }}
-                                        style={{ resizeMode: 'contain' }}
-                                        className={`rounded-full w-full h-full  ${selectedCategory === item.subcategory_name ? ' scale-100 ' : ' scale-90'}`}
-                                    />
-                                </View>
-                                <Text
-                                    numberOfLines={2}
-                                    // style={{ marginHorizontal: Sizes.fixPadding, marginTop: Sizes.fixPadding, ...Fonts.blackColor12SemiBold }}
-                                    className={`text-center text-[11px] mt-1.5 px-1 py-0.5  ${selectedCategory === item.subcategory_name ? 'font-bold  text-[13px]  rounded-sm ' : ''}`}
+                    
+                        : 
+            <SubcategoryPlaceholder/>
+                        
+                        }
 
-                                >
-                                    {t(`${item.subcategory_name}`)}
-                                </Text>
-                            </TouchableOpacity>
-                        ))
-                    }
-
-                </ScrollView>
+                </ScrollView> 
+            
 
             </View>
         )
@@ -683,7 +682,7 @@ const CategoriesItemsScreen = React.memo(({ navigation, route }) => {
 
     function header() {
         return (
-            <HeaderBar goback={true} title={t(`${singleData.category_name}`)} navigation={navigation} />)
+            <HeaderBar goback={true} title={t(`${route.params.categoryName ? route.params.categoryName : "sbcategory"}`)} navigation={navigation} />)
     }
 })
 
