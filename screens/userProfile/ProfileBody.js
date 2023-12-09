@@ -4,6 +4,8 @@ import Feather from 'react-native-vector-icons/Feather';
 import { useNavigation } from '@react-navigation/native';
 import { HeaderBar } from '../../constant';
 import { debounce } from 'lodash';
+import { useSelector } from 'react-redux';
+
 export const ProfileBody = ({
     name,
     accountName,
@@ -13,6 +15,7 @@ export const ProfileBody = ({
     reviews,
 }) => {
     const navigation = useNavigation()
+
 
     return (
         <View>
@@ -71,6 +74,8 @@ export const ProfileBody = ({
 export const ProfileButtons = ({ phone, data }) => {
     const navigation = useNavigation();
     const [follow, setFollow] = useState(follow);
+    const { customerData } = useSelector((store) => store.userData)
+
 
     const handlePhoneIconPress = () => {
         Linking.openURL(`tel:${phone}`);
@@ -103,7 +108,13 @@ export const ProfileButtons = ({ phone, data }) => {
                         </Text>
                     </View>
                 </TouchableOpacity>
-                <TouchableOpacity style={{ width: '42%' }} onPress={debounce(() => navigation.push('InboxChatScreen', { data }), 300)}>
+                <TouchableOpacity
+  style={{ width: '42%' }}
+  onPress={debounce(() => {
+    const screenName = customerData?.length > 0 ? 'InboxChatScreen' : 'Login';
+    navigation.navigate(screenName, { data });
+  }, 300)}
+>
                     <View
                         style={{
                             width: '100%',

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, TouchableOpacity, Image } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity, Image, SafeAreaView } from 'react-native';
 import { AdminUrl, HeaderBar } from '../../constant';
 import { useSelector } from 'react-redux';
 
@@ -81,7 +81,10 @@ const Inbox = ({ navigation }) => {
     }
 
     return (
-        <View>
+        <SafeAreaView  style={{
+            flex: 1,
+            backgroundColor: "white",
+        }} >
             <HeaderBar title={'Inbox'} goback={true} navigation={navigation} searchEnable={false} />
             {
                 conversations == null ? (
@@ -111,7 +114,7 @@ const Inbox = ({ navigation }) => {
                 )
             }
 
-        </View>
+        </SafeAreaView>
     );
 };
 

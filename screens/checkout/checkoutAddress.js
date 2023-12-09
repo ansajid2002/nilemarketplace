@@ -61,11 +61,11 @@ const Checkoutaddress = ({ navigation }) => {
       // Check if any item in customerData has the same given_name, family_name, city, or postalCode
       const dataExists = customerAddressData.some((data) =>
         data.given_name_address === currentAddress.given_name_address &&
-        data.family_name_address === currentAddress.family_name_address
-        // data.city === currentAddress.city &&
-        // data.postalCode === currentAddress.postalCode
+        data.family_name_address === currentAddress.family_name_address &&
+        data.region_address === currentAddress.region_address 
       );
-      console.log(dataExists);
+      console.log(dataExists ,"dataexist");
+      console.log(currentAddress, "currentaddress");
 
       if (!dataExists) {
         // If none of the properties match, dispatch the action
@@ -95,7 +95,7 @@ const Checkoutaddress = ({ navigation }) => {
       </View>
     </View>
 
-    <ScrollView className="">
+    <ScrollView className="" showsVerticalScrollIndicator={false}>
       {
         customerAddressData.length === 0 ? <View className="m-auto my-20"><Text className="text-2xl">No Address Selected</Text>
           <TouchableOpacity className="bg-[#00008b] flex-row items-center justify-center mt-4 w-[200px] mx-auto" onPress={debounce(() => navigation.navigate("Checkout Add Address"), 1000)}><Text className="text-xl text-white  py-1">Add Address</Text></TouchableOpacity></View>
@@ -126,19 +126,19 @@ const Checkoutaddress = ({ navigation }) => {
                       <View>
                         <Text className="text-lg font-semibold tracking-wider">{given_name_address} {family_name_address}</Text>
 
-                        <Text className="text-base ">{apt_address}</Text>
+                        <Text className="text-[15px] ">{apt_address}</Text>
                         {/* <Text className="text-base">{street}</Text> */}
-                        <Text className="text-base">{city_address}</Text>
+                        <Text className="text-[15px]">{city_address}</Text>
                         {
                           region_address && subregion_address &&
-                          <Text className="text-base">{`${region_address}, ${subregion_address}`}</Text>
+                          <Text numberOfLines={1} className="text-[15px] ">{`${region_address}, ${subregion_address}`}</Text>
                         }
                         <Text className="text-base">{country_address}</Text>
-                        <Text className="text-base">{zip_address}</Text>
-                        <Text className="text-base">{country_address}</Text>
+                        <Text className="text-[15px]">{zip_address}</Text>
+                        {/* <Text className="text-base">{country_address}</Text> */}
                         {
                           phone_address &&
-                          <Text className="text-base">{`Phone Number: ${phone_address}`}</Text>
+                          <Text className="text-[15px]">{`Phone Number: ${phone_address}`}</Text>
                         }
                       </View>
 
@@ -199,7 +199,7 @@ const Checkoutaddress = ({ navigation }) => {
               })
             }
           </View>}
-    </ScrollView >
+    </ScrollView>
     {loading && <FullPageLoader />}
 
   </SafeAreaView>

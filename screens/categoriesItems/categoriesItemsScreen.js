@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { SafeAreaView, View, Dimensions, StatusBar, ImageBackground, FlatList, ScrollView, TouchableOpacity, StyleSheet, Modal, Text } from "react-native";
 import { Colors, Fonts, Sizes, } from "../../constants/styles";
 import { MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
@@ -13,38 +13,38 @@ import ProductListing from "../../components/ProductList";
 import { Image } from "react-native";
 import { loaderOff, loaderOn } from "../../store/slices/counterslice";
 import { ActivityIndicator } from "react-native";
+import { SubcategoryPlaceholder } from "../../components/Skeleton";
+import { BottomSheetModalProvider, BottomSheetModal, BottomSheetBackdrop } from "@gorhom/bottom-sheet";
 const { width } = Dimensions.get('window');
-// import { currencyConverter } from "../Currency/currencyScreen";
-
 
 const CategoriesItemsScreen = React.memo(({ navigation, route }) => {
     const { currencyCode } = useSelector((store) => store.selectedCurrency)
     const { c_symbol } = useSelector((store) => store.selectedCurrency)
+    const [subcategoriesToShow, setSubcategoriesToShow] = useState(null)
+    const [productsDataBackend, setProducts] = useState(null)
+    const [filterProductsBACKEND, setFilteredProducts] = useState(null)
 
+    const { categoryId, categoryName, subcategory_name, featureddatatoshow } = route.params
 
     const { t } = useTranslation()
-    const singleData = route.params.item;
 
-
-    const categoriesList = singleData.subcategories?.map((singlesuncategory) => {
-        return singlesuncategory.subcategory_name
-    })
-
-    const [isOpen, setIsOpen] = useState(false);
     const [filterlabel, setFilterlabel] = useState()
     const [sliderValues, setSliderValues] = useState([0, 500]);
-    const [subcategoryData, setSubcategoryData] = useState([])
-    // const { loaderstate } = useSelector((store) => store.bottomtabbar)
-    const [showLoading, setShowLoading] = useState(true);
+    const [selectedsubcategory, setSelectedsubcategory] = useState(subcategory_name || 'All');
+    const [containerStyles, setContainerStyles] = useState({});
 
-    const togglePickeropen = (label) => {
-        setFilterlabel(label)
-        setIsOpen(true);
-    };
+    const bottomSheetModalRef = useRef(null);
+    const snapPoints = useMemo(() => ['25%', '50%', '90%'], []);
 
-    const togglePickerclose = () => {
-        setIsOpen(false);
-    };
+    const handleSheetChanges = useCallback((index) => {
+        if (index >= 0) {
+            setContainerStyles(styles.container);
+        } else {
+            setContainerStyles({});
+        }
+    }, []);
+
+
     const handleSliderValuesChange = (values) => {
         const min = values[0]
         const max = values[1]
@@ -52,7 +52,7 @@ const CategoriesItemsScreen = React.memo(({ navigation, route }) => {
     };
     const filtersData = [
         { label: "Sort By", data: [{ name: "Relevance", value: "Relevance" }, { name: "Price: Low to High", value: "Price: Low to High" }, { name: "Price: High to Low", value: "Price: High to Low" }, { name: "Most Recent", value: "Most Recent" }] },
-        { label: "Ratings", data: [{ name: "** and more", value: 2 }, { name: "*** and more", value: 3 }, { name: "**** and more", value: 4 }] },
+        // { label: "Ratings", data: [{ name: "** and more", value: 2 }, { name: "*** and more", value: 3 }, { name: "**** and more", value: 4 }] },
         { label: "Discount", data: [{ name: "30% and More", value: "30%" }, { name: "50% and More", value: "50%" }, { name: "70% and More", value: "70%" }] },
         {
             label: "Price", min: sliderValues[0],
@@ -61,7 +61,6 @@ const CategoriesItemsScreen = React.memo(({ navigation, route }) => {
     ]
 
     const [filterparameters, setFilterparameters] = useState([])
-
 
     const handleFilters = (newProps) => {
         setFilterparameters((prev) => {
@@ -124,7 +123,6 @@ const CategoriesItemsScreen = React.memo(({ navigation, route }) => {
         });
     };
 
-
     const handlefilterdelete = (label) => {
         setFilterparameters((prev) => {
             // Create a copy of the previous filterparameters
@@ -145,83 +143,18 @@ const CategoriesItemsScreen = React.memo(({ navigation, route }) => {
                 }
             }
 
-            togglePickerclose()
+            bottomSheetModalRef?.current.dismiss()
             return updatedFilterparameters;
         });
-    };
+        featureddatatoshow ? getProductsbysubcategory(selectedsubcategory) : getProductsbysubcategory('All')
 
+    };
 
     const handlefilterresults = () => {
         handleFilters({ label: "Price", min: sliderValues[0], max: sliderValues[1] })
-        togglePickerclose()
+        bottomSheetModalRef?.current.dismiss()
+        featureddatatoshow ? getProductsbysubcategory(selectedsubcategory) : getProductsbysubcategory('All')
     }
-
-
-
-    //////////////////////REDUX//////////////////////////////////////
-    const dispatch = useDispatch()
-
-    // dispatch(loaderOn())
-    const [selectedsubcategory, setSelectedsubcategory] = useState(route.params.subcategory_name ? route.params.subcategory_name : t("All"));
-
-    const filterProductsBySubcategory = () => {
-        if (selectedsubcategory === t("All")) {
-            return subcategoryData; // Return all products
-        } else {
-            return subcategoryData.filter((singleproduct) => {
-                return singleproduct.slug_subcat === selectedsubcategory.replace(/[^\w\s]/g, "")
-                    .replace(/\s/g, "");
-            });
-        }
-    }
-
-    // --------------------------------OLD CODE--------------------------------
-    //     const categoryProducts = productsList.filter((product) => {
-    //         return (
-    //             product.category === singleData.category_name
-    //         );
-    //     });
-
-    // const filterProductsBySubcategory = () => {
-    //     if (selectedsubcategory === "All") {
-    //         return categoryProducts; // Return all products
-    //     } else {
-    //         return categoryProducts.filter((singleproduct) => {
-    //             return singleproduct.subcategory === selectedsubcategory;
-    //         });
-    //     }
-    // }
-
-    ////////////////Here we get the products of subcategory using API//////////////////////////////// 
-    const getProductsbysubcategory = async (subcategoryname) => {
-        try {
-            const response = await fetch(`${AdminUrl}/api/getProductBySubcategories?subcat=${subcategoryname.replace(/[^\w\s]/g, "")
-                .replace(/\s/g, "")}&currency=${currencyCode}`);
-
-            if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
-            }
-
-            const data = await response.json();
-
-            setSubcategoryData((prevData) => [...prevData, ...data.AllProducts]);
-
-            // You can dispatch or process the data here as needed.
-        } catch (error) {
-            console.error('Error:', error);
-        }
-    };
-
-
-    useEffect(() => {
-        const timeout = setTimeout(() => {
-            setShowLoading(false);
-        }, 1500); // 5 seconds
-
-        return () => clearTimeout(timeout);
-    }, []);
-
-
 
     const discountThresholds = {
         "70%": 0.7,
@@ -254,6 +187,7 @@ const CategoriesItemsScreen = React.memo(({ navigation, route }) => {
         }
         return products;
     };
+
     const filterByPriceRange = (products, filterparameters) => {
         const priceFilter = filterparameters["Price"];
 
@@ -276,77 +210,151 @@ const CategoriesItemsScreen = React.memo(({ navigation, route }) => {
         const sortBy = filterparameters["Sort By"] && filterparameters["Sort By"][0];
         const discountFilter = filterparameters["Discount"] && filterparameters["Discount"][0];
         const priceFilter = filterparameters["Price"]
-        let filteredProducts = filterProductsBySubcategory();
+        // let filteredProducts = filterProductsBySubcategory();
+        let filteredProducts = []
 
         if (sortBy) {
-            filteredProducts = sortProducts(filteredProducts, sortBy);
+            filteredProducts = sortProducts(productsDataBackend, sortBy);
         }
 
         if (discountFilter) {
-            filteredProducts = filterByDiscount(filteredProducts, discountFilter);
+            filteredProducts = filterByDiscount(productsDataBackend, discountFilter);
         }
         if (priceFilter) {
-            filteredProducts = filterByPriceRange(filteredProducts, filterparameters);
+            filteredProducts = filterByPriceRange(productsDataBackend, filterparameters);
         }
+
+        console.log(filteredProducts, 'fil');
 
         return filteredProducts;
     };
 
     useEffect(() => {
-        if (subcategoryData.length === 0) {
-            // dispatch(loaderOn())
-            categoriesList?.map((single) => {
-                getProductsbysubcategory(single.trim())
-            })
-            // dispatch(loaderOff())
-        }
-        else {
-            console.log("NOT FOUND");
-        }
-
-    }, [])
-
-    useEffect(() => {
-        updateState({ availableProducts: filterapplied() })
+        const products = filterapplied()
+        setFilteredProducts(products)
     }, [filterparameters])
 
-    const [state, setState] = useState({
-        selectedCategory: selectedsubcategory,
-        showCategoriesOptions: false,
-        showLocationsOptions: false,
-        availableProducts: [],
-        showSnackBar: false,
-        snackBarMsg: null,
-    })
-    const updateState = (data) => setState((state) => ({ ...state, ...data }))
+    const renderSubcategoryItem = (item) => {
+        const isSelected = item.subcategory_name === selectedsubcategory
+        return (
+            <TouchableOpacity
+                className={`w-[90px]`}
+                onPress={debounce(() => {
+                    handleSubcategoryProduct(item.subcategory_name);
+                }, 500)}
+                key={item.id}
+            >
+                <View key={item.subcategory_name} className={`h-[80px] w-[80px] border border-gray-200 shadow-sm rounded-full mx-auto duration-300 overflow-hidden ${isSelected ? ' border-gray-600 border-2 ' : ''}`} >
+                    <Image
+                        source={{ uri: `${AdminUrl}/uploads/SubcategoryImages/${item.subcategory_image_url}` }}
+                        style={{ resizeMode: 'contain' }}
+                        className={`rounded-full w-full h-full  ${isSelected ? ' scale-100 ' : ' scale-90'}`}
+                    />
+                </View>
+                <Text
+                    numberOfLines={2}
+                    className={`text-center text-[11px] mt-1.5 px-1 py-0.5  ${isSelected ? 'font-bold  text-[13px]  rounded-sm ' : ''}`}
+                >
+                    {t(`${item.subcategory_name}`)}
+                </Text>
+            </TouchableOpacity>
+        )
+    };
 
-    const {
-        selectedCategory,
-        showCategoriesOptions,
-        showLocationsOptions,
-        availableProducts,
-        showSnackBar,
-        snackBarMsg,
-    } = state;
+    const getSubcatDataByCatId = async () => {
+        try {
+            const response = await fetch(`${AdminUrl}/api/getSubcategorygroupByCatId?catId=${categoryId}&category_name=${categoryName}`);
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            const data = await response.json();
+
+            if (data) {
+                setSubcategoriesToShow(data.subcategories);
+            }
+
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    };
 
     useEffect(() => {
-        if (subcategoryData) {
-            const filteredProducts = filterProductsBySubcategory();
-            const updatedAvailableProducts = filteredProducts.length === 0
-                ? subcategoryData.filter((singleproduct) => singleproduct.subcategory === selectedsubcategory)
-                : filteredProducts;
-
-            updateState({
-                availableProducts: updatedAvailableProducts,
-                selectedCategory: selectedsubcategory,
-            });
-            setFilterparameters([])
+        if (!subcategoriesToShow && !featureddatatoshow) {
+            getSubcatDataByCatId()
         }
-        dispatch(loaderOff())
-    }, [selectedsubcategory, subcategoryData]);
+    }, [subcategoriesToShow])
 
+    useEffect(() => {
+        // updateState({ availableProducts: filterapplied() })
+    }, [filterparameters])
 
+    const handleSubcategoryProduct = (subcat_name) => {
+        setSelectedsubcategory(subcat_name)
+        getProductsbysubcategory(subcat_name)
+    }
 
+    ////////////////Here we get the products of subcategory using API//////////////////////////////// 
+    const getProductsbysubcategory = async (subcategoryname) => {
+        setProducts(null)
+        setFilteredProducts(null)
+
+        try {
+            const response = await fetch(`${AdminUrl}/api/getProductBySubcategories?subcat=${subcategoryname.replace(/[^\w\s]/g, "")
+                .replace(/\s/g, "")}&currency=${currencyCode}&category=${categoryName.replace(/[^\w\s]/g, "")
+                    .replace(/\s/g, "")}`);
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            console.log(data);
+            // setSubcategoryData((prevData) => [...prevData, ...data.AllProducts]);
+            setProducts(data?.AllProducts)
+            setFilteredProducts(data?.AllProducts)
+            // You can dispatch or process the data here as needed.
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    };
+
+    useEffect(() => {
+        featureddatatoshow ? getProductsbysubcategory(selectedsubcategory) : getProductsbysubcategory('All')
+    }, [])
+
+    const CustomSliderMarker = ({ currentValue }) => (
+        <View style={{ alignItems: 'center' }}>
+            <View style={styles.sliderThumbStyle} />
+            <Text style={{ position: 'absolute', top: 20 }} className="text-[14px]">
+                {c_symbol} {currentValue}
+            </Text>
+        </View>
+    )
+
+    function renderStars(value) {
+        const stars = [];
+        for (let i = 0; i < value; i++) {
+            stars.push(
+                <MaterialCommunityIcons key={i} name="star" color={"#00008b"} size={20} />
+            );
+        }
+        return stars;
+    }
+    // callbacks
+    const handlePresentModalPress = useCallback((label) => {
+        setFilterlabel(label)
+        bottomSheetModalRef.current?.present();
+        setContainerStyles(styles.container);
+    }, []);
+
+    const handlePresentModalClose = useCallback(() => {
+        bottomSheetModalRef.current?.dismiss(); // Dismiss the modal
+    }, []);
+
+    const renderBackdrop = useCallback(
+        (props) => <BottomSheetBackdrop {...props} />,
+        []
+    );
 
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: Colors.whiteColor }}>
@@ -354,57 +362,145 @@ const CategoriesItemsScreen = React.memo(({ navigation, route }) => {
             {header()}
             {filtersInfo2()}
             <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
+                {categoryInfo()}
                 {divider()}
-                {categoryLocationAndBrandInfo()}
-                {divider()}
-
                 {availableProductsInfo()}
             </ScrollView>
-            <Snackbar
-                style={styles.snackBarStyle}
-                visible={showSnackBar}
-                onDismiss={() => updateState({ showSnackBar: false })}
-            >
-                <Text style={{ ...Fonts.whiteColor12Medium }}>
-                    {snackBarMsg}
-                </Text>
-            </Snackbar>
+            <BottomSheetModalProvider>
+                <View style={containerStyles}>
+                    <BottomSheetModal
+                        ref={bottomSheetModalRef}
+                        index={1}
+                        snapPoints={snapPoints}
+                        onChange={handleSheetChanges}
+                        enableDismissOnPress={true}
+                        backdropComponent={renderBackdrop}
+                    >
+                        {
+                            filtersData.filter((s) => s.label === filterlabel)?.map((single, index) => {
+                                if (filterlabel === "Price") {
+                                    return (
+                                        <View className="m-2" key={index} >
+                                            <View className="flex-row items-center justify-between mx-4">
+                                                <Text className="text-xl mb-3">{t("Select Price Range")}</Text>
+                                                <TouchableOpacity onPress={debounce(() => handlePresentModalClose(), 500)}>
+                                                    <MaterialCommunityIcons name="close" color={"black"} size={22} />
+                                                </TouchableOpacity>
+                                            </View>
+                                            <View style={{ alignItems: 'center' }}>
+                                                <MultiSlider
+                                                    isMarkersSeparated={true}
+                                                    values={[sliderValues[0], sliderValues[1]]}
+                                                    min={0}
+                                                    max={1000}
+                                                    sliderLength={width - 70}
+                                                    customMarkerLeft={(e) => { return (<CustomSliderMarker currentValue={e.currentValue} />) }}
+                                                    customMarkerRight={(e) => { return (<CustomSliderMarker currentValue={e.currentValue} />) }}
+                                                    selectedStyle={{ backgroundColor: Colors.primaryColor, height: 4.0, borderRadius: Sizes.fixPadding }}
+                                                    unselectedStyle={{ backgroundColor: Colors.lightGrayColor, height: 4.0, borderRadius: Sizes.fixPadding }}
+                                                    onValuesChange={handleSliderValuesChange}
+
+                                                />
+                                            </View>
+                                            <View className="flex-row ml-auto mr-4 space-x-4 my-6 ">
+                                                <TouchableOpacity
+                                                    className="bg-[#00008b] rounded-md max-w-[100px]" onPress={debounce(() => handlefilterdelete(filterlabel), 500)}>
+                                                    <Text className="mx-auto p-0.5 mb-1 px-2.5 tracking-wider text-lg text-white font-semibold">{t("Reset")}</Text>
+                                                </TouchableOpacity>
+                                                <TouchableOpacity className="bg-[#fb7701] rounded-md max-w-[90px] i " onPress={debounce(() => handlefilterresults(), 500)}>
+                                                    <Text className="mx-auto p-0.5 mb-1 px-2.5 tracking-wider text-lg text-white font-semibold">{t("Apply")}</Text>
+                                                </TouchableOpacity>
+                                            </View>
+                                        </View>
+                                    )
+                                }
+
+                                else if (filterlabel === "Ratings") {
+                                    return (
+                                        <View className="m-2" key={index}>
+
+                                            <View className="flex-row items-center justify-between mx-4">
+                                                <Text className="text-xl mb-3">{t(`${single.label}`)}</Text>
+                                                <TouchableOpacity onPress={debounce(() => handlePresentModalClose(), 500)}>
+                                                    <MaterialCommunityIcons name="close" color={"black"} size={22} />
+                                                </TouchableOpacity>
+                                            </View>
+
+                                            <View className="flex-row flex-wrap  w-full">
+                                                {single.data?.map((s, index) => {
+
+                                                    return (
+                                                        <TouchableOpacity onPress={debounce(() => handleFilters({ label: "Ratings", value: s.value }), 500)} key={index}
+                                                            style={filterparameters["Ratings"]?.includes(s.value) ? { backgroundColor: '#E5E4E2' } : { backgroundColor: 'white' }}
+                                                            // style={{backgroundColor:"red"}}
+
+                                                            className="border  border-gray-200 p-1 px-1.5 rounded-md mb-3  mr-4 ">
+                                                            <View className="flex-row items-center">
+                                                                {renderStars(s.value)}
+                                                                <Text className=" tracking-wide font-medium text-[16px]"> {t("and more")} </Text>
+                                                            </View>
+
+                                                        </TouchableOpacity>
+                                                    )
+                                                })}
+                                            </View>
+                                            <View className="flex-row ml-auto mr-4 space-x-4 my-6 ">
+                                                <TouchableOpacity className="bg-[#00008b] rounded-md max-w-[100px] " onPress={debounce(() => handlefilterdelete("Ratings"), 500)}>
+                                                    <Text className="mx-auto p-0.5 mb-1 px-2.5 tracking-wider text-lg text-white font-semibold">{t("Reset")}</Text>
+                                                </TouchableOpacity>
+
+                                            </View>
+                                        </View>
+                                    )
+                                }
+                                return (
+                                    <View className="m-2" key={index}>
+                                        <View className="flex-row items-center justify-between mx-4">
+                                            <Text className="text-xl mb-3">{t(`${single.label}`)}</Text>
+                                            <TouchableOpacity onPress={debounce(() => handlePresentModalClose(), 500)}>
+                                                <MaterialCommunityIcons name="close" color={"black"} size={22} />
+                                            </TouchableOpacity>
+                                        </View>
+                                        <View className="flex-row flex-wrap   ">
+                                            {single.data?.map((s, index) => {
+                                                return (
+                                                    <TouchableOpacity onPress={debounce(() => handleFilters({ label: single.label, value: s.value }), 500)} key={index}
+                                                    >
+                                                        <Text className="text-[15px] my-2 tracking-wide mr-4 border border-gray-200 py-1 px-2 rounded-md"
+                                                            style={filterparameters[filterlabel]?.includes(s.value) ? { backgroundColor: '#E5E4E2' } : { backgroundColor: 'white' }}
+                                                        >{t(`${s.name}`)}</Text>
+                                                    </TouchableOpacity>
+
+
+                                                )
+                                            })}
+                                        </View>
+                                        <View className="flex-row ml-auto mr-4 space-x-4 my-6 ">
+                                            <TouchableOpacity className="bg-[#00008b] rounded-md max-w-[100px] " onPress={debounce(() => handlefilterdelete(single.label), 500)}>
+                                                <Text className="mx-auto p-0.5 mb-1 px-2.5 tracking-wider text-lg text-white font-semibold" >{t("Reset")}</Text>
+                                            </TouchableOpacity>
+
+                                        </View>
+                                    </View>
+                                )
+                            })
+                        }
+                    </BottomSheetModal>
+                </View>
+            </BottomSheetModalProvider>
         </SafeAreaView>
     )
 
 
     function filtersInfo2() {
-
-        const CustomSliderMarker = ({ currentValue }) => (
-            <View style={{ alignItems: 'center' }}>
-                <View style={styles.sliderThumbStyle} />
-                <Text style={{ position: 'absolute', top: 20 }} className="text-[14px]">
-                    {c_symbol} {currentValue}
-                </Text>
-            </View>
-        )
-
-        function renderStars(value) {
-            const stars = [];
-            for (let i = 0; i < value; i++) {
-                stars.push(
-                    <MaterialCommunityIcons key={i} name="star" color={"#00008b"} size={20} />
-                );
-            }
-            return stars;
-        }
-
         return (
-            <View className="mt-3">
-
-                <ScrollView className="mx-auto" horizontal showsHorizontalScrollIndicator={false}>
+            <View className="py-2 border-b border-gray-200">
+                <ScrollView className="gap-2 px-2" horizontal showsHorizontalScrollIndicator={false}>
                     {
                         filtersData?.map((single, index) => {
                             let translatedText = t(single.label)
                             return (
-
-
-                                <TouchableOpacity key={index} className="mx-2 flex-row items-center border border-gray-200 rounded-md p-1" onPress={debounce(() => togglePickeropen(single.label), 500)}>
+                                <TouchableOpacity key={index} className="flex-row py-1 px-2 items-center border border-gray-200 rounded-md " onPress={() => handlePresentModalPress(single.label)}>
                                     {
                                         single.label === "Price" ?
                                             <Text className=" text-[15px] ">{t(`${single.label}`)}</Text> :
@@ -413,171 +509,40 @@ const CategoriesItemsScreen = React.memo(({ navigation, route }) => {
                                                 : ""
                                                 }`}</Text>
                                     }
-
                                     <MaterialCommunityIcons name="chevron-down" size={16} />
                                 </TouchableOpacity>
-
-
                             )
                         })
                     }
                     {
                         Object.keys(filterparameters).length !== 0 ?
-                            <TouchableOpacity className="flex-row mx-4 bg-[#CED5FF] px-1.5 rounded-md items-center" onPress={debounce(() => setFilterparameters({}), 500)}><Text className="text-[15px]   mr-0.5 font-medium ">{t("Clear all")}</Text><MaterialCommunityIcons name="close" size={16} /></TouchableOpacity>
+                            <TouchableOpacity className="flex-row mx-4 px-1.5 rounded-md items-center" onPress={debounce(() => {
+                                featureddatatoshow ? getProductsbysubcategory(selectedsubcategory) : getProductsbysubcategory('All')
+
+                                setFilterparameters({})
+                            }, 500)}><Text className="text-[15px] text-blue-800   mr-0.5 font-medium ">{t("Clear all")}</Text></TouchableOpacity>
                             : ""}
                 </ScrollView>
-                <Modal
-                    animationType="slide"
-                    transparent={true}
-                    visible={isOpen}
-                    onRequestClose={togglePickerclose}
-                >
-
-                    <View style={{ flex: 1 }} className="">
-                        <TouchableOpacity
-                            style={{ position: 'absolute', top: 0, right: 0, left: 0, bottom: 0 }}
-                            activeOpacity={1}
-                            onPress={debounce(togglePickerclose, 500)}
-                        >
-                            <View style={{ flex: 1, backgroundColor: 'rgba(0, 0, 0, 0.7)' }} />
-                        </TouchableOpacity>
-
-                        <View className="h-100 pt-4 min-h-[175px] bg-white">
-
-                            {
-                                filtersData.filter((s) => s.label === filterlabel)?.map((single, index) => {
-                                    if (filterlabel === "Price") {
-                                        return (
-                                            <View className="m-2" key={index} >
-                                                <View className="flex-row items-center justify-between mx-4">
-                                                    <Text className="text-xl mb-3">{t("Select Price Range")}</Text>
-                                                    <TouchableOpacity onPress={debounce(() => togglePickerclose(), 500)}>
-                                                        <MaterialCommunityIcons name="close" color={"black"} size={22} />
-                                                    </TouchableOpacity>
-                                                </View>
-                                                <View style={{ alignItems: 'center' }}>
-                                                    <MultiSlider
-                                                        isMarkersSeparated={true}
-                                                        values={[sliderValues[0], sliderValues[1]]}
-                                                        min={0}
-                                                        max={1000}
-                                                        sliderLength={width - 70}
-                                                        customMarkerLeft={(e) => { return (<CustomSliderMarker currentValue={e.currentValue} />) }}
-                                                        customMarkerRight={(e) => { return (<CustomSliderMarker currentValue={e.currentValue} />) }}
-                                                        selectedStyle={{ backgroundColor: Colors.primaryColor, height: 4.0, borderRadius: Sizes.fixPadding }}
-                                                        unselectedStyle={{ backgroundColor: Colors.lightGrayColor, height: 4.0, borderRadius: Sizes.fixPadding }}
-                                                        onValuesChange={handleSliderValuesChange}
-
-                                                    />
-                                                </View>
-                                                <View className="flex-row ml-auto mr-4 space-x-4 my-6 ">
-                                                    <TouchableOpacity
-                                                        className="bg-[#00008b] rounded-md max-w-[100px]" onPress={debounce(() => handlefilterdelete(filterlabel), 500)}>
-                                                        <Text className="mx-auto p-0.5 mb-1 px-2.5 tracking-wider text-lg text-white font-semibold">{t("Reset")}</Text>
-                                                    </TouchableOpacity>
-                                                    <TouchableOpacity className="bg-[#fb7701] rounded-md max-w-[90px] i " onPress={debounce(() => handlefilterresults(), 500)}>
-                                                        <Text className="mx-auto p-0.5 mb-1 px-2.5 tracking-wider text-lg text-white font-semibold">{t("Apply")}</Text>
-                                                    </TouchableOpacity>
-                                                </View>
-                                            </View>
-                                        )
-                                    }
-
-                                    else if (filterlabel === "Ratings") {
-                                        return (
-                                            <View className="m-2" key={index}>
-
-                                                <View className="flex-row items-center justify-between mx-4">
-                                                    <Text className="text-xl mb-3">{t(`${single.label}`)}</Text>
-                                                    <TouchableOpacity onPress={debounce(() => togglePickerclose(), 500)}>
-                                                        <MaterialCommunityIcons name="close" color={"black"} size={22} />
-                                                    </TouchableOpacity>
-                                                </View>
-
-                                                <View className="flex-row flex-wrap  w-full">
-                                                    {single.data?.map((s, index) => {
-
-                                                        return (
-                                                            <TouchableOpacity onPress={debounce(() => handleFilters({ label: "Ratings", value: s.value }), 500)} key={index}
-                                                                style={filterparameters["Ratings"]?.includes(s.value) ? { backgroundColor: '#E5E4E2' } : { backgroundColor: 'white' }}
-                                                                // style={{backgroundColor:"red"}}
-
-                                                                className="border  border-gray-200 p-1 px-1.5 rounded-md mb-3  mr-4 ">
-                                                                <View className="flex-row items-center">
-                                                                    {renderStars(s.value)}
-                                                                    <Text className=" tracking-wide font-medium text-[16px]"> {t("and more")} </Text>
-                                                                </View>
-
-                                                            </TouchableOpacity>
-                                                        )
-                                                    })}
-                                                </View>
-                                                <View className="flex-row ml-auto mr-4 space-x-4 my-6 ">
-                                                    <TouchableOpacity className="bg-[#00008b] rounded-md max-w-[100px] " onPress={debounce(() => handlefilterdelete("Ratings"), 500)}>
-                                                        <Text className="mx-auto p-0.5 mb-1 px-2.5 tracking-wider text-lg text-white font-semibold">{t("Reset")}</Text>
-                                                    </TouchableOpacity>
-
-                                                </View>
-                                            </View>
-                                        )
-                                    }
-                                    return (
-                                        <View className="m-2" key={index}>
-                                            <View className="flex-row items-center justify-between mx-4">
-                                                <Text className="text-xl mb-3">{t(`${single.label}`)}</Text>
-                                                <TouchableOpacity onPress={debounce(() => togglePickerclose(), 500)}>
-                                                    <MaterialCommunityIcons name="close" color={"black"} size={22} />
-                                                </TouchableOpacity>
-                                            </View>
-                                            <View className="flex-row flex-wrap   ">
-                                                {single.data?.map((s, index) => {
-                                                    return (
-                                                        <TouchableOpacity onPress={debounce(() => handleFilters({ label: single.label, value: s.value }), 500)} key={index}
-                                                        >
-                                                            <Text className="text-[15px] my-2 tracking-wide mr-4 border border-gray-200 py-1 px-2 rounded-md"
-                                                                style={filterparameters[filterlabel]?.includes(s.value) ? { backgroundColor: '#E5E4E2' } : { backgroundColor: 'white' }}
-                                                            >{t(`${s.name}`)}</Text>
-                                                        </TouchableOpacity>
-
-
-                                                    )
-                                                })}
-                                            </View>
-                                            <View className="flex-row ml-auto mr-4 space-x-4 my-6 ">
-                                                <TouchableOpacity className="bg-[#00008b] rounded-md max-w-[100px] " onPress={debounce(() => handlefilterdelete(single.label), 500)}>
-                                                    <Text className="mx-auto p-0.5 mb-1 px-2.5 tracking-wider text-lg text-white font-semibold" >{t("Reset")}</Text>
-                                                </TouchableOpacity>
-
-                                            </View>
-                                        </View>
-                                    )
-                                })
-                            }
-                        </View>
-                    </View>
-                </Modal>
             </View>
         )
     }
 
     function availableProductsInfo() {
-
         return (
-
             <View>
-                {showLoading ? (
+                {!filterProductsBACKEND ? (
                     <View className="flex-row items-center  m-auto mt-24">
                         <ActivityIndicator size="large" color="#00008b" />
                         {/* <Text className="text-gray-400 ml-2 text-[14px]">Fetching Location Data...</Text> */}
                     </View>
-                ) : availableProducts.length === 0 ? (
+                ) : filterProductsBACKEND.length === 0 ? (
                     <View className="mt-10">
                         <Image resizeMode="contain" className="h-[150px] w-[150px] mx-auto" source={require('../../assets/images/empty-folder.png')} />
                         <Text className="text-center text-xl ">{t("No Product Found !")}</Text>
                     </View>
                 ) : (
                     <View>
-                        <ProductListing title={selectedCategory} productList={availableProducts} />
+                        <ProductListing title={selectedsubcategory} productList={filterProductsBACKEND} />
                     </View>
                 )}
             </View>
@@ -590,92 +555,56 @@ const CategoriesItemsScreen = React.memo(({ navigation, route }) => {
         )
     }
 
-    function categoryLocationAndBrandInfo() {
-        return (
-            <View style={{ marginTop: Sizes.fixPadding * 2.0, flexDirection: 'row', }}>
-                {categoryInfo()}
-            </View>
-        )
-    }
 
     function categoryInfo() {
         return (
-            <View className="px-1" style={{ flex: 1 }}>
-
+            <View className="px-1 mt-4" style={{ flex: 1 }}>
                 <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                    <TouchableOpacity className="w-[90px]"
-                        onPress={debounce(() => {
-                            setSelectedsubcategory(t('All'));
-                        }, 500)}>
-                        <View className={`h-[80px] w-[80px] border border-gray-200 shadow-sm  rounded-full mx-auto duration-300 overflow-hidden
-                                ${selectedCategory === t("All") ? ' border-gray-600 border-2 ' : ''}`}>
-                            <Image resizeMode="contain" className={`rounded-full w-full h-full  ${selectedCategory === t("All") ? '  ' : ' scale-90'} `} source={require('../../assets/images/allproducts.png')} />
-                        </View>
-                        <Text
-
-                            // style={{ marginHorizontal: Sizes.fixPadding, marginTop: Sizes.fixPadding, ...Fonts.blackColor12SemiBold }}
-                            className={`text-center text-[12px] mt-1.5 px-1 py-0.5  ${selectedCategory === t("All") ? 'font-bold  text-[13px]  rounded-lg ' : ''}`}
-
-                        >{t("All")}</Text>
-                    </TouchableOpacity>
                     {
-                        singleData.subcategories?.filter((item) => selectedCategory === item.subcategory_name).map((item, index) => (
-                            <TouchableOpacity className={`w-[90px] `}
-                                onPress={debounce(() => {
-                                    setSelectedsubcategory(item.subcategory_name);
-                                }, 500)}
-                                key={index}>
-                                <View className={`h-[80px] w-[80px] border border-gray-200 shadow-sm rounded-full mx-auto duration-300 overflow-hidden
-                                ${selectedCategory === item.subcategory_name ? ' border-gray-600 border-2 ' : ''}`} >
-                                    {/* <Image className={`rounded-full w-full h-full  ${selectedCategory === item ? ' scale-110 ' : ''} `} source={require('../../assets/images/mobiles/mobile11.png')} /> */}
+                        featureddatatoshow || subcategoriesToShow ?
+                            <>
+                                {
+                                    categoryName !== 'Featured' && <TouchableOpacity className="w-[90px]"
+                                        onPress={debounce(() => {
+                                            handleSubcategoryProduct('All');
+                                        }, 500)}>
+                                        <View className={`h-[80px] w-[80px] border border-gray-200 shadow-sm  rounded-full mx-auto duration-300 overflow-hidden
+                            ${selectedsubcategory === t("All") ? ' border-gray-600 border-2 ' : ''}`}>
+                                            <Image resizeMode="contain" className={`rounded-full w-full h-full  ${selectedsubcategory === t("All") ? '  ' : ' scale-90'} `} source={require('../../assets/images/allproducts.png')} />
+                                        </View>
+                                        <Text
 
-                                    <Image
-                                        source={{ uri: `${AdminUrl}/uploads/SubcategoryImages/${item.subcategory_image_url}` }}
-                                        style={{ resizeMode: 'contain' }}
-                                        className={`rounded-full w-full h-full  ${selectedCategory === item.subcategory_name ? ' scale-100 ' : ' scale-90'}`}
-                                    />
-                                </View>
-                                <Text
-                                    numberOfLines={2}
-                                    // style={{ marginHorizontal: Sizes.fixPadding, marginTop: Sizes.fixPadding, ...Fonts.blackColor12SemiBold }}
-                                    className={`text-center text-[11px] mt-1.5 px-1 py-0.5  ${selectedCategory === item.subcategory_name ? 'font-bold  text-[13px]  rounded-sm ' : ''}`}
+                                            // style={{ marginHorizontal: Sizes.fixPadding, marginTop: Sizes.fixPadding, ...Fonts.blackColor12SemiBold }}
+                                            className={`text-center text-[12px] mt-1.5 px-1 py-0.5  ${selectedsubcategory === t("All") ? 'font-bold  text-[13px]  rounded-lg ' : ''}`}
 
-                                >
-                                    {t(`${item.subcategory_name}`)}
-                                </Text>
-                            </TouchableOpacity>
-                        ))
-                    }
-                    {
-                        singleData.subcategories?.filter((item) => selectedCategory !== item.subcategory_name).map((item, index) => (
-                            <TouchableOpacity className={`w-[90px]   `}
-                                onPress={debounce(() => {
-                                    setSelectedsubcategory(item.subcategory_name);
-                                }, 500)}
-                                key={index}>
-                                <View className={`h-[80px] w-[80px] border border-gray-200 shadow-sm  rounded-full mx-auto duration-300 overflow-hidden
-                                ${selectedCategory === item.subcategory_name ? ' border-gray-600 border-2 ' : ''}`} >
-                                    {/* <Image className={`rounded-full w-full h-full  ${selectedCategory === item ? ' scale-110 ' : ''} `} source={require('../../assets/images/mobiles/mobile11.png')} /> */}
+                                        >{t("All")}</Text>
+                                    </TouchableOpacity>
 
-                                    <Image
-                                        source={{ uri: `${AdminUrl}/uploads/SubcategoryImages/${item.subcategory_image_url}` }}
-                                        style={{ resizeMode: 'contain' }}
-                                        className={`rounded-full w-full h-full  ${selectedCategory === item.subcategory_name ? ' scale-100 ' : ' scale-90'}`}
-                                    />
-                                </View>
-                                <Text
-                                    numberOfLines={2}
-                                    // style={{ marginHorizontal: Sizes.fixPadding, marginTop: Sizes.fixPadding, ...Fonts.blackColor12SemiBold }}
-                                    className={`text-center text-[11px] mt-1.5 px-1 py-0.5  ${selectedCategory === item.subcategory_name ? 'font-bold  text-[13px]  rounded-sm ' : ''}`}
+                                }
 
-                                >
-                                    {t(`${item.subcategory_name}`)}
-                                </Text>
-                            </TouchableOpacity>
-                        ))
+                                {
+                                    featureddatatoshow ? (
+                                        featureddatatoshow.map((item, index) => (
+                                            <View key={index}>
+                                                {renderSubcategoryItem(item, false)}
+                                            </View>
+                                        ))
+                                    ) : (
+                                        subcategoriesToShow?.map((item, index) => (
+                                            <View key={index}>
+                                                {renderSubcategoryItem(item, selectedsubcategory === item.subcategory_name)}
+                                            </View>
+                                        ))
+                                    )
+                                }
+                            </>
+                            :
+                            <SubcategoryPlaceholder />
+
                     }
 
                 </ScrollView>
+
 
             </View>
         )
@@ -683,7 +612,7 @@ const CategoriesItemsScreen = React.memo(({ navigation, route }) => {
 
     function header() {
         return (
-            <HeaderBar goback={true} title={t(`${singleData.category_name}`)} navigation={navigation} />)
+            <HeaderBar goback={true} title={t(`${route.params.categoryName ? route.params.categoryName : "sbcategory"}`)} navigation={navigation} />)
     }
 })
 
@@ -767,7 +696,16 @@ const styles = StyleSheet.create({
         borderColor: Colors.whiteColor,
         borderWidth: 1.0,
         elevation: 2.0,
-    }
+    },
+    container: {
+        position: "absolute",
+        top: 0,
+        width: Dimensions.get('window').width,
+        height: Dimensions.get('window').height,
+        flex: 1,
+        padding: 24,
+        backgroundColor: 'rgba(0,0,0,0.3)',
+    },
 });
 
 export default CategoriesItemsScreen; 

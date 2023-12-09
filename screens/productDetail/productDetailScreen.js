@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { SafeAreaView, View, Image, Dimensions, ScrollView, StatusBar, Share, FlatList, StyleSheet, Text, ImageBackground, Alert, Button, ActivityIndicator } from "react-native";
+import { SafeAreaView, View, Image, Dimensions, ScrollView, StatusBar, Share, FlatList, StyleSheet, Text, ImageBackground, Alert, Button, ActivityIndicator, LogBox } from "react-native";
 import { Colors, Fonts, Sizes, } from "../../constants/styles";
 import { MaterialIcons, MaterialCommunityIcons, } from '@expo/vector-icons';
 import { Snackbar } from "react-native-paper";
@@ -16,7 +16,7 @@ import { useEffect } from "react";
 import Slider from "../../components/Slider/Slider";
 import ReviewComponent from "../../components/ReviewsComponent";
 import { changeSearchFocus, changetabbarIndex } from "../../store/slices/counterslice";
-import { BottomSheetModal, BottomSheetModalProvider } from '@gorhom/bottom-sheet';
+import { BottomSheetBackdrop, BottomSheetModal, BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { useRef } from "react";
 import { useMemo } from "react";
 import { useCallback } from "react";
@@ -352,6 +352,10 @@ const ProductDetailScreen = ({ navigation, route }) => {
         Object.entries(attributesSpecification).filter(([key]) => key !== 'status')
     );
 
+    const renderBackdrop = useCallback(
+        (props) => <BottomSheetBackdrop {...props} />,
+        []
+    );
 
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: Colors.whiteColor }}>
@@ -423,6 +427,10 @@ const ProductDetailScreen = ({ navigation, route }) => {
                         index={1}
                         snapPoints={snapPoints}
                         onChange={handleSheetChanges}
+                        backdropComponent={renderBackdrop}
+
+                        enableDismissOnPress={true}
+
                     >
                         <ScrollView className="p-4" showsVerticalScrollIndicator={false}>
                             <View className="flex-row items-center">
@@ -470,7 +478,6 @@ const ProductDetailScreen = ({ navigation, route }) => {
 
         </SafeAreaView>
     )
-
 
 
     function chatcall() {
@@ -814,7 +821,7 @@ const ProductDetailScreen = ({ navigation, route }) => {
 
         return (
             <View>
-                <View className='flex-row items-center p-3 '>
+                <View className='flex-row items-center m-3 mb-1.5 '>
                     <Text className="text-lg">
                         {ad_title}
                     </Text>
@@ -866,27 +873,44 @@ const ProductDetailScreen = ({ navigation, route }) => {
 
 const priceSection = (discountPercentageSimple, mrp, sellingprice, c_symbol) => {
     return <>
-        <View className={`flex-row ${discountPercentageSimple > 50 && 'bg-green-100/60  py-2 mx-2 mb-2 mt-2'} border border-b-4 border-gray-200 border-l-0 border-r-0 border-t-0 rounded-md items-end justify-between`}>
-            <View>
-                {
-                    discountPercentageSimple > 50 && <Text className="font-bold ml-3 text-green-700 tracking-wide">
-                        Special Offer
-                        <MaterialCommunityIcons name="offer" className="ml-2" size={14} color={'green'} />
-                    </Text>
-                }
-                <View className="p-3 flex-row items-center">
+        <View>
+
+            <View className={`flex-row ${discountPercentageSimple > 50 && 'bg-green-100/60  py-2 mx-2 mb-2'}    rounded-md items-end justify-between`}>
+                <View>
                     {
-                        discountPercentageSimple > 0 && <Text className="text-green-600 text-xl font-bold">
-                            {discountPercentageSimple?.toFixed(2)}% <Text className="tracking-widest font-normal">off</Text>
+                        discountPercentageSimple > 50 && <Text className="font-bold ml-3 text-green-700 tracking-wide">
+                            Special Offer
+                            <MaterialCommunityIcons name="offer" className="ml-2" size={14} color={'green'} />
                         </Text>
                     }
-                    <Text className="font-semibold text-xl text-gray-400 ml-2" style={{ textDecorationLine: 'line-through' }}>
-                        {`${mrp}`}
-                    </Text>
-                    <Text className={'text-black/90 text-xl font-bold ml-2'}>
-                        {`${c_symbol}${sellingprice}`}
-                    </Text>
+
+
+
                 </View>
+
+            </View>
+            <View className="mx-4">
+
+                <View className="gap-2 flex-row items-center">
+                    {discountPercentageSimple && discountPercentageSimple > 0 && (
+                        <Text className="text-lg" style={{ color: 'green' }}>-{discountPercentageSimple?.toFixed(2)}%</Text>
+                    )}
+                    <View className="flex-row ">
+                        <Text className="text-[14px] ml-1 font-medium">{`${c_symbol} `}</Text>
+                        <Text className="text-gray-900 text-lg" style={{ fontWeight: 'bold' }}>
+                            {`${sellingprice % 1 === 0 ? Math.trunc(sellingprice) : sellingprice}`}
+                        </Text>
+                    </View>
+                </View>
+                {
+                    discountPercentageSimple !== 0 &&
+                    <View className="flex-row items-center mb-2">
+                        <Text className="text-gray-500 font-medium text-[14px] line-through">List Price: </Text>
+                        <Text style={styles.mrpPrice} className="font-medium text-base line-through text-gray-500">
+                            {`$${mrp % 1 === 0 ? Math.trunc(mrp) : mrp}`}
+                        </Text>
+                    </View>
+                }
             </View>
         </View>
     </>

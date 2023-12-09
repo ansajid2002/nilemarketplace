@@ -1,6 +1,3 @@
-// ios 216641462687-0vgml3eh21399khfqk6avahgmis7sgo2.apps.googleusercontent.com
-// android 216641462687-7mv9inako2l7n3rmp5gq72qu8lquvnn0.apps.googleusercontent.com
-// web 216641462687-a2ut20irksvqdes9n9gfgs21p8hp1kq4.apps.googleusercontent.com
 import React, { useState, useEffect, memo } from "react";
 import {
     StyleSheet,
@@ -29,8 +26,9 @@ import { useCallback } from "react";
 import { useMemo } from "react";
 import InCart from "../../components/inCart";
 import { AntDesign } from '@expo/vector-icons';
-import { CategoryPlaceholder } from "../../components/Skeleton";
+import { CategoryPlaceholder, ServicesPlaceholder } from "../../components/Skeleton";
 import NoLogin from "../../components/NoLogin";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 
 const { width } = Dimensions.get('window');
@@ -40,33 +38,114 @@ const HomeScreen = () => {
     const [recommendedProductsFetched, setRecommendedProductsFetched] = useState(false);
     const [newArrivalsFetched, setNewArrivalsFetched] = useState(false);
     const [error, setError] = useState(null);
-    const [loading, setLoading] = useState(true);
+
+    const [servicesData, setServicesData] = useState(null)
+    const [productCatData, setProductCatData] = useState(null)
+
 
     const navigation = useNavigation();
-
     const { t } = useTranslation()
     const { customerData } = useSelector((store) => store.userData)
     const cartItems = useSelector((state) => state.cart.cartItems);
     const { productsList } = useSelector((store) => store.products)
 
     const customerId = customerData[0]?.customer_id
-    const { categoriesData } = useSelector((store) => store.categories);
 
+    const getservicesData = async () => {
+        try {
+            const response = await fetch(`${AdminUrl}/api/getServicesData`);
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            const data = await response.json();
+            setServicesData(data);
 
-    const productscategories = useMemo(() => {
-        return categoriesData.filter((singleservice) => singleservice.category_type === "Products");
-    }, [categoriesData]);
+            // Save the new data and timestamp to AsyncStorage
+            const currentTimestamp = new Date().getTime();
+            await AsyncStorage.setItem('servicesData', JSON.stringify(data));
+            await AsyncStorage.setItem('servicesDataTimestamp', currentTimestamp.toString());
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    };
 
-    const productssubcategories = useMemo(() => {
-        return productscategories?.map((single) => single.subcategories).flat() || [];
-    }, [productscategories]);
+    const getCatgeory = async () => {
+        try {
+            const response = await fetch(`${AdminUrl}/api/getCatgeory`);
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            const data = await response.json();
+            setProductCatData(data);
 
-    // Now you can use productssubcategories in your component
+            // Save the new data and timestamp to AsyncStorage
+            const currentTimestamp = new Date().getTime();
+            await AsyncStorage.setItem('productCatData', JSON.stringify(data));
+            await AsyncStorage.setItem('productCatDataTimestamp', currentTimestamp.toString());
+
+            // After getting category data, call the services API
+            getservicesData();
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    };
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                // Check if there is stored category data and if it is still valid
+                const storedCategoryData = await AsyncStorage.getItem('productCatData');
+                const storedCategoryTimestamp = await AsyncStorage.getItem('productCatDataTimestamp');
+                const currentTimestamp = new Date().getTime();
+
+                if (storedCategoryData && storedCategoryTimestamp && currentTimestamp - parseInt(storedCategoryTimestamp) <= 30 * 60 * 1000) {
+                    // Use stored category data if it's still valid
+                    setProductCatData(JSON.parse(storedCategoryData));
+
+                    // After getting category data, call the services API
+                    getservicesData();
+                } else {
+
+                    // Fetch new category data if there is no stored data or if it's expired
+                    await getCatgeory();
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        };
+
+        if (!productCatData) {
+            fetchData();
+        }
+    }, [productCatData]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                // Check if there is stored services data and if it is still valid
+                const storedServicesData = await AsyncStorage.getItem('servicesData');
+                const storedServicesTimestamp = await AsyncStorage.getItem('servicesDataTimestamp');
+                const currentTimestamp = new Date().getTime();
+
+                if (storedServicesData && storedServicesTimestamp && currentTimestamp - parseInt(storedServicesTimestamp) <= 30 * 60 * 1000) {
+                    // Use stored services data if it's still valid
+                    setServicesData(JSON.parse(storedServicesData));
+                } else {
+                    // Fetch new services data if there is no stored data or if it's expired
+
+                    await getservicesData();
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        };
+
+        if (!servicesData && productCatData?.length > 0) {
+            fetchData();
+        }
+    }, [servicesData, productCatData]);
 
     const fetchRecommendedProducts = useCallback(async () => {
-        setLoading(true);
-        setError(null);
-
         try {
             const recommendedResponse = await fetch(`${AdminUrl}/api/recommendedProducts/${customerId}`);
             if (!recommendedResponse.ok) {
@@ -74,17 +153,17 @@ const HomeScreen = () => {
             }
             const recommendedData = await recommendedResponse.json();
             setRecommendedProducts(recommendedData);
+
+            // Save the new data and timestamp to AsyncStorage
+            const currentTimestamp = new Date().getTime();
+            await AsyncStorage.setItem('recommendedProducts', JSON.stringify(recommendedData));
+            await AsyncStorage.setItem('recommendedProductsTimestamp', currentTimestamp.toString());
         } catch (error) {
-            setError(error.message || 'An error occurred while fetching recommended products.');
-        } finally {
-            setLoading(false);
+            console.log(error);
         }
-    }, [customerId]);
+    }, [customerId, setRecommendedProducts]);
 
     const fetchNewArrivals = useCallback(async () => {
-        setLoading(true);
-        setError(null);
-
         try {
             const newArrivalsResponse = await fetch(`${AdminUrl}/api/newArrivals/${customerId}`);
             if (!newArrivalsResponse.ok) {
@@ -92,39 +171,86 @@ const HomeScreen = () => {
             }
             const newArrivalsData = await newArrivalsResponse.json();
             setNewArrivals(newArrivalsData);
+
+            // Save the new data and timestamp to AsyncStorage
+            const currentTimestamp = new Date().getTime();
+            await AsyncStorage.setItem('newArrivals', JSON.stringify(newArrivalsData));
+            await AsyncStorage.setItem('newArrivalsTimestamp', currentTimestamp.toString());
         } catch (error) {
             setError(error.message || 'An error occurred while fetching new arrivals.');
-        } finally {
-            setLoading(false);
         }
-    }, [customerId]);
-
-    // Memoize the callback functions so they don't change on re-renders
-    const memoizedFetchRecommendedProducts = useMemo(() => fetchRecommendedProducts, [fetchRecommendedProducts]);
-    const memoizedFetchNewArrivals = useMemo(() => fetchNewArrivals, [fetchNewArrivals]);
+    }, [customerId, setNewArrivals, setError]);
 
     useEffect(() => {
-        // Trigger the fetch for recommended products only if customerId exists and is not null
-        if (customerId && !recommendedProductsFetched) {
-            memoizedFetchRecommendedProducts();
+        const fetchData = async () => {
+            try {
+                // Check if there is stored recommended products data and if it is still valid
+                const storedRecommendedProducts = await AsyncStorage.getItem('recommendedProducts');
+                const storedRecommendedProductsTimestamp = await AsyncStorage.getItem('recommendedProductsTimestamp');
+                const currentTimestamp = new Date().getTime();
+
+                if (
+                    storedRecommendedProducts &&
+                    storedRecommendedProductsTimestamp &&
+                    currentTimestamp - parseInt(storedRecommendedProductsTimestamp) <= 30 * 60 * 1000
+                ) {
+                    console.log('storage');
+                    // Use stored recommended products data if it's still valid
+                    setRecommendedProducts(JSON.parse(storedRecommendedProducts));
+
+                } else {
+                    console.log('backend');
+                    // Fetch new recommended products data if there is no stored data or if it's expired
+                    await fetchRecommendedProducts();
+                    fetchNewArrivals()
+
+                }
+            } catch (error) {
+                console.log(error);
+            }
+        };
+
+        if (customerId && !recommendedProductsFetched && servicesData?.length > 0) {
+            fetchData();
             setRecommendedProductsFetched(true); // Mark data as fetched
         }
-    }, [customerId, recommendedProductsFetched, memoizedFetchRecommendedProducts]);
+    }, [customerId, recommendedProductsFetched, servicesData, fetchRecommendedProducts]);
 
-    // Use another useEffect for new arrivals
     useEffect(() => {
-        // Trigger the fetch for new arrivals only if customerId exists and is not null
-        if (customerId && !newArrivalsFetched) {
-            memoizedFetchNewArrivals();
+        const fetchData = async () => {
+            try {
+                // Check if there is stored new arrivals data and if it is still valid
+                const storedNewArrivals = await AsyncStorage.getItem('newArrivals');
+                const storedNewArrivalsTimestamp = await AsyncStorage.getItem('newArrivalsTimestamp');
+                const currentTimestamp = new Date().getTime();
+
+                if (
+                    storedNewArrivals &&
+                    storedNewArrivalsTimestamp &&
+                    currentTimestamp - parseInt(storedNewArrivalsTimestamp) <= 30 * 60 * 1000
+                ) {
+                    console.log('storage arrivals');
+
+                    // Use stored new arrivals data if it's still valid
+                    setNewArrivals(JSON.parse(storedNewArrivals));
+                } else {
+                    console.log('backend arrivals');
+
+                    // Fetch new new arrivals data if there is no stored data or if it's expired
+                    await fetchNewArrivals();
+                }
+            } catch (error) {
+                console.log(error);
+            }
+        };
+
+        if (customerId && !newArrivalsFetched && recommendedProdutcs?.length > 0) {
+            fetchData();
             setNewArrivalsFetched(true); // Mark data as fetched
         }
-    }, [customerId, newArrivalsFetched, memoizedFetchNewArrivals]);
+    }, [customerId, newArrivalsFetched, recommendedProdutcs, fetchNewArrivals]);
 
-
-    const servicesData = categoriesData.filter((singleservice) => {
-        return singleservice.category_type === "Services";
-    });
-
+    ////////////////////////////////////////////////////////////////////
 
     return (
         <SafeAreaView
@@ -143,10 +269,6 @@ const HomeScreen = () => {
                         <View
                             className="px-2 flex-1"
                             style={{
-                                // backgroundColor: "#00008b",
-                                // padding: 10,
-                                // flexDirection: "row",
-                                // alignItems: "center",
                             }}
                         >
                             <TouchableOpacity
@@ -200,7 +322,7 @@ const HomeScreen = () => {
                         !customerId && <ProductListing title="Recommended Products" productList={productsList.slice(0, 10)} />
                     }
                     {
-                        customerData.length > 0 && <>
+                        customerData?.length > 0 && <>
                             <ProductListing title="Recommended Products" productList={recommendedProdutcs} />
                             <ProductListing title="New Arrivals" productList={newArrivals} />
                         </>
@@ -215,50 +337,53 @@ const HomeScreen = () => {
 
     function browseServicesInfo() {
         return (
-            <>{
+            <View style={{ marginBottom: Sizes.fixPadding, marginTop: Sizes.fixPadding * 2.0, marginHorizontal: Sizes.fixPadding * 1.0, }}>
 
-                categoriesData.length > 0 &&
-                <View style={{ marginBottom: Sizes.fixPadding, marginTop: Sizes.fixPadding * 2.0, marginHorizontal: Sizes.fixPadding * 1.0, }}>
-                    <View className="flex flex-row justify-between items-center mt-2 mb-4 mx-2">
-                        <Text className="text-lg font-bold text-gray-900">
-                            {t('Browse Services')}
-                        </Text>
-                        <TouchableOpacity
-                            onPress={debounce(() => navigation.navigate('servicesList'), 500)
-                            }
-                        >
-                            <AntDesign name="arrowright" size={24} color="black" />
-                        </TouchableOpacity>
+                {
 
-                    </View>
-                    <ScrollView horizontal showsHorizontalScrollIndicator={false} className=" ">
-                        {
-                            servicesData.map((item, index) => {
-                                return (
-                                    <TouchableOpacity key={index} className=" mx-4 my-4"
-                                        activeOpacity={0.9}
-                                        onPress={debounce(() => navigation.push('CategoriesItems', { item, subcategory_name: t("All") }), 500)}
-                                        style={styles.categoryWrapStyle}
-                                    >
-                                        <View style={styles.categoryImageWrapStyle} className="border border-gray-200">
-                                            <Image
-                                                resizeMode="contain"
-                                                source={{ uri: `${AdminUrl}/uploads/CatgeoryImages/${item.category_image_url}` }}
-                                                style={{ width: 100.0, height: 100.0, resizeMode: 'contain' }}
-                                                className="rounded-full"
+                    !servicesData ? <ServicesPlaceholder /> :
+                        <>
+                            <View className="flex flex-row justify-between items-center mt-2 mb-4 mx-2">
+                                <Text className="text-lg font-bold text-gray-900">
+                                    {t('Browse Services')}
+                                </Text>
+                                <TouchableOpacity
+                                    onPress={debounce(() => navigation.navigate('servicesList'), 500)
+                                    }
+                                >
+                                    <AntDesign name="arrowright" size={24} color="black" />
+                                </TouchableOpacity>
 
-                                            />
-                                        </View>
-                                        <Text numberOfLines={2} style={styles.categoryText} className="text-[12px]">
-                                            {t(`${item.category_name}`)}
-                                        </Text>
-                                    </TouchableOpacity>
-                                )
-                            })
-                        }
-                    </ScrollView>
-                </View>
-            }</>
+                            </View>
+                            <ScrollView horizontal showsHorizontalScrollIndicator={false} className=" ">
+                                {
+                                    servicesData?.map((item, index) => {
+                                        return (
+                                            <TouchableOpacity key={index} className=" mx-4 my-4"
+                                                activeOpacity={0.9}
+
+                                                style={styles.categoryWrapStyle}
+                                            >
+                                                <TouchableOpacity onPress={debounce(() => navigation.push('CategoriesItems', { categoryId: item.category_id, categoryName: item.category_name, subcategory_name: t("All") }), 500)} style={styles.categoryImageWrapStyle} className="border border-gray-200">
+                                                    <Image
+                                                        resizeMode="contain"
+                                                        source={{ uri: `${AdminUrl}/uploads/CatgeoryImages/${item.category_image_url}` }}
+                                                        style={{ width: 100.0, height: 100.0, resizeMode: 'contain' }}
+                                                        className="rounded-full"
+
+                                                    />
+                                                </TouchableOpacity>
+                                                <Text numberOfLines={2} style={styles.categoryText} className="text-[12px]">
+                                                    {t(`${item.category_name}`)}
+                                                </Text>
+                                            </TouchableOpacity>
+                                        )
+                                    })
+                                }
+                            </ScrollView>
+                        </>
+
+                }</View>
         )
     }
 
@@ -275,7 +400,7 @@ const HomeScreen = () => {
         return (
             <View style={{ marginBottom: Sizes.fixPadding, marginTop: Sizes.fixPadding * 2.0, marginHorizontal: Sizes.fixPadding * 1.0, }}>
                 {
-                    categoriesData.length === 0 ? (
+                    !productCatData ? (
                         <CategoryPlaceholder />
                     ) :
                         <>
@@ -295,31 +420,33 @@ const HomeScreen = () => {
                                     <AntDesign name="arrowright" size={24} color="black" />
 
                                 </Link> */}
-                            </View> 
+                            </View>
                             <ScrollView horizontal className="grid grid-rows-3 gap-5 h-[350px]" showsHorizontalScrollIndicator={false}>
-                                {chunkArray(productssubcategories, 2)?.map((rowItems, rowIndex) => (
+                                {productCatData && chunkArray(productCatData, 2)?.map((rowItems, rowIndex) => (
                                     <View key={rowIndex} className="grid grid-cols-2 gap-2">
                                         {rowItems?.map((item, itemIndex) => {
-                                            const { subcategory_name } = item
+                                            const { category_name } = item
                                             return (
                                                 <TouchableOpacity key={itemIndex} className="mr-1.5 w-[100px] h-[100px]"
                                                     activeOpacity={0.9}
-                                                    onPress={debounce(() => {
-                                                        navigation.push('CategoriesItems', { item: productscategories.find((single) => single.category_id === item.parent_category_id), subcategory_name })
-                                                    }, 500)}
+
                                                     style={styles.categoryWrapStyle}
                                                 >
                                                     <View style={styles.categoryWrapStyle} className="mb-10">
-                                                        <View style={styles.categoryImageWrapStyle} className="border border-gray-200 ">
+                                                        <TouchableOpacity
+                                                            onPress={debounce(() => {
+                                                                navigation.push('CategoriesItems', { categoryId: item.category_id, categoryName: item.category_name, subcategory_name: t("All") })
+                                                            }, 500)}
+                                                            style={styles.categoryImageWrapStyle} className="border border-gray-200 ">
                                                             <Image
                                                                 resizeMode="contain"
-                                                                source={{ uri: `${AdminUrl}/uploads/SubcategoryImages/${item.subcategory_image_url}` }}
+                                                                source={{ uri: `${AdminUrl}/uploads/CatgeoryImages/${item.category_image_url}` }}
                                                                 style={{ width: 100.0, height: 100.0, resizeMode: 'contain' }}
                                                                 className="rounded-full"
                                                             />
-                                                        </View>
+                                                        </TouchableOpacity>
                                                         <Text numberOfLines={2} style={styles.categoryText} className="mt-4">
-                                                            {t(`${item.subcategory_name}`)}
+                                                            {t(`${category_name}`)}
                                                         </Text>
                                                     </View>
                                                 </TouchableOpacity>
@@ -449,11 +576,11 @@ const styles = StyleSheet.create({
         position: 'absolute', // Use absolute positioning for the icon
     },
     categoryText: {
-        width: 80,
-        fontSize: 12,
+        width: 90,
+        fontSize: 10,
         textAlign: 'center',
         marginTop: 5,
-        fontWeight:"500",
+        fontWeight: "500",
     },
 });
 

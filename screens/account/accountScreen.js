@@ -226,13 +226,11 @@ const AccountScreen = ({ navigation }) => {
                 {accountOptionsSort({
                     icon: <MaterialIcons name="info" size={20} color={Colors.blackColor} />,
                     option: 'About us',
-                    navigateTo: 'AboutUs',
                 })}
                 {divider()}
                 {accountOptionsSort({
                     icon: <MaterialIcons name="email" size={20} color={Colors.blackColor} />,
                     option: 'Contact us',
-                    navigateTo: 'ContactUs',
                 })}
                 {divider()}
             </>
@@ -269,6 +267,68 @@ const AccountScreen = ({ navigation }) => {
                     </TouchableOpacity>
 
                 </TouchableOpacity>
+            )
+        }
+        else if (option === "About us") {
+            return (
+                <TouchableOpacity
+                activeOpacity={0.9}
+
+                style={{ flexDirection: 'row', alignItems: 'center', margin: Sizes.fixPadding * 2.0 }}
+            >
+                {icon}
+                <TouchableOpacity onPress={debounce(async () => {
+                    setLoading(true);
+                    try {
+                        const externalURL = 'https://stg.nilegmp.com/company/about-us'; // Replace with your URL
+                        const supported = await Linking.canOpenURL(externalURL);
+                        if (supported) {
+                            await Linking.openURL(externalURL);
+                        } else {
+                            console.log("Can't handle URL: " + externalURL);
+                        }
+                    } catch (error) {
+                        console.error('Error opening URL:', error);
+                    }
+                    setLoading(false);
+                }, 500)} className="flex-row ">
+                    <Text className="" style={{ marginLeft: Sizes.fixPadding, ...Fonts.blackColor14SemiBold }}>
+                        {t(`${option}`)}
+                    </Text>
+                </TouchableOpacity>
+
+            </TouchableOpacity>
+            )
+        }
+        else if (option === "Contact us") {
+            return (
+                <TouchableOpacity
+                activeOpacity={0.9}
+
+                style={{ flexDirection: 'row', alignItems: 'center', margin: Sizes.fixPadding * 2.0 }}
+            >
+                {icon}
+                <TouchableOpacity onPress={debounce(async () => {
+                    setLoading(true);
+                    try {
+                        const externalURL = 'https://stg.nilegmp.com/company/contact-us'; // Replace with your URL
+                        const supported = await Linking.canOpenURL(externalURL);
+                        if (supported) {
+                            await Linking.openURL(externalURL);
+                        } else {
+                            console.log("Can't handle URL: " + externalURL);
+                        }
+                    } catch (error) {
+                        console.error('Error opening URL:', error);
+                    }
+                    setLoading(false);
+                }, 500)} className="flex-row ">
+                    <Text className="" style={{ marginLeft: Sizes.fixPadding, ...Fonts.blackColor14SemiBold }}>
+                        {t(`${option}`)}
+                    </Text>
+                </TouchableOpacity>
+
+            </TouchableOpacity>
             )
         }
         return (
