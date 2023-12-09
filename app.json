@@ -47,12 +47,12 @@
       "**/*"
     ],
     "ios": {
-      "bundleIdentifier": "com.render.ngmp",
+      "bundleIdentifier": "com.ngmp.ios",
       "buildNumber": "9",
       "supportsTablet": true
     },
     "android": {
-      "package": "com.render.ngmp",
+      "package": "com.ngmp.ios",
       "versionCode": 4,
       "useNextNotificationsApi": true,
       "config": {
