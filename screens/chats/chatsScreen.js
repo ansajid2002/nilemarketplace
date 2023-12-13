@@ -54,7 +54,7 @@ const ChatsScreen = ({ navigation }) => {
     }, [cartItems]);
     const handleRemove = async (itemId, item, type) => {
         try {
-
+            setLoading(true)
             if (customerId) {
                 const { category, subcategory, uniquepid, label } = item;
                 const replacecategory = category
@@ -78,17 +78,21 @@ const ChatsScreen = ({ navigation }) => {
 
                 const data = await response.json();
                 if (type === 'cart') {
+                    setLoading(false)
                     Alert.alert("Product Removed", `${item.ad_title} Removed from Cart`)
                 }
                 else if (type === 'wishlist') {
+                    setLoading(false)
                     Alert.alert("Added to Wishlist", `${item.ad_title} Added to wishlist✅`)
                 }
                 dispatch(removeItem(item));
             }
+            setLoading(false)
             dispatch(removeItem(item));
 
             // Handle success, update UI or perform any other action
         } catch (error) {
+            setLoading(false)
             console.error('Error removing product from cart:', error);
             // Handle error, show a message to the user, or retry the operation
         }
@@ -386,7 +390,7 @@ const ChatsScreen = ({ navigation }) => {
                 </TouchableOpacity>
                 <View className="flex-row border border-gray-300 border-l-0">
                     <TouchableOpacity className="flex-1 flex-row     justify-center items-center"
-                        onPress={debounce(() => handleRemove(id, item))}>
+                        onPress={debounce(() => handleRemove(id, item,"cart"))}>
 
                         <MaterialCommunityIcons name="delete-outline" size={20} color={'black'} />
 

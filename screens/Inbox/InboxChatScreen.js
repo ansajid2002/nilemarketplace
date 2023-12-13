@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, FlatList, SafeAreaView } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, FlatList, SafeAreaView, KeyboardAvoidingView } from 'react-native';
 import { AdminUrl, HeaderBar } from '../../constant';
 import { useSelector } from 'react-redux';
 import moment from 'moment/moment';
@@ -123,9 +123,9 @@ const InboxChatScreen = ({ route, navigation }) => {
         const date = moment(messageDate);
 
         if (currentDate.isSame(date, 'day')) {
-            return 'TODAY';
+            return 'Today';
         } else if (currentDate.clone().subtract(1, 'day').isSame(date, 'day')) {
-            return 'YESTERDAY';
+            return 'Yesterday';
         } else if (currentDate.diff(date, 'days') < 7) {
             return date.format('dddd'); // Display day of the week
         } else {
@@ -154,57 +154,55 @@ const InboxChatScreen = ({ route, navigation }) => {
     }));
 
     return (
-        <SafeAreaView style={{
-            flex: 1,
-            backgroundColor: "white",
-        }} >
-            {vendorData && <HeaderBar title={vendorData?.brand_name || ''} goback={true} navigation={navigation} cartEnable={false} searchEnable={false} />}
-            <View style={{ flex: 1, padding: 10 }}>
-                <FlatList
-
-                    showsVerticalScrollIndicator={false}
-                    ref={flatListRef}
-                    data={messageGroups}
-                    keyExtractor={(item, index) => index.toString()}
-                    renderItem={({ item }) => (
-                        <View >
-                            <Text className="font-medium mt-6 mb-2" style={{ textAlign: 'center', marginVertical: 10, fontSize: 18 }}>{item.date}</Text>
-                            {item.messages.map((message, index) => (
-                                <View key={index.toString()} className="" style={{ flexDirection: message.sender === 'customer' ? 'row-reverse' : 'row', marginBottom: 10 }}>
-                                    <View className=" items-center px-2  py-2" style={{  backgroundColor: message.sender === 'customer' ? '#25D366' : 'rgb(230,230,230)', borderRadius: 6 }}>
-                                        <Text style={{ marginRight: 2 }} className="mx-2 leading-6">{message.text}</Text>
-                                        <Text className="mt-2 text-gray-600 text-[12px]" style={{ flexDirection: message.sender === 'customer' ? '' : 'text-right', }}>{moment(message.timestamp).format('LT')}</Text>
-                                    </View>
-                                </View>
-                            ))}
-                        </View>
-                    )}
-                    onContentSizeChange={() => flatListRef.current.scrollToEnd({ animated: true })}
-                    onLayout={() => flatListRef.current.scrollToEnd({ animated: true })}
-                />
-
-                {/* Input for typing new messages */}
-                <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
-                    <TextInput
-                        style={{ flex: 1, borderWidth: 1, borderRadius: 5, padding: 8 }}
-                        placeholder="Type your message..."
-                        value={newMessage}
-                        keyboardType='web-search'
-                        onChangeText={(text) => setNewMessage(text)}
-                    />
-                    <TouchableOpacity onPress={handleSendMessage} style={{ marginLeft: 10, padding: 8, backgroundColor: '#25D366', borderRadius: 5 }}>
-                        {/* <Text style={{ color: 'white' }}>Send</Text> */}
-                        <MaterialIcons
-                            className=""
-                            name="send"
-                            color="white"
-                            size={25}
-
-                        />
-                    </TouchableOpacity>
+        <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={{ flex: 1 }}
+      >
+        <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
+          {vendorData && <HeaderBar title={vendorData?.brand_name || ''} goback={true} navigation={navigation} cartEnable={false} searchEnable={false} />}
+          <View style={{ flex: 1, padding: 10 }}>
+            <FlatList
+              showsVerticalScrollIndicator={false}
+              ref={flatListRef}
+              data={messageGroups}
+              keyExtractor={(item, index) => index.toString()}
+              renderItem={({ item }) => (
+                <View>
+                  <Text style={{ textAlign: 'center', marginVertical: 10, fontSize: 18 }}>{item.date}</Text>
+                  {item.messages.map((message, index) => (
+                    <View key={index.toString()} style={{ flexDirection: message.sender === 'customer' ? 'row-reverse' : 'row', marginBottom: 10 }}>
+                      <View style={{ backgroundColor: message.sender === 'customer' ? '#25D366' : 'rgb(230,230,230)', borderRadius: 6, paddingHorizontal: 8, paddingVertical: 6 }}>
+                        <Text style={{ marginRight: 2 }}>{message.text}</Text>
+                        <Text style={{ textAlign: message.sender === 'customer' ? 'right' : 'left', fontSize: 12, color: 'gray' }}>{moment(message.timestamp).format('LT')}</Text>
+                      </View>
+                    </View>
+                  ))}
                 </View>
+              )}
+              onContentSizeChange={() => flatListRef.current.scrollToEnd({ animated: true })}
+              onLayout={() => flatListRef.current.scrollToEnd({ animated: true })}
+            />
+            {/* Input for typing new messages */}
+            <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
+              <TextInput
+                style={{ flex: 1, borderWidth: 1, borderRadius: 5, padding: 8 }}
+                placeholder="Type your message..."
+                value={newMessage}
+                keyboardType='web-search'
+                onChangeText={(text) => setNewMessage(text)}
+              />
+              <TouchableOpacity onPress={handleSendMessage} style={{ marginLeft: 10, padding: 8, backgroundColor: '#25D366', borderRadius: 5 }}>
+                {/* <Text style={{ color: 'white' }}>Send</Text> */}
+                <MaterialIcons
+                  name="send"
+                  color="white"
+                  size={25}
+                />
+              </TouchableOpacity>
             </View>
+          </View>
         </SafeAreaView>
+      </KeyboardAvoidingView>
     );
 };
 

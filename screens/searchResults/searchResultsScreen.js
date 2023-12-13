@@ -161,20 +161,6 @@ const SearchResultsScreen = ({ navigation, route }) => {
                         />
 
 
-                        {/* <Image
-                            resizeMode="contain"
-                            source={
-                                item.images.length === 0
-                                    ? require('../../assets/noimage.jpg')
-                                    : { uri: `${AdminUrl}/uploads/UploadedProductsFromVendors/${item.images[0]}` }
-                            }
-
-                            defaultSource={require('../../assets/noimage.jpg')}
-
-                            style={{ width: '100%', height: undefined, aspectRatio: 4 / 4 }} className="rounded-md"
-                        /> */}
-
-
                     </View>
                     <View className="absolute -top-[1px] -right-[1px]">
                         {

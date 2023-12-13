@@ -53,8 +53,14 @@ const Inbox = ({ navigation }) => {
     }, []); // The empty dependency array ensures that this effect runs only once on mount
 
 
-    const renderConversationItem = ({ item }) => (
-        <TouchableOpacity onPress={() => navigation.navigate('InboxChatScreen', { data: item.vendorDetails })}>
+    const renderConversationItem = ({ item }) => {
+
+        console.log("item");
+        console.log(item);
+        console.log("item");
+        return (
+
+<TouchableOpacity onPress={() => navigation.navigate('InboxChatScreen', { data: item.vendorDetails })}>
             <View style={{ padding: 16, borderBottomWidth: 1, borderBottomColor: '#ccc', flexDirection: 'row', alignItems: 'center' }}>
                 {/* Display vendor image */}
                 <Image
@@ -68,7 +74,11 @@ const Inbox = ({ navigation }) => {
                 </View>
             </View>
         </TouchableOpacity>
-    );
+        )
+    }
+
+
+
 
     const renderSkeleton = (index) => {
         return <View key={index} style={{ display: 'flex', flexDirection: 'row' }} className="p-2">
