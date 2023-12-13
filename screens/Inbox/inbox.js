@@ -57,7 +57,7 @@ const Inbox = ({ navigation }) => {
 
         console.log("item");
         console.log(item);
-        console.log("item");
+        console.log("item end");
         return (
 
 <TouchableOpacity onPress={() => navigation.navigate('InboxChatScreen', { data: item.vendorDetails })}>

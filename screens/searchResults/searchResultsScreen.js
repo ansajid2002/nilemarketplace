@@ -214,7 +214,7 @@ const SearchResultsScreen = ({ navigation, route }) => {
                     renderItem={renderItem2}
                     showsVerticalScrollIndicator={false}
                     numColumns={2}
-                    ListFooterComponent={renderFooter}
+                    // ListFooterComponent={renderFooter}
                     onEndReachedThreshold={0.3} // Adjust as needed
                     onEndReached={() => {
                         if (getSearchedProducts.length < totalProducts) {

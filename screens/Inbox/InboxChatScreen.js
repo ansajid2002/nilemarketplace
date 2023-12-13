@@ -155,7 +155,7 @@ const InboxChatScreen = ({ route, navigation }) => {
 
     return (
         <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height mt-10'}
         style={{ flex: 1 }}
       >
         <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
