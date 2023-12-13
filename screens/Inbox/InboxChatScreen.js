@@ -170,10 +170,10 @@ const InboxChatScreen = ({ route, navigation }) => {
                         <View >
                             <Text className="font-medium mt-6 mb-2" style={{ textAlign: 'center', marginVertical: 10, fontSize: 18 }}>{item.date}</Text>
                             {item.messages.map((message, index) => (
-                                <View key={index.toString()} style={{ flexDirection: message.sender === 'customer' ? 'row-reverse' : 'row', marginBottom: 10 }}>
-                                    <View className="items-center" style={{ flexDirection: 'row', padding: 10, backgroundColor: message.sender === 'customer' ? '#25D366' : 'rgb(230,230,230)', borderRadius: 6 }}>
-                                        <Text style={{ marginRight: 6 }}>{message.text}</Text>
-                                        <Text style={{ color: 'rgb(100,100,100)', fontSize: 12 }}>{moment(message.timestamp).format('LT')}</Text>
+                                <View key={index.toString()} className="" style={{ flexDirection: message.sender === 'customer' ? 'row-reverse' : 'row', marginBottom: 10 }}>
+                                    <View className=" items-center px-2  py-2" style={{  backgroundColor: message.sender === 'customer' ? '#25D366' : 'rgb(230,230,230)', borderRadius: 6 }}>
+                                        <Text style={{ marginRight: 2 }} className="mx-2 leading-6">{message.text}</Text>
+                                        <Text className="mt-2 text-gray-600 text-[12px]" style={{ flexDirection: message.sender === 'customer' ? '' : 'text-right', }}>{moment(message.timestamp).format('LT')}</Text>
                                     </View>
                                 </View>
                             ))}

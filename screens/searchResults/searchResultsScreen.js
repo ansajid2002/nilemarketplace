@@ -18,7 +18,7 @@ import { Button } from "react-native";
 
 const { width } = Dimensions.get('window');
 
-const searchResultsList = [
+const searchResultsList = [  
 ];
 
 const sortByOptions = ['Date Published', 'Price:low to high', 'Price:high to low'];
@@ -118,8 +118,8 @@ const SearchResultsScreen = ({ navigation, route }) => {
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: Colors.whiteColor }}>
             <StatusBar translucent={false} backgroundColor={Colors.primaryColor} />
-            <View style={{ flex: 1 }}>
                 {header()}
+            <View className="mb-20" style={{ flex: 1 }}>
                 {searchResultsCountAndFilterIcon()}
                 {searchResultsInfo()}
             </View>
