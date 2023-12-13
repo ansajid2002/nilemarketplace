@@ -3,7 +3,6 @@ import { SafeAreaView, View, StatusBar, Dimensions, FlatList, ScrollView, StyleS
 import { Colors, Fonts, Sizes, } from "../../constants/styles";
 import { MaterialIcons, MaterialCommunityIcons, AntDesign } from '@expo/vector-icons';
 import { Snackbar } from 'react-native-paper';
-import { BottomSheet } from '@rneui/themed';
 import { TextInput as Input } from 'react-native-paper';
 import { Menu } from 'react-native-material-menu';
 import MultiSlider from "@ptomasroos/react-native-multi-slider";
@@ -14,6 +13,7 @@ import { useSelector } from "react-redux";
 // import { t } from "i18next";
 import { ActivityIndicator } from "react-native";
 import { Button } from "react-native";
+// import s from "../../assets/images"
 
 
 const { width } = Dimensions.get('window');
@@ -150,11 +150,31 @@ const SearchResultsScreen = ({ navigation, route }) => {
 
                         <Image
                             resizeMode="contain"
-                            source={{
-                                uri: `${AdminUrl}/uploads/UploadedProductsFromVendors/${item.images?.[0]}`,
-                            }}
+                            source={
+                                item.images.length === 0
+                                    ? require('../../assets/noimage.jpg')
+                                    : { uri: `${AdminUrl}/uploads/UploadedProductsFromVendors/${item.images[0]}` }
+                            }
+
+                            defaultSource={require('../../assets/noimage.jpg')}
                             className=" h-full w-full  "
                         />
+
+
+                        {/* <Image
+                            resizeMode="contain"
+                            source={
+                                item.images.length === 0
+                                    ? require('../../assets/noimage.jpg')
+                                    : { uri: `${AdminUrl}/uploads/UploadedProductsFromVendors/${item.images[0]}` }
+                            }
+
+                            defaultSource={require('../../assets/noimage.jpg')}
+
+                            style={{ width: '100%', height: undefined, aspectRatio: 4 / 4 }} className="rounded-md"
+                        /> */}
+
+
                     </View>
                     <View className="absolute -top-[1px] -right-[1px]">
                         {
@@ -261,7 +281,7 @@ const styles = StyleSheet.create({
         padding: Sizes.fixPadding * 1.5,
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor:"#fb7701",
+        backgroundColor: "#fb7701",
         // borderBottomLeftRadius: Sizes.fixPadding + 5.0,
         // borderBottomRightRadius: Sizes.fixPadding + 5.0,
     },
@@ -302,12 +322,7 @@ const styles = StyleSheet.create({
         elevation: 3.0,
         backgroundColor: Colors.whiteColor,
     },
-    bottomSheetWrapStyle: {
-        backgroundColor: Colors.whiteColor,
-        borderTopLeftRadius: Sizes.fixPadding + 5.0,
-        borderTopRightRadius: Sizes.fixPadding + 5.0,
-        paddingTop: Sizes.fixPadding + 5.0,
-    },
+ 
     sortByOptionWrapStyle: {
         borderWidth: 1.0,
         flex: 1,

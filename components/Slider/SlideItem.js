@@ -14,8 +14,6 @@ import { Image } from 'react-native';
 import { debounce } from 'lodash';
 
 const SlideItem = ({ width, item, singleData, heightCheck, redirect }) => {
-    const [loading, setLoading] = useState(true);
-    const [imageError, setImageError] = useState(false);
 
     if (width === undefined) {
         width = Dimensions.get('window').width;
@@ -40,21 +38,17 @@ const SlideItem = ({ width, item, singleData, heightCheck, redirect }) => {
                 redirect != '' ?
                     <TouchableOpacity onPress={debounce(handleImagePress, 500)}>
 
-                        {imageError && (
-                            <ActivityIndicator size="large" color="gray" style={styles.loadingIndicator} />
-                        )}
+
                         <Image
                             resizeMode="contain"
                             source={
-                                { uri: item?.url }
-                            }
+          item?.url
+            ? { uri: item.url }
+            : require('../../assets/noimage.jpg') // fallback local image
+        }
+                            defaultSource={require('../../assets/noimage.jpg')}
+
                             style={{ width, height: "100%" }}
-                            onLoadStart={() => setLoading(true)}
-                            onLoadEnd={() => setLoading(false)}
-                            onError={() => {
-                                setLoading(false);
-                                setImageError(true);
-                            }}
                         />
                     </TouchableOpacity> :
                     <Animated.Image

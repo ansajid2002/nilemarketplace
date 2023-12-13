@@ -297,8 +297,8 @@ const ChatsScreen = ({ navigation }) => {
         const myCart = t("My Cart")
         return (
             <View>
-            <HeaderBar title={myCart} goback={false} cartEnable={false} navigation={navigation} />
-            <View className="border-t border-gray-400"></View>
+                <HeaderBar title={myCart} goback={false} cartEnable={false} navigation={navigation} />
+                <View className="border-t border-gray-400"></View>
             </View>
         )
     }
@@ -314,24 +314,21 @@ const ChatsScreen = ({ navigation }) => {
                     onPress={debounce(() => navigation.push('ProductDetail', item), 500)}
                 >
                     <View style={{ width: 110, overflow: 'hidden' }} className="m-auto ">
-                        
+
 
 
                         <Image
-                        resizeMode="contain"
-                        source={
-    imageError || !item?.images || item.images.length === 0
-      ? require('../../assets/noimage.jpg')
-      : { uri: `${AdminUrl}/uploads/UploadedProductsFromVendors/${item.images[0]}` }
-  }
+                            resizeMode="contain"
+                            source={
+                                item.images.length === 0
+                                    ? require('../../assets/noimage.jpg')
+                                    : { uri: `${AdminUrl}/uploads/UploadedProductsFromVendors/${item.images[0]}` }
+                            }
 
-                        style={{ width: '100%', height: undefined, aspectRatio: 4 / 4 }} className="rounded-md"
+                            defaultSource={require('../../assets/noimage.jpg')}
 
-                        onError={() => {
-                            setLoading(false);
-                            setImageError(true);
-                        }}
-                    />
+                            style={{ width: '100%', height: undefined, aspectRatio: 4 / 4 }} className="rounded-md"
+                        />
 
                         <View style={styles.container} className=" mt-1 rounded-md">
                             <View style={styles.buttonContainer} className="mx-auto">
@@ -381,8 +378,8 @@ const ChatsScreen = ({ navigation }) => {
                         {/* <Text className="text-base text-gray-600 my-0.5">Published By : <Text className="text-black">{`${item?.vendorInfo?.vendorname}`}</Text></Text> */}
                         <View className="flex-row items-center">
 
-                        <Text className="text-[14px] text-gray-600 mt-1">{t("Expected  By : ")}</Text>
-                        <Text className="text-[#00008b] font-medium text-base">{formattedDate}</Text>
+                            <Text className="text-[14px] text-gray-600 mt-1">{t("Expected  By : ")}</Text>
+                            <Text className="text-[#00008b] font-medium text-base">{formattedDate}</Text>
                         </View>
                     </View>
 

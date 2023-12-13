@@ -485,7 +485,7 @@ const ProductDetailScreen = ({ navigation, route }) => {
             <View className=" w-full">
                 {
                     !IsMatchedCartProduct ?
-                        loading ? <View className="p-2"><ActivityIndicator color={'blue'} size={'large'} /></View> : <TouchableOpacity className="  bg-[#fb7701] mb-2 w-full justify-center  rounded-full mx-auto flex-row items-center" onPress={async () => {
+                        loading ? <View className="p-2"><ActivityIndicator color={'blue'} size={'large'} /></View> : <TouchableOpacity className="  bg-[#fb7701]   w-full justify-center    flex-row items-center" onPress={async () => {
                             const updatedSingleData = {
                                 ...singleData,
                                 added_quantity: 1, // This adds the productToAdd object as a property of singleData
@@ -547,7 +547,7 @@ const ProductDetailScreen = ({ navigation, route }) => {
                         }}>
                             <MaterialCommunityIcons name="cart" size={25} color={Colors.whiteColor} />
 
-                            <Text className="text-xl h-12 px-4 py-2.5 text-white font-bold rounded ">{t("Add To Cart")}</Text>
+                            <Text className="text-xl h-12 px-2 py-2.5 text-white font-bold rounded ">{t("Add To Cart")}</Text>
 
                         </TouchableOpacity>
                         :
@@ -596,15 +596,15 @@ const ProductDetailScreen = ({ navigation, route }) => {
     }
 
     function postedByInfo(singleData) {
-        const placeholderImageUrl = 'https://www.sfb1425.uni-freiburg.de/wp-content/uploads/2021/05/dummy-profile-pic-360x360.png';
+        // const placeholderImageUrl = 'https://www.sfb1425.uni-freiburg.de/wp-content/uploads/2021/05/dummy-profile-pic-360x360.png';
 
         const { brand_logo, brand_name } = singleData?.vendorInfo
-        let imageUrl = placeholderImageUrl; // Default to the placeholder image URL
+        let imageUrl = ''; // Define imageUrl variable
 
-        if (brand_logo && brand_logo?.images[0]) {
-            // If brand logo image exists, use its URL
-            imageUrl = `${AdminUrl}/uploads/vendorBrandLogo/${brand_logo?.images[0]}`;
-        }
+  if (brand_logo && brand_logo.images && brand_logo.images.length > 0) {
+    // If brand logo image exists, try setting imageUrl to its URL
+    imageUrl = `${AdminUrl}/uploads/vendorBrandLogo/${brand_logo.images[0]}`;
+  }
 
         return (
             <View style={{ margin: Sizes.fixPadding * 1.0, }}>
@@ -625,7 +625,8 @@ const ProductDetailScreen = ({ navigation, route }) => {
                 </View>
                 <View style={{ marginTop: Sizes.fixPadding, flexDirection: 'row', alignItems: 'center' }}>
                     <Image
-                        source={{ uri: imageUrl }}
+                         source={imageUrl ? { uri: imageUrl } : require('../../assets/images/dummy-profile-pic.png')}
+        
                         style={{ width: 45.0, height: 45.0, borderRadius: 20.0 }}
                     />
                     <Text style={{ marginLeft: Sizes.fixPadding - 1.0, ...Fonts.blackColor14SemiBold }}>

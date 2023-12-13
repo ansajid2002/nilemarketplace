@@ -28,6 +28,8 @@ const CheckoutPreview = ({ route, navigation }) => {
   const [selectedPaymentMode, setSelectedPaymentMode] = useState('Stripe');
   const [showLoader, setshowLoader] = useState(false);
   const [couponCode, setCouponCode] = useState('');
+  const [imageError, setImageError] = useState(false);
+
 
   const handleCouponCodeChange = (event) => {
     setCouponCode(event.target.value);
@@ -281,7 +283,20 @@ const CheckoutPreview = ({ route, navigation }) => {
 
         >
           <View style={{ width: 110, overflow: 'hidden' }} className="m-auto ">
-            <Image resizeMode='contain' source={{ uri: `${AdminUrl}/uploads/UploadedProductsFromVendors/${item?.images[0]}` }} style={{ width: '100%', height: undefined, aspectRatio: 4 / 4, resizeMode: 'contain' }} className="rounded-md" />
+          <Image
+                            resizeMode="contain"
+                            source={
+                                item.images.length === 0
+                                    ? require('../../assets/noimage.jpg')
+                                    : { uri: `${AdminUrl}/uploads/UploadedProductsFromVendors/${item.images[0]}` }
+                            }
+
+                            defaultSource={require('../../assets/noimage.jpg')}
+
+                            style={{ width: '100%', height: undefined, aspectRatio: 4 / 4 }} className="rounded-md"
+
+                           
+                        />
 
           </View>
 
@@ -390,7 +405,7 @@ const CheckoutPreview = ({ route, navigation }) => {
           </TouchableOpacity> */}
         </View>
       </View>
-      <TouchableOpacity className=" mb-16" onPress={debounce(() => handlePaymentSubmit(), 500)}>
+      <TouchableOpacity className="" onPress={debounce(() => handlePaymentSubmit(), 500)}>
         <Text className="text-[22px] bg-[#00008b] py-2 pb-3 mt-2 tracking-widest rounded-md  text-center text-white font-bold">
           {` ${t("Pay")} ${c_symbol} ${cartTotalSellingPrice - cartDiscount + (cartTotalDeliveryCharges || 0)}`} </Text>
       </TouchableOpacity>
