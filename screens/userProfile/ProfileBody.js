@@ -5,6 +5,7 @@ import { useNavigation } from '@react-navigation/native';
 import { HeaderBar } from '../../constant';
 import { debounce } from 'lodash';
 import { useSelector } from 'react-redux';
+import defaultImage from "../../assets/images/dummy-profile-pic.png"
 
 export const ProfileBody = ({
     name,
@@ -16,7 +17,7 @@ export const ProfileBody = ({
 }) => {
     const navigation = useNavigation()
 
-
+console.log(profileImage,"profileimg");
     return (
         <View>
             {accountName ? (
@@ -29,6 +30,7 @@ export const ProfileBody = ({
                 }}>
                 <Image
                     source={{ uri: profileImage }}
+                    defaultSource={defaultImage}
                     style={{
                         resizeMode: 'cover',
                         width: 80,

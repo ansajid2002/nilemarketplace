@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { View } from "react-native";
+import { View ,Text} from "react-native";
 import * as Font from "expo-font";
 import { Colors } from "../constants/styles";
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -30,12 +30,12 @@ const LoadingScreen = ({ navigation }) => {
             // Navigate to the appropriate screen based on AsyncStorage data
             if (customerDataAsync) {
                 dispatch(updateCustomerData(a))
-                navigation.push("Home")
+                navigation.replace("Home")
             } else {
                 if (onboarding === 1) {
-                    navigation.navigate('Login');
+                    navigation.replace('Login');
                 } else {
-                    navigation.navigate('Onboarding');
+                    navigation.replace('Onboarding');
                 }
             }
         }
@@ -44,7 +44,8 @@ const LoadingScreen = ({ navigation }) => {
     }, []);
 
     return (
-        <View style={{ flex: 1, backgroundColor: Colors.whiteColor }} />
+        <View className="bg-blue-600" style={{ flex: 1, backgroundColor: Colors.whiteColor }} >
+        </View>
     )
 }
 

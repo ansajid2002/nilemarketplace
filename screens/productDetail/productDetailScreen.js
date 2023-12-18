@@ -623,7 +623,9 @@ const ProductDetailScreen = ({ navigation, route }) => {
                     </TouchableOpacity>
 
                 </View>
-                <View style={{ marginTop: Sizes.fixPadding, flexDirection: 'row', alignItems: 'center' }}>
+                <TouchableOpacity
+                 onPress={debounce(() => navigation.push('UserProfile', { item: singleData }), 500)}
+                 style={{ marginTop: Sizes.fixPadding, flexDirection: 'row', alignItems: 'center' }}>
                     <Image
                          source={imageUrl ? { uri: imageUrl } : require('../../assets/images/dummy-profile-pic.png')}
         
@@ -632,7 +634,7 @@ const ProductDetailScreen = ({ navigation, route }) => {
                     <Text style={{ marginLeft: Sizes.fixPadding - 1.0, ...Fonts.blackColor14SemiBold }}>
                         {brand_name}
                     </Text>
-                </View>
+                </TouchableOpacity>
             </View>
         )
     }

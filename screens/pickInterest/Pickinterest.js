@@ -10,16 +10,16 @@ import { updateCustomerData } from '../../store/slices/customerData';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import FullPageLoader from '../../components/FullPageLoader';
 import { SafeAreaView } from 'react-native';
+import { CategoryPlaceholder, PickinterestPlaceholder } from '../../components/Skeleton';
 
 const Pickinterest = ({ navigation }) => {
-  const { categoriesData } = useSelector((store) => store.categories);
   const dispatch = useDispatch()
+  const [allcategorydata,setAllcategorydata] = useState(null)
   const [interest, setInterest] = useState([]);
   const [selectedInterests, setSelectedInterests] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const minSelectedInterests = 5; // Minimum number of interests to select
-  // const [selectedInterests, setSelectedInterests] = useState([]);
+  const minSelectedInterests = 5;
 
   const continueButtonEnabled = selectedInterests?.length >= minSelectedInterests;
 
@@ -30,9 +30,31 @@ const Pickinterest = ({ navigation }) => {
     setSelectedInterests(interest.map((single) => single.category_id));
   }, [interest]);
 
+
+  const getCatgeory = async () => {
+    try {
+        const response = await fetch(`${AdminUrl}/api/getCatgeory`);
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        const data = await response.json();
+        setAllcategorydata(data);
+
+    } catch (error) {
+        console.error('Error:', error);
+    }
+};
+
+
+  useEffect(() => {
+    if (!allcategorydata) {
+      getCatgeory()
+    }
+  },[])
+
   const handleInterest = (category_id) => {
     // Find the clicked category in categoriesData
-    const clickedCategory = categoriesData.find(
+    const clickedCategory = allcategorydata.find(
       (category) => category.category_id === category_id
     );
 
@@ -119,8 +141,12 @@ const Pickinterest = ({ navigation }) => {
 
           <HeaderBar goback={true} navigation={navigation} title={`Pick Interest (${selectedInterests?.length}/${minSelectedInterests})`} />
           <ScrollView style={styles.scrollView} className="mt-2">
+            
+            {
+              !allcategorydata ? <PickinterestPlaceholder/> : 
+            
             <View style={styles.categoriesContainer}>
-              {categoriesData.map((single) => {
+              {allcategorydata?.map((single) => {
                 const { category_id, category_name, category_image_url } = single;
 
                 return (
@@ -153,7 +179,7 @@ const Pickinterest = ({ navigation }) => {
                   </TouchableOpacity>
                 );
               })}
-            </View>
+            </View> }
           </ScrollView>
           <View className={`rounded-full mb-2 mx-2 ${continueButtonEnabled ? 'bg-[#fb7701]' : 'bg-gray-400'}`}>
             <TouchableOpacity className=" mx-auto flex-row items-center"

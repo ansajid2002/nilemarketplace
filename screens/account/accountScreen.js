@@ -131,10 +131,10 @@ const AccountScreen = ({ navigation }) => {
 
     function logoutOption() {
         return (
-            <TouchableOpacity
+            <TouchableOpacity onPress={debounce(() => setShowLogoutDialog(true), 500)}
                 activeOpacity={0.9}
 
-                className="ml-2 px-4 py-4"
+                className="ml-2 px-4 py-4 "
                 style={{ flexDirection: 'row', alignItems: 'center' }}
             >
                 <Image
@@ -142,7 +142,7 @@ const AccountScreen = ({ navigation }) => {
                     source={require('../../assets/images/icons/logout.png')}
                     style={{ width: 18.0, height: 18.0, resizeMode: 'contain' }}
                 />
-                <TouchableOpacity onPress={debounce(() => setShowLogoutDialog(true), 500)}>
+                <TouchableOpacity >
 
                     <Text style={{ marginLeft: Sizes.fixPadding, ...Fonts.primaryColor14SemiBold }}>{t("Logout")}</Text>
                 </TouchableOpacity>
@@ -240,13 +240,9 @@ const AccountScreen = ({ navigation }) => {
     function accountOptionsSort({ icon, option, navigateTo }) {
         if (option === "Become a Seller") {
             return (
-                <TouchableOpacity
+                <TouchableOpacity className=""
                     activeOpacity={0.9}
-
-                    style={{ flexDirection: 'row', alignItems: 'center', margin: Sizes.fixPadding * 2.0 }}
-                >
-                    {icon}
-                    <TouchableOpacity onPress={debounce(async () => {
+                    onPress={debounce(async () => {
                         setLoading(true);
                         try {
                             const externalURL = 'https://admin.nilegmp.com/seller'; // Replace with your URL
@@ -260,7 +256,11 @@ const AccountScreen = ({ navigation }) => {
                             console.error('Error opening URL:', error);
                         }
                         setLoading(false);
-                    }, 500)} className="flex-row ">
+                    }, 500)}
+                    style={{ flexDirection: 'row', alignItems: 'center', padding: Sizes.fixPadding * 2.0 }}
+                >
+                    {icon}
+                    <TouchableOpacity  className="flex-row ">
                         <Text className="" style={{ marginLeft: Sizes.fixPadding, ...Fonts.blackColor14SemiBold }}>
                             {t(`${option}`)}
                         </Text>
@@ -273,11 +273,8 @@ const AccountScreen = ({ navigation }) => {
             return (
                 <TouchableOpacity
                 activeOpacity={0.9}
-
-                style={{ flexDirection: 'row', alignItems: 'center', margin: Sizes.fixPadding * 2.0 }}
-            >
-                {icon}
-                <TouchableOpacity onPress={debounce(async () => {
+                className=""
+                onPress={debounce(async () => {
                     setLoading(true);
                     try {
                         const externalURL = 'https://stg.nilegmp.com/company/about-us'; // Replace with your URL
@@ -291,7 +288,11 @@ const AccountScreen = ({ navigation }) => {
                         console.error('Error opening URL:', error);
                     }
                     setLoading(false);
-                }, 500)} className="flex-row ">
+                }, 500)}
+                style={{ flexDirection: 'row', alignItems: 'center', padding: Sizes.fixPadding * 2.0 }}
+            >
+                {icon}
+                <TouchableOpacity  className="flex-row ">
                     <Text className="" style={{ marginLeft: Sizes.fixPadding, ...Fonts.blackColor14SemiBold }}>
                         {t(`${option}`)}
                     </Text>
@@ -303,12 +304,9 @@ const AccountScreen = ({ navigation }) => {
         else if (option === "Contact us") {
             return (
                 <TouchableOpacity
+                className=""
                 activeOpacity={0.9}
-
-                style={{ flexDirection: 'row', alignItems: 'center', margin: Sizes.fixPadding * 2.0 }}
-            >
-                {icon}
-                <TouchableOpacity onPress={debounce(async () => {
+                onPress={debounce(async () => {
                     setLoading(true);
                     try {
                         const externalURL = 'https://stg.nilegmp.com/company/contact-us'; // Replace with your URL
@@ -322,7 +320,11 @@ const AccountScreen = ({ navigation }) => {
                         console.error('Error opening URL:', error);
                     }
                     setLoading(false);
-                }, 500)} className="flex-row ">
+                }, 500)}
+                style={{ flexDirection: 'row', alignItems: 'center', padding: Sizes.fixPadding * 2.0 }}
+            >
+                {icon}
+                <TouchableOpacity  className="flex-row ">
                     <Text className="" style={{ marginLeft: Sizes.fixPadding, ...Fonts.blackColor14SemiBold }}>
                         {t(`${option}`)}
                     </Text>
@@ -334,15 +336,16 @@ const AccountScreen = ({ navigation }) => {
         return (
             <TouchableOpacity
                 activeOpacity={0.9}
-
-                style={{ flexDirection: 'row', alignItems: 'center', margin: Sizes.fixPadding * 2.0, }}
-            >
-                {icon}
-                <TouchableOpacity onPress={debounce(() => {
+                className=""
+                onPress={debounce(() => {
                     setLoading(true)
                     navigation.push(navigateTo, navigateTo == "EditProfile" && customerData)
                     setLoading(false)
-                }, 500)} className="flex-row ">
+                }, 500)}
+                style={{ flexDirection: 'row', alignItems: 'center', padding: Sizes.fixPadding * 2.0, }}
+            >
+                {icon}
+                <TouchableOpacity  className="flex-row ">
                     <Text style={{ marginLeft: Sizes.fixPadding, ...Fonts.blackColor14SemiBold }}>
                         {t(`${option}`)}
                     </Text>

@@ -93,7 +93,7 @@ const InboxChatScreen = ({ route, navigation }) => {
 
             // Parse the response or handle success as needed
             const responseData = await response.json();
-            console.log('Message sent successfully:', responseData);
+            // console.log('Message sent successfully:', responseData);
 
             // Update the local state or trigger a reload of messages if needed
             const updatedMessages = [...messages, { text: newMessage, sender: 'customer', timestamp: moment().format() }];
@@ -190,6 +190,7 @@ const InboxChatScreen = ({ route, navigation }) => {
                 value={newMessage}
                 keyboardType='web-search'
                 onChangeText={(text) => setNewMessage(text)}
+                onSubmitEditing={handleSendMessage}
               />
               <TouchableOpacity onPress={handleSendMessage} style={{ marginLeft: 10, padding: 8, backgroundColor: '#25D366', borderRadius: 5 }}>
                 {/* <Text style={{ color: 'white' }}>Send</Text> */}

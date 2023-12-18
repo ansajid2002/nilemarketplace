@@ -8,6 +8,7 @@ import {
     Platform,
     ScrollView,
     ActivityIndicator,
+    FlatList,
 } from 'react-native';
 import { AdminUrl } from '../constant';
 import { useNavigation } from '@react-navigation/native';
@@ -148,6 +149,7 @@ const ProductItem = ({ item }) => {
     const [imageError, setImageError] = useState(false);
 
     return (
+        
         <TouchableComponent onPress={handlePress}>
             <View style={{ padding: 5 }} className="border w-full border-gray-200">
                 <View>
@@ -208,9 +210,6 @@ const ProductItem = ({ item }) => {
                         </View>
                     }
 
-
-
-
                     <View style={{ flexDirection: 'row', alignItems: 'center', paddingTop: 5 }}>
                         <StarRating
                             enable={false}
@@ -225,33 +224,66 @@ const ProductItem = ({ item }) => {
                             <Text style={{ fontSize: 14, color: 'green' }}>({reviewText})</Text>
                         )}
                     </View>
-                </View>
+                </View> 
             </View>
         </TouchableComponent>
     );
 };
 
-const ProductListing = ({ title, productList }) => {
+const ProductListing = ({ title,loading, productList,loadMoreProducts}) => {
+
+
+
+
     const { t } = useTranslation();
     const memoizedProductList = useMemo(() => productList, [productList]);
-    return (
-        <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-            {title !== '' && <Text className="text-lg font-bold text-gray-900 px-3 py-4">{t(`${title}`)}</Text>}
-            <View style={styles.productContainer}>
-                {
-                    memoizedProductList ? memoizedProductList.map((item, index) => (
-                        <View key={index} className="w-1/2">
-                            <ProductItem item={item} />
-                        </View>
+    const keyExtractor = (item, index) => (item ? item.id.toString() : index.toString());
 
-                    )) : [1, 2, 3, 4].map(item =>
-                        <View key={item} className="w-1/2 relative right-[1px]">
-                            <ProductSkeleton />
-                        </View>
-                    )
-                }
-            </View>
-        </ScrollView>
+    const renderItemOrSkeleton = ({ item }) => {
+        if (item) {
+            return (
+                <View className="w-1/2">
+                    <ProductItem item={item} />
+                </View>
+            )
+        }
+    };
+
+    const emptyListItem = () => ({});
+    const data = useMemo(() => {
+        // Create a list with 'null' placeholders for the skeletons
+
+        const skeletonArray = Array(4).fill(null);
+        return memoizedProductList ? [...memoizedProductList, ...skeletonArray] : skeletonArray;
+    }, [memoizedProductList]);
+    return (
+        <View style={styles.container} >
+            {title !== '' && <Text className="text-lg font-bold text-gray-900 px-3 py-4">{t(`${title}`)}</Text>}
+
+            {
+                data ? (
+                    <View>
+                    <FlatList
+                        data={data}
+                        renderItem={renderItemOrSkeleton}
+                        keyExtractor={keyExtractor}
+                        numColumns={2} // Adjust as needed
+                        onEndReached={loadMoreProducts}
+                        onEndReachedThreshold={0.6}
+                    />
+                     {loading && <Text className="py-64 bg-red-600">Loading...</Text>}
+                    </View>
+                ) : (
+                    <View className="flex-row flex-wrap my-10">
+                        {[1, 2, 3, 4].map(item => (
+                            <View key={item} className="w-1/2 relative right-[1px]">
+                                <ProductSkeleton />
+                            </View>
+                        ))}
+                    </View>
+                )
+            }
+        </View>
     );
 };
 
@@ -259,6 +291,7 @@ const styles = StyleSheet.create({
     container: {
         backgroundColor: "#fff",
         marginBottom: 10,
+        
     },
     productContainer: {
         flexDirection: 'row',

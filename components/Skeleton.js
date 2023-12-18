@@ -59,6 +59,23 @@ export const CategoryPlaceholder = () => {
         </View>
     );
 };
+export const PickinterestPlaceholder = () => {
+    return (
+        <View>
+            <View className="flex flex-row flex-wrap justify-center gap-4 mt-2">
+                {
+                    [1, 2, 3, 4, 5, 6,7,8,9,10].map((item, i) => {
+                        return <View key={i} style={{ padding: 10 }}>
+                            {/* Text Placeholder */}
+                            <ShimmerPlaceHolder width={80} height={80} style={{ borderRadius: 50 }} shimmerColors={['#ffcf87', '#ddd', '#ffcf87']} />
+                            <ShimmerPlaceHolder width={70} height={8} style={{ marginTop: 10 }} className="mx-auto rounded-sm" shimmerColors={['#ffcf87', '#ddd', '#ffcf87']} />
+                        </View>
+                    })
+                }
+            </View>
+        </View>
+    );
+};
 export const ServicesPlaceholder = () => {
     return (
         <View className="mt-4">

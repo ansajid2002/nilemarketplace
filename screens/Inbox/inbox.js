@@ -55,9 +55,6 @@ const Inbox = ({ navigation }) => {
 
     const renderConversationItem = ({ item }) => {
 
-        console.log("item");
-        console.log(item);
-        console.log("item end");
         return (
 
 <TouchableOpacity onPress={() => navigation.navigate('InboxChatScreen', { data: item.vendorDetails })}>
@@ -70,7 +67,7 @@ const Inbox = ({ navigation }) => {
 
                 <View>
                     <Text style={{ fontSize: 18, fontWeight: 'bold' }}>{item.vendorDetails?.brand_name || 'hello'}</Text>
-                    <Text>{item.lastMessages?.[0].content || 'hey'}</Text>
+                    <Text>{item.lastMessage?.content || 'hey'}</Text>
                 </View>
             </View>
         </TouchableOpacity>

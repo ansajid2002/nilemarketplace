@@ -11,7 +11,6 @@ export const productformsSchema = Yup.object({
     // .min(1, 'At least one image is required')
     // .required('At least one image is required'),
 
-
     ad_title: Yup.string().min(2).max(25).required("Please enter Ad Title"),
     price: Yup.number()
         .typeError("Enter a valid Price") // Display this error message if the input is not a number

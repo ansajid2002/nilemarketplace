@@ -165,11 +165,16 @@ const HomeScreen = () => {
 
     const fetchNewArrivals = useCallback(async () => {
         try {
+            console.log("fetchNewArrivals");
             const newArrivalsResponse = await fetch(`${AdminUrl}/api/newArrivals/${customerId}`);
+            console.log(newArrivalsResponse,"newArrivalsResponse");
             if (!newArrivalsResponse.ok) {
                 throw new Error(`HTTP error! Status: ${newArrivalsResponse.status}`);
             }
             const newArrivalsData = await newArrivalsResponse.json();
+            console.log("newArrivals");
+            console.log(newArrivalsData);
+            console.log("newArrivals");
             setNewArrivals(newArrivalsData);
 
             // Save the new data and timestamp to AsyncStorage
@@ -202,7 +207,7 @@ const HomeScreen = () => {
                     console.log('backend');
                     // Fetch new recommended products data if there is no stored data or if it's expired
                     await fetchRecommendedProducts();
-                    fetchNewArrivals()
+                    await fetchNewArrivals()
 
                 }
             } catch (error) {

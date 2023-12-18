@@ -10,8 +10,8 @@ import { debounce } from 'lodash';
 
 
 // import Config from "react-native-config";
-export const AdminUrl = "http://192.168.1.6:3001";
 // export const AdminUrl = "https://admin.nilegmp.com";
+export const AdminUrl = "http://192.168.1.9:3001";
 
 // export const AdminUrl = ADMINURL
 // api.js
