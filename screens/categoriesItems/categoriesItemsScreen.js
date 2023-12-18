@@ -15,6 +15,7 @@ import { loaderOff, loaderOn } from "../../store/slices/counterslice";
 import { ActivityIndicator } from "react-native";
 import { SubcategoryPlaceholder } from "../../components/Skeleton";
 import { BottomSheetModalProvider, BottomSheetModal, BottomSheetBackdrop } from "@gorhom/bottom-sheet";
+import renderItemOrSkeleton from "../../components/ProductList2";
 const { width } = Dimensions.get('window');
 
 const CategoriesItemsScreen = React.memo(({ navigation, route }) => {
@@ -24,8 +25,12 @@ const CategoriesItemsScreen = React.memo(({ navigation, route }) => {
     const [productsDataBackend, setProducts] = useState(null)
     const [filterProductsBACKEND, setFilteredProducts] = useState(null)
 
-    const { categoryId, categoryName, subcategory_name, featureddatatoshow } = route.params
+    const [page, setPage] = useState(1);
+    const [pageloading, setPageloading] = useState(true);
+    const [hasMore, setHasMore] = useState(true);
 
+    const { categoryId, categoryName, subcategory_name, featureddatatoshow } = route.params
+    console.log(subcategory_name);
     const { t } = useTranslation()
 
     const [filterlabel, setFilterlabel] = useState()
@@ -297,10 +302,10 @@ const CategoriesItemsScreen = React.memo(({ navigation, route }) => {
     const getProductsbysubcategory = async (subcategoryname) => {
         setProducts(null)
         setFilteredProducts(null)
-
+        setPageloading(true);
         try {
             const response = await fetch(`${AdminUrl}/api/getProductBySubcategories?subcat=${subcategoryname.replace(/[^\w\s]/g, "")
-                .replace(/\s/g, "")}&currency=${currencyCode}&category=${categoryName.replace(/[^\w\s]/g, "")
+                .replace(/\s/g, "")}&pageNumber=${page}&pageSize=10&currency=${currencyCode}&category=${categoryName.replace(/[^\w\s]/g, "")
                     .replace(/\s/g, "")}`);
 
             if (!response.ok) {
@@ -308,19 +313,43 @@ const CategoriesItemsScreen = React.memo(({ navigation, route }) => {
             }
 
             const data = await response.json();
+            console.log(data, "data");
+            if (data?.AllProducts.length > 0) {
+                setProducts(prevProducts => {
+                    if (prevProducts) {
+                        return [...prevProducts, ...data?.AllProducts];
+                    } else {
+                        return [...data?.AllProducts];
+                    }
+                });
+                setFilteredProducts(prevProducts => {
+                    if (prevProducts) {
+                        return [...prevProducts, ...data?.AllProducts];
+                    } else {
+                        return [...data?.AllProducts];
+                    }
+                });
+                setHasMore(true); // If data is fetched and not an empty array, set hasMore to true
+            } else {
+                setFilteredProducts([])
+                setHasMore(false); // If response is an empty array, set hasMore to false
+
+            }
+
+
             console.log(data);
-            // setSubcategoryData((prevData) => [...prevData, ...data.AllProducts]);
-            setProducts(data?.AllProducts)
-            setFilteredProducts(data?.AllProducts)
-            // You can dispatch or process the data here as needed.
+
         } catch (error) {
             console.error('Error:', error);
+        } finally {
+            setPageloading(false);
         }
     };
 
+    console.log(featureddatatoshow);
     useEffect(() => {
-        featureddatatoshow ? getProductsbysubcategory(selectedsubcategory) : getProductsbysubcategory('All')
-    }, [])
+        selectedsubcategory  ? getProductsbysubcategory(selectedsubcategory) : getProductsbysubcategory('All')
+    }, [page])
 
     const CustomSliderMarker = ({ currentValue }) => (
         <View style={{ alignItems: 'center' }}>
@@ -356,16 +385,22 @@ const CategoriesItemsScreen = React.memo(({ navigation, route }) => {
         []
     );
 
+    const loadMoreProducts = () => {
+        setPageloading(true);
+        if (hasMore) { // Check if there is more data to fetch
+            console.log("LOADING MORE PRODUCTS=============================================================================");
+            setPage(prevPage => prevPage + 1);
+        }
+        else {
+            console.log("##################### NO MORE PRODUCTS TO BE FETCHED ####################################################");
+        }
+    };
+
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: Colors.whiteColor }}>
             <StatusBar translucent={false} backgroundColor={Colors.primaryColor} />
-            {header()}
-            {filtersInfo2()}
-            <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
-                {categoryInfo()}
-                {divider()}
-                {availableProductsInfo()}
-            </ScrollView>
+
+            {availableProductsInfo()}
             <BottomSheetModalProvider>
                 <View style={containerStyles}>
                     <BottomSheetModal
@@ -491,6 +526,59 @@ const CategoriesItemsScreen = React.memo(({ navigation, route }) => {
         </SafeAreaView>
     )
 
+    function availableProductsInfo() {
+        return (
+            <View>
+                <HeaderBar goback={true} title={t(`${route.params.categoryName ? route.params.categoryName : "sbcategory"}`)} navigation={navigation} />
+
+                {!filterProductsBACKEND ? (
+                    <View className="flex-row items-center  m-auto mt-24">
+                        <ActivityIndicator size="large" color="orange" />
+                        {/* <Text className="text-gray-400 ml-2 text-[14px]">Fetching Location Data...</Text> */}
+                    </View>
+                )  : (
+                    <View>
+                        {/* <ProductListing title={selectedsubcategory} productList={filterProductsBACKEND} /> */}
+                        <FlatList
+                            data={filterProductsBACKEND}
+                            renderItem={ renderItemOrSkeleton
+                            }
+                            keyExtractor={(item, index) => index.toString()}
+                            numColumns={2} // Adjust as needed
+                            onEndReached={filterProductsBACKEND?.length > 10 && loadMoreProducts}
+                            onEndReachedThreshold={0.1}
+                            ListFooterComponent={() => (
+                                <View className="">
+                                    {
+                                        (pageloading && hasMore) &&
+                                        <View className="my-8">
+                                            <ActivityIndicator size="large" color={"#00008b"} />
+                                        </View>
+                                    }
+                                    {
+                                        filterProductsBACKEND.length === 0 &&
+                                        <View className="">
+                        <Image resizeMode="contain" className="h-[150px] w-[150px] mx-auto" source={require('../../assets/images/empty-folder.png')} />
+                        <Text className="text-center text-xl ">{t("No Product Found !")}</Text>
+                    </View>
+                                    }
+                                </View>
+                            )}
+                            ListHeaderComponent={() => (
+                                <View>
+
+                                    {filtersInfo2()}
+                                    {categoryInfo()}
+                                    {divider()}
+                                </View>
+                            )}
+                        />
+                    </View>
+                )}
+            </View>
+        )
+    }
+
 
     function filtersInfo2() {
         return (
@@ -523,28 +611,6 @@ const CategoriesItemsScreen = React.memo(({ navigation, route }) => {
                             }, 500)}><Text className="text-[15px] text-blue-800   mr-0.5 font-medium ">{t("Clear all")}</Text></TouchableOpacity>
                             : ""}
                 </ScrollView>
-            </View>
-        )
-    }
-
-    function availableProductsInfo() {
-        return (
-            <View>
-                {!filterProductsBACKEND ? (
-                    <View className="flex-row items-center  m-auto mt-24">
-                        <ActivityIndicator size="large" color="#00008b" />
-                        {/* <Text className="text-gray-400 ml-2 text-[14px]">Fetching Location Data...</Text> */}
-                    </View>
-                ) : filterProductsBACKEND.length === 0 ? (
-                    <View className="mt-10">
-                        <Image resizeMode="contain" className="h-[150px] w-[150px] mx-auto" source={require('../../assets/images/empty-folder.png')} />
-                        <Text className="text-center text-xl ">{t("No Product Found !")}</Text>
-                    </View>
-                ) : (
-                    <View>
-                        <ProductListing title={selectedsubcategory} productList={filterProductsBACKEND} />
-                    </View>
-                )}
             </View>
         )
     }
@@ -610,10 +676,6 @@ const CategoriesItemsScreen = React.memo(({ navigation, route }) => {
         )
     }
 
-    function header() {
-        return (
-            <HeaderBar goback={true} title={t(`${route.params.categoryName ? route.params.categoryName : "sbcategory"}`)} navigation={navigation} />)
-    }
 })
 
 const styles = StyleSheet.create({

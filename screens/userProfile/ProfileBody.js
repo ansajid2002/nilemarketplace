@@ -20,9 +20,7 @@ export const ProfileBody = ({
 console.log(profileImage,"profileimg");
     return (
         <View>
-            {accountName ? (
-                <HeaderBar goback={true} title={accountName} navigation={navigation} />
-            ) : null}
+            
 
             <View
                 style={{

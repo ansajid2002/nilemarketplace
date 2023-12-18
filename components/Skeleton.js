@@ -12,11 +12,12 @@ const windowWidth = Dimensions.get('window').width;
 
 export const ProductSkeleton = () => {
     return (
-        <View style={styles.productContainer} >
-            <View style={{ width: '100%', height: 200, borderRadius: 8, backgroundColor: '#e0e0e0' }}></View>
+        <View style={styles.productContainer} className="mb-4" >
+            <View style={{ width: '100%', height: 250, borderRadius: 5, backgroundColor: '#e0e0e0' }}></View>
             <View style={{ flexDirection: 'column', marginLeft: 2, justifyContent: 'center', marginTop: 10 }}>
-                <Text style={{ width: '70%', height: 10, backgroundColor: '#e0e0e0' }}></Text>
-                <Text style={{ width: '50%', height: 10, marginTop: 4, backgroundColor: '#e0e0e0' }}></Text>
+                <Text className="rounded-md my-0.5" style={{ width: '90%', height: 15, backgroundColor: '#e0e0e0' }}></Text>
+                <Text className="rounded-md my-0.5" style={{ width: '60%', height: 10, marginTop: 4, backgroundColor: '#e0e0e0' }}></Text>
+                <Text className="rounded-md" style={{ width: '50%', height: 20, marginTop: 4, backgroundColor: '#e0e0e0' }}></Text>
             </View>
         </View>
     );
@@ -136,7 +137,6 @@ export const ProductcategoryPlaceholder = () => {
 const styles = StyleSheet.create({
     productContainer: {
         width: windowWidth / 2 - 10, // Adjust spacing as needed
-        marginBottom: 3, // Adjust spacing as needed
         backgroundColor: 'white',
         borderColor: 'lightgray',
         borderRadius: 5,
