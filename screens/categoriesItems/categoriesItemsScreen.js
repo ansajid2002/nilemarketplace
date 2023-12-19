@@ -9,7 +9,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { debounce } from "lodash";
 import { AdminUrl, HeaderBar } from "../../constant";
-import ProductListing from "../../components/ProductList";
 import { Image } from "react-native";
 import { loaderOff, loaderOn } from "../../store/slices/counterslice";
 import { ActivityIndicator } from "react-native";
@@ -229,7 +228,6 @@ const CategoriesItemsScreen = React.memo(({ navigation, route }) => {
             filteredProducts = filterByPriceRange(productsDataBackend, filterparameters);
         }
 
-        console.log(filteredProducts, 'fil');
 
         return filteredProducts;
     };
@@ -289,9 +287,7 @@ const CategoriesItemsScreen = React.memo(({ navigation, route }) => {
         }
     }, [subcategoriesToShow])
 
-    useEffect(() => {
-        // updateState({ availableProducts: filterapplied() })
-    }, [filterparameters])
+
 
     const handleSubcategoryProduct = (subcat_name) => {
         setSelectedsubcategory(subcat_name)
@@ -330,14 +326,19 @@ const CategoriesItemsScreen = React.memo(({ navigation, route }) => {
                     }
                 });
                 setHasMore(true); // If data is fetched and not an empty array, set hasMore to true
-            } else {
-                setFilteredProducts([])
+            }
+            
+            else {
+                console.log("ENTERED ELSEeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee");
+                console.log(filterProductsBACKEND,productsDataBackend,"timer start");
+                !filterProductsBACKEND && setFilteredProducts([])
+                !productsDataBackend && setProducts([])
+                filterProductsBACKEND?.length===0 && setFilteredProducts([])
+                productsDataBackend?.length===0 && setProducts([])
+                console.log(filterProductsBACKEND,productsDataBackend,"timer end");
                 setHasMore(false); // If response is an empty array, set hasMore to false
 
             }
-
-
-            console.log(data);
 
         } catch (error) {
             console.error('Error:', error);
@@ -346,10 +347,16 @@ const CategoriesItemsScreen = React.memo(({ navigation, route }) => {
         }
     };
 
+console.log("SAJID start");
+console.log(filterProductsBACKEND);
+console.log("SAJID end");
+
     console.log(featureddatatoshow);
     useEffect(() => {
         selectedsubcategory  ? getProductsbysubcategory(selectedsubcategory) : getProductsbysubcategory('All')
     }, [page])
+
+
 
     const CustomSliderMarker = ({ currentValue }) => (
         <View style={{ alignItems: 'center' }}>
@@ -531,9 +538,9 @@ const CategoriesItemsScreen = React.memo(({ navigation, route }) => {
             <View>
                 <HeaderBar goback={true} title={t(`${route.params.categoryName ? route.params.categoryName : "sbcategory"}`)} navigation={navigation} />
 
-                {!filterProductsBACKEND ? (
+                {!filterProductsBACKEND && filterProductsBACKEND?.length===0 ? (
                     <View className="flex-row items-center  m-auto mt-24">
-                        <ActivityIndicator size="large" color="orange" />
+                        <ActivityIndicator size="large" color="red" />
                         {/* <Text className="text-gray-400 ml-2 text-[14px]">Fetching Location Data...</Text> */}
                     </View>
                 )  : (
@@ -545,7 +552,7 @@ const CategoriesItemsScreen = React.memo(({ navigation, route }) => {
                             }
                             keyExtractor={(item, index) => index.toString()}
                             numColumns={2} // Adjust as needed
-                            onEndReached={filterProductsBACKEND?.length > 10 && loadMoreProducts}
+                            onEndReached={filterProductsBACKEND?.length > 9 && loadMoreProducts}
                             onEndReachedThreshold={0.1}
                             ListFooterComponent={() => (
                                 <View className="">
@@ -556,7 +563,7 @@ const CategoriesItemsScreen = React.memo(({ navigation, route }) => {
                                         </View>
                                     }
                                     {
-                                        filterProductsBACKEND.length === 0 &&
+                                        filterProductsBACKEND?.length === 0 &&
                                         <View className="">
                         <Image resizeMode="contain" className="h-[150px] w-[150px] mx-auto" source={require('../../assets/images/empty-folder.png')} />
                         <Text className="text-center text-xl ">{t("No Product Found !")}</Text>

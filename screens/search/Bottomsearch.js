@@ -61,6 +61,8 @@ const Bottomsearch = ({navigation}) => {
                         onChangeText={(text) => handleSearchInput(text)}
                         onFocus={handleFocus}
                         onBlur={handleBlur}
+                        onSubmitEditing={() => {handleKeywordPress(searchInput)}}
+
                     />
 
 

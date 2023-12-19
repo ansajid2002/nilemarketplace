@@ -601,9 +601,9 @@ const ProductDetailScreen = ({ navigation, route }) => {
         const { brand_logo, brand_name } = singleData?.vendorInfo
         let imageUrl = ''; // Define imageUrl variable
 
-  if (brand_logo && brand_logo.images && brand_logo.images.length > 0) {
+  if (brand_logo && brand_logo?.images && brand_logo?.images.length > 0) {
     // If brand logo image exists, try setting imageUrl to its URL
-    imageUrl = `${AdminUrl}/uploads/vendorBrandLogo/${brand_logo.images[0]}`;
+    imageUrl = `${AdminUrl}/uploads/vendorBrandLogo/${brand_logo?.images[0]}`;
   }
 
         return (

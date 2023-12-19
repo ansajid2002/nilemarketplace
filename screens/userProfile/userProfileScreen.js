@@ -60,6 +60,7 @@ const UserProfileScreen = ({ navigation, route }) => {
                         });
                         setHasMore(true); // If data is fetched and not an empty array, set hasMore to true
                     } else {
+                        !VendorProductList &&  setVendorProductList([])
                         setHasMore(false); // If response is an empty array, set hasMore to false
                     }
                 } else {
@@ -134,12 +135,12 @@ const UserProfileScreen = ({ navigation, route }) => {
                         renderItem={renderItemOrSkeleton}
                         keyExtractor={(item, index) => index.toString()}
                         numColumns={2} // Adjust as needed
-                        onEndReached={loadMoreProducts}
+                        onEndReached={VendorProductList?.length > 9 && loadMoreProducts}
                         onEndReachedThreshold={0.1}
                         ListFooterComponent={() => (
                             <View className="">
                                 {
-
+                               
                                     (pageloading && hasMore) &&
                                     <View className="my-8">
                                         <ActivityIndicator size="large" color={"#00008b"} />
@@ -148,9 +149,16 @@ const UserProfileScreen = ({ navigation, route }) => {
                                 {
                                     !hasMore &&
                                     <View className="flex-row items-center justify-center">
-                                        <Text className="text-xl my-10 text-gray-300 font-bold">No More Products</Text>
+                                        <Text className="text-xl my-10 text-gray-300 font-bold">No More Products!</Text>
                                     </View>
                                 }
+                                {
+                            VendorProductList?.length === 0 &&
+                            <View className="">
+                                <Image resizeMode="contain" className="h-[150px] w-[150px] mx-auto" source={require('../../assets/images/empty-folder.png')} />
+                                <Text className="text-center text-xl ">{t("No Product Found !")}</Text>
+                            </View>
+                        }
                             </View>
                         )}
                         ListHeaderComponent={() => (

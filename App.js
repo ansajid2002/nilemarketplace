@@ -101,7 +101,7 @@ const App = () => {
                 <MaterialCommunityIcons name="home-outline" size={28} color={color} />
               ),
               headerShown: false,
-              tabBarLabel: 'Home',
+              tabBarLabel: `${t("Home")}`,
               tabBarLabelStyle: { fontSize: 10, marginBottom: 4, marginTop: 1, fontWeight: '600' },
             }}
           />
