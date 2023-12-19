@@ -54,85 +54,6 @@ const ProductDetailScreen = ({ navigation, route }) => {
         setinFavorite(isFavorite);
     }, [wishlistItems]);
 
-    const handleToggleWishlist = async () => {
-
-        if (!customerId) return navigation.navigate("Login")
-        updateState({ inFavorite: !inFavorite, showSnackBar: true, })
-
-        const { category, subcategory, uniquepid, vendorid } = singleData;
-        const replacecategory = category
-            .replace(/[^\w\s]/g, "")
-            .replace(/\s/g, "");
-        const replacesubcategory = subcategory
-            .replace(/[^\w\s]/g, "")
-            .replace(/\s/g, "");
-        const requestData = {
-            customer_id: customerId,
-            vendor_id: vendorid,
-            uniquepid,
-            category: replacecategory,
-            subcategory: replacesubcategory,
-            label: selectLabel,
-            mrp: mrpData,
-            sellingprice: sellingPriceData
-        };
-
-        if (!inFavorite) {
-            dispatch(addItemToWishlist({ ...singleData }))
-
-            if (customerId) {
-                try {
-
-                    // Make a POST request to your API endpoint for updating the cart
-                    const response = await fetch(`${AdminUrl}/api/addWishlist`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify(requestData),
-                    });
-
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! Status: ${response.status}`);
-                    }
-
-                    const responseData = await response.json();
-                    setinFavorite(true)
-
-                } catch (error) {
-                    console.error('Error updating wishlist:', error);
-                }
-            }
-        }
-        else {
-            dispatch(removeItemFromWishlist({ ...singleData }))
-            if (customerId) {
-                try {
-
-                    // Make a POST request to your API endpoint for updating the wishlist
-                    const response = await fetch(`${AdminUrl}/api/removeFromWishlist`, {
-                        method: 'DELETE',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify(requestData),
-                    });
-
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! Status: ${response.status}`);
-                    }
-
-                    const responseData = await response.json();
-                    setinFavorite(false)
-                } catch (error) {
-                    console.error('Error updating wishlist:', error);
-                }
-            }
-        }
-
-        dispatch(toggleFavouriteProductslice(singleData))
-    }
-
     const [state, setState] = useState({
         showSnackBar: false,
         productImages: singleData.images,
@@ -330,7 +251,7 @@ const ProductDetailScreen = ({ navigation, route }) => {
     const bottomSheetModalRef = useRef(null);
 
     // variables
-    const snapPoints = useMemo(() => ['25%', '50%', '90%'], []);
+    const snapPoints = useMemo(() => ["40%", '50%', '90%'], []);
 
     // callbacks
     const handlePresentModalPress = useCallback(() => {
@@ -346,11 +267,26 @@ const ProductDetailScreen = ({ navigation, route }) => {
         }
     }, []);
 
-    const attributesSpecification = singleData.attributes_specification;
 
-    const filteredAttributes = Object.fromEntries(
-        Object.entries(attributesSpecification).filter(([key]) => key !== 'status')
-    );
+
+    let updatedAttributesSpecification = singleData?.attributes_specification;
+
+    // Check if updatedAttributesSpecification exists and has the 'specificaitons' property
+    if (updatedAttributesSpecification && updatedAttributesSpecification.specificaitons) {
+        const specificaitons = updatedAttributesSpecification.specificaitons;
+
+        if (Array.isArray(specificaitons)) {
+            specificaitons.forEach(({ label, Value }) => {
+                updatedAttributesSpecification[label] = Value;
+            });
+
+            delete updatedAttributesSpecification.specificaitons;
+        }
+
+    }
+
+    // Redefine updatedAttributesSpecification after performing operations
+    updatedAttributesSpecification = { ...updatedAttributesSpecification }; // Create a copy of the modified object
 
     const renderBackdrop = useCallback(
         (props) => <BottomSheetBackdrop {...props} />,
@@ -460,11 +396,13 @@ const ProductDetailScreen = ({ navigation, route }) => {
                                 </View>
                             }
                             <View>
-                                {
-                                    Object.entries(filteredAttributes).length > 0 ? <Text className="font-bold text-xl py-4">Specifications</Text> : <Text className="italic mt-4">No Specifications Available</Text>
-                                }
+                                {Object.entries(updatedAttributesSpecification).length > 0 ? (
+                                    <Text className="font-bold text-xl py-4">Specifications</Text>
+                                ) : (
+                                    <Text className="italic mt-4">No Specifications Available</Text>
+                                )}
 
-                                {Object.entries(filteredAttributes).map(([key, value]) => (
+                                {Object.entries(updatedAttributesSpecification).map(([key, value]) => (
                                     <View key={key} className="flex-row justify-between">
                                         <Text className="capitalize font-bold py-2 text-gray-500">{key}:</Text>
                                         <Text className="text-left">{value}</Text>
@@ -595,59 +533,56 @@ const ProductDetailScreen = ({ navigation, route }) => {
         )
     }
 
+
     function postedByInfo(singleData) {
         // const placeholderImageUrl = 'https://www.sfb1425.uni-freiburg.de/wp-content/uploads/2021/05/dummy-profile-pic-360x360.png';
+        if (singleData.vendorInfo) {
 
-        const { brand_logo, brand_name } = singleData?.vendorInfo
-        let imageUrl = ''; // Define imageUrl variable
 
-  if (brand_logo && brand_logo?.images && brand_logo?.images.length > 0) {
-    // If brand logo image exists, try setting imageUrl to its URL
-    imageUrl = `${AdminUrl}/uploads/vendorBrandLogo/${brand_logo?.images[0]}`;
-  }
+            const { brand_logo, brand_name } = singleData?.vendorInfo
+            let imageUrl = ''; // Define imageUrl variable
 
-        return (
-            <View style={{ margin: Sizes.fixPadding * 1.0, }}>
-                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <Text className="text-xl font-medium">
-                        {t('Posted By')}
-                    </Text>
+            if (brand_logo && brand_logo?.images && brand_logo?.images.length > 0) {
+                // If brand logo image exists, try setting imageUrl to its URL
+                imageUrl = `${AdminUrl}/uploads/vendorBrandLogo/${brand_logo?.images[0]}`;
+            }
+
+            return (
+                <View style={{ margin: Sizes.fixPadding * 1.0, }}>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <Text className="text-xl font-medium">
+                            {t('Posted By')}
+                        </Text>
+                        <TouchableOpacity
+                            onPress={debounce(() => navigation.push('UserProfile', { item: singleData }), 500)}
+                        >
+                            <Text
+                                style={{ ...Fonts.primaryColor14Bold }}
+                            >
+                                {t('View Profile')}
+                            </Text>
+                        </TouchableOpacity>
+
+                    </View>
                     <TouchableOpacity
                         onPress={debounce(() => navigation.push('UserProfile', { item: singleData }), 500)}
-                    >
-                        <Text
-                            style={{ ...Fonts.primaryColor14Bold }}
-                        >
-                            {t('View Profile')}
+                        style={{ marginTop: Sizes.fixPadding, flexDirection: 'row', alignItems: 'center' }}>
+                        <Image
+                            source={imageUrl ? { uri: imageUrl } : require('../../assets/images/dummy-profile-pic.png')}
+
+                            style={{ width: 45.0, height: 45.0, borderRadius: 20.0 }}
+                        />
+                        <Text style={{ marginLeft: Sizes.fixPadding - 1.0, ...Fonts.blackColor14SemiBold }}>
+                            {brand_name}
                         </Text>
                     </TouchableOpacity>
-
                 </View>
-                <TouchableOpacity
-                 onPress={debounce(() => navigation.push('UserProfile', { item: singleData }), 500)}
-                 style={{ marginTop: Sizes.fixPadding, flexDirection: 'row', alignItems: 'center' }}>
-                    <Image
-                         source={imageUrl ? { uri: imageUrl } : require('../../assets/images/dummy-profile-pic.png')}
-        
-                        style={{ width: 45.0, height: 45.0, borderRadius: 20.0 }}
-                    />
-                    <Text style={{ marginLeft: Sizes.fixPadding - 1.0, ...Fonts.blackColor14SemiBold }}>
-                        {brand_name}
-                    </Text>
-                </TouchableOpacity>
-            </View>
+            )
+        }
+        else return (
+            <View></View>
         )
-    }
 
-
-    function divider() {
-        return (
-            <View style={{
-                backgroundColor: Colors.lightGrayColor,
-                height: 2.0,
-                marginHorizontal: Sizes.fixPadding * 2.0,
-            }} />
-        )
     }
 
 

@@ -45,10 +45,10 @@ const HomeScreen = () => {
 
     const navigation = useNavigation();
     const { t } = useTranslation()
-    const { customerData } = useSelector((store) => store.userData)
     const cartItems = useSelector((state) => state.cart.cartItems);
     const { productsList } = useSelector((store) => store.products)
-
+    
+    const { customerData } = useSelector((store) => store.userData)
     const customerId = customerData[0]?.customer_id
 
     const getservicesData = async () => {
@@ -165,16 +165,11 @@ const HomeScreen = () => {
 
     const fetchNewArrivals = useCallback(async () => {
         try {
-            console.log("fetchNewArrivals");
             const newArrivalsResponse = await fetch(`${AdminUrl}/api/newArrivals/${customerId}`);
-            console.log(newArrivalsResponse,"newArrivalsResponse");
             if (!newArrivalsResponse.ok) {
                 throw new Error(`HTTP error! Status: ${newArrivalsResponse.status}`);
             }
             const newArrivalsData = await newArrivalsResponse.json();
-            console.log("newArrivals");
-            console.log(newArrivalsData);
-            console.log("newArrivals");
             setNewArrivals(newArrivalsData);
 
             // Save the new data and timestamp to AsyncStorage
@@ -322,14 +317,32 @@ const HomeScreen = () => {
                     {browseServicesInfo()}
 
                 </LinearGradient>
-                <View className="mt-4 bg-gray-200">
+                <View className="mt-4 ">
                     {
                         !customerId && <ProductListing title="Recommended Products" productList={productsList.slice(0, 10)} />
                     }
                     {
                         customerData?.length > 0 && <>
-                            <ProductListing title="Recommended Products" productList={recommendedProdutcs} />
-                            <ProductListing title="New Arrivals" productList={newArrivals} />
+                        <View>
+                        <View className="m-3 flex-row justify-between items-center">
+                            <Text className="font-bold text-lg">Recommended Products</Text>
+                            <TouchableOpacity onPress={() => {
+                                navigation.navigate("Channel",{recommended:true})
+                            }}>
+                            <MaterialIcons name="arrow-forward" size={30} /></TouchableOpacity>
+                        </View>
+                            <ProductListing title="" productList={recommendedProdutcs} />
+                        </View>
+                        <View>
+                        <View className="m-3 flex-row justify-between items-center">
+                            <Text className="font-bold text-lg">New Arrivals</Text>
+                            <TouchableOpacity onPress={() => {
+                                navigation.navigate("Channel",{arrivals:true})
+                            }}>
+                            <MaterialIcons name="arrow-forward" size={30} /></TouchableOpacity>
+                        </View>
+                            <ProductListing title="" productList={newArrivals} />
+                        </View>
                         </>
                     }
 

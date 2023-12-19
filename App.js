@@ -62,6 +62,7 @@ import productDetailScreen from "./screens/productDetail/productDetailScreen";
 import { BackHandler, Text, ToastAndroid } from 'react-native';
 import Inbox from './screens/Inbox/inbox';
 import InboxChatScreen from './screens/Inbox/InboxChatScreen';
+import Channels from './screens/channels/Channels';
 
 ///////////////////////////////////////FORM SCREENS///////////////////////////////////////
 
@@ -177,6 +178,7 @@ const App = () => {
             <Stack.Screen name="Onboarding" component={onboardingScreen} />
             <Stack.Screen name="Login" component={loginScreen} options={{ ...TransitionPresets.DefaultTransition }} />
             <Stack.Screen name="Register" component={registerScreen} />
+            <Stack.Screen name="Channel" component={Channels} />
             <Stack.Screen name="Verification" component={verificationScreen} />
             <Stack.Screen name="servicesList" component={ServicesList} />
             <Stack.Screen name="productsList" component={ProductsList} />
