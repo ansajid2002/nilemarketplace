@@ -60,7 +60,7 @@ const UserProfileScreen = ({ navigation, route }) => {
                         });
                         setHasMore(true); // If data is fetched and not an empty array, set hasMore to true
                     } else {
-                        !VendorProductList &&  setVendorProductList([])
+                        !VendorProductList && setVendorProductList([])
                         setHasMore(false); // If response is an empty array, set hasMore to false
                     }
                 } else {
@@ -122,7 +122,7 @@ const UserProfileScreen = ({ navigation, route }) => {
 
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
-            { vendorInfo ? (
+            {vendorInfo ? (
                 <HeaderBar goback={true} title={vendorInfo?.brand_name} navigation={navigation} />
             ) : null}
             {
@@ -140,7 +140,7 @@ const UserProfileScreen = ({ navigation, route }) => {
                         ListFooterComponent={() => (
                             <View className="">
                                 {
-                               
+
                                     (pageloading && hasMore) &&
                                     <View className="my-8">
                                         <ActivityIndicator size="large" color={"#00008b"} />
@@ -153,12 +153,12 @@ const UserProfileScreen = ({ navigation, route }) => {
                                     </View>
                                 }
                                 {
-                            VendorProductList?.length === 0 &&
-                            <View className="">
-                                <Image resizeMode="contain" className="h-[150px] w-[150px] mx-auto" source={require('../../assets/images/empty-folder.png')} />
-                                <Text className="text-center text-xl ">{t("No Product Found !")}</Text>
-                            </View>
-                        }
+                                    VendorProductList?.length === 0 &&
+                                    <View className="">
+                                        <Image resizeMode="contain" className="h-[150px] w-[150px] mx-auto" source={require('../../assets/images/empty-folder.png')} />
+                                        <Text className="text-center text-xl ">{t("No Product Found !")}</Text>
+                                    </View>
+                                }
                             </View>
                         )}
                         ListHeaderComponent={() => (
@@ -172,7 +172,7 @@ const UserProfileScreen = ({ navigation, route }) => {
                                     post={VendorProductList && VendorProductList?.length}
                                 />
                                 <ProfileButtons
-                                    id={0}
+                                    id={`${vendorInfo?.id}`}
                                     name={`${vendorInfo?.vendorname}`}
                                     accountName={`${vendorInfo?.brand_name} - Brand`}
                                     profileImage={imageUrl || null}

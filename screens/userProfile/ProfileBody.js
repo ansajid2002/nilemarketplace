@@ -71,7 +71,7 @@ export const ProfileBody = ({
     );
 };
 
-export const ProfileButtons = ({ phone, data }) => {
+export const ProfileButtons = ({ phone, data, id }) => {
     const navigation = useNavigation();
     const [follow, setFollow] = useState(follow);
     const { customerData } = useSelector((store) => store.userData)
@@ -114,7 +114,7 @@ export const ProfileButtons = ({ phone, data }) => {
                     //     const screenName = customerData?.length > 0 ? 'InboxChatScreen' : 'Login';
                     //     navigation.navigate(screenName, { data });
                     // }, 300)}
-                    onPress={debounce(() => navigation.navigate("Reviews", { item, selectedRating:3, data }), 500)}
+                    onPress={debounce(() => navigation.navigate("Reviews", { type: 'seller', vendor_id: id || null, selectedRating: 3, data }), 500)}
                 >
                     <View
                         style={{

@@ -9,11 +9,11 @@ const StarRating = ({ rating, onRatingChange, item, enable = true, size = '2xl',
     const [selectedRating, setSelectedRating] = useState(rating);
     const { vendor_id, customer_id, product_uniqueid, label } = item
     const [data, setData] = useState(ratingData || [])
-    const dispatch = useDispatch()
     const navigation = useNavigation()
+    console.log(item, 'item');
     const handleRatingPress = async (newRating, type) => {
         setSelectedRating(newRating);
-        onRatingChange(newRating); // Notify the parent component
+        onRatingChange(newRating);
 
         try {
             // Create the request data object
@@ -38,7 +38,7 @@ const StarRating = ({ rating, onRatingChange, item, enable = true, size = '2xl',
                 if (response.ok) {
                     // If the response status is okay, parse and handle the response data
                     // Alert the response
-                   
+
                     const data = await response.json()
                     setData(data?.data)
 
@@ -59,7 +59,7 @@ const StarRating = ({ rating, onRatingChange, item, enable = true, size = '2xl',
 
     useEffect(() => {
         setSelectedRating(rating)
-        enable && handleRatingPress(rating, 'nochange')
+        // enable && handleRatingPress(rating, 'nochange')
         console.log(enable, 're');
     }, [rating])
 
@@ -89,7 +89,7 @@ const StarRating = ({ rating, onRatingChange, item, enable = true, size = '2xl',
             </View>
             {
                 selectedRating > 0 && reviewButton && (
-                    <TouchableOpacity onPress={debounce(() => navigation.navigate("Reviews", { item, selectedRating, data }), 500)}>
+                    <TouchableOpacity onPress={debounce(() => navigation.navigate("Reviews", { item, vendor_id: vendor_id, selectedRating, data }), 500)}>
                         <Text style={styles.reviewLink}>{data?.review_text?.trim() != '' ? 'Edit Review' : 'Write a Review'}</Text>
                     </TouchableOpacity>
                 )

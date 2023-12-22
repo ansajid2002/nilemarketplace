@@ -12,16 +12,14 @@ import { updateReviewlistener } from "../../store/slices/reviewSlice";
 import { useTranslation } from "react-i18next";
 import { SafeAreaView } from "react-native";
 import { Colors } from "../../constants/styles";
-const MyOrdersScreen = ({ navigation }) => {
 
-
-  const { ordersData } = useSelector((store) => store.ordersdata);
+const MyOrdersScreen = ({ navigation, route }) => {
   const cartItems = useSelector((state) => state.cart.cartItems);
   const { customerData } = useSelector((store) => store.userData)
   // const { reviewItems } = useSelector((store) => store.reviews)
 
   const [myOrdersData, setMyOrdersData] = useState(null)
-  const [reviewItems,setReviewItems] = useState(null)
+  const [reviewItems, setReviewItems] = useState(null)
 
   const customerId = customerData[0]?.customer_id
 
@@ -34,7 +32,6 @@ const MyOrdersScreen = ({ navigation }) => {
   const handleRatingChange = (newRating) => {
     setRating(newRating);
   };
-
 
   const getAllCustomerOrder = async () => {
     setLoading(true)
@@ -58,7 +55,6 @@ const MyOrdersScreen = ({ navigation }) => {
       console.error('Error:', error);
     }
   };
-
 
   const fetchRatings = async () => {
     console.log("FETCHING__________________________________________________________");
@@ -85,14 +81,9 @@ const MyOrdersScreen = ({ navigation }) => {
       fetchRatings();
     }
 
-  }, [customer_id,myOrdersData,reviewItems]);
-
-
+  }, [customer_id, myOrdersData, reviewItems]);
 
   const renderitem = ({ item }) => {
-    console.log('item from myorders');
-    console.log(item);
-    console.log('item');
     const { product_name, order_status, product_image, product_uniqueid, label } = item;
     const ratingData = reviewItems?.find((ratingItem) => {
       // Convert the product_uniqueid to an integer for comparison
