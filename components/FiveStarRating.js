@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { View, TouchableOpacity, Text, StyleSheet, ToastAndroid } from 'react-native';
+import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
 import { AdminUrl } from '../constant';
 import { useNavigation } from '@react-navigation/native';
 import { debounce } from 'lodash';
 import { useDispatch } from 'react-redux';
-import { updateReviewlistener } from '../store/slices/reviewSlice';
 
 const StarRating = ({ rating, onRatingChange, item, enable = true, size = '2xl', reviewButton = true, ratingData, color = "#00008b" }) => {
     const [selectedRating, setSelectedRating] = useState(rating);
@@ -39,11 +38,11 @@ const StarRating = ({ rating, onRatingChange, item, enable = true, size = '2xl',
                 if (response.ok) {
                     // If the response status is okay, parse and handle the response data
                     // Alert the response
-                    {
-                        type !== "nochange" && ToastAndroid.showWithGravity('Thanks you for Rating', ToastAndroid.SHORT, ToastAndroid.BOTTOM);
-                    }
+                   
                     const data = await response.json()
-                    dispatch(updateReviewlistener(data?.data))
+                    setData(data?.data)
+
+                    // dispatch(updateReviewlistener(data?.data))
                 } else {
                     // If the response status is not okay, handle the error
                     console.log('Request failed with status:', response.status);
@@ -61,7 +60,13 @@ const StarRating = ({ rating, onRatingChange, item, enable = true, size = '2xl',
     useEffect(() => {
         setSelectedRating(rating)
         enable && handleRatingPress(rating, 'nochange')
+        console.log(enable, 're');
     }, [rating])
+
+    // console.log("item, selectedRating, data");
+    // product object ,no.of stars,review object
+    // console.log(item, selectedRating, data);
+    // console.log("item, selectedRating, data");
 
     return (
         <View>

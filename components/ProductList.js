@@ -187,7 +187,8 @@ const ProductItem = ({ item }) => {
                 <View style={{ padding: 1 }} className="py-2">
                     <Text numberOfLines={1}>{item?.ad_title}</Text>
 
-                    <View className="gap-2" style={{ flexDirection: 'row', alignItems: 'center', paddingTop: 8 }}>
+                    <View className="gap-1" style={{ flexDirection: 'row', alignItems: 'center', paddingTop: 8 }}>
+                    <Text className="text-lg font-medium text-gray-700">Price:</Text>
                         {discountPercentageSimple && discountPercentageSimple > 0 && (
                             <Text className="text-lg" style={{ color: 'green' }}>-{discountPercentageSimple?.toFixed(2)}%</Text>
                         )}
@@ -222,7 +223,7 @@ const ProductItem = ({ item }) => {
                             color={`text-green-800`}
                         />
                         {parseInt(reviewText) > 0 && (
-                            <Text style={{ fontSize: 14, color: 'green' }}>({reviewText})</Text>
+                            <Text style={{ fontSize: 14, color: 'green' }}>{`(${reviewText})`}</Text>
                         )}
                     </View>
                 </View>

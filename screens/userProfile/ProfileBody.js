@@ -17,10 +17,10 @@ export const ProfileBody = ({
 }) => {
     const navigation = useNavigation()
 
-console.log(profileImage,"profileimg");
+    console.log(profileImage, "profileimg");
     return (
         <View>
-            
+
 
             <View
                 style={{
@@ -109,12 +109,13 @@ export const ProfileButtons = ({ phone, data }) => {
                     </View>
                 </TouchableOpacity>
                 <TouchableOpacity
-  style={{ width: '42%' }}
-  onPress={debounce(() => {
-    const screenName = customerData?.length > 0 ? 'InboxChatScreen' : 'Login';
-    navigation.navigate(screenName, { data });
-  }, 300)}
->
+                    style={{ width: '42%' }}
+                    // onPress={debounce(() => {
+                    //     const screenName = customerData?.length > 0 ? 'InboxChatScreen' : 'Login';
+                    //     navigation.navigate(screenName, { data });
+                    // }, 300)}
+                    onPress={debounce(() => navigation.navigate("Reviews", { item, selectedRating:3, data }), 500)}
+                >
                     <View
                         style={{
                             width: '100%',
@@ -125,7 +126,7 @@ export const ProfileButtons = ({ phone, data }) => {
                             alignItems: 'center',
                             borderRadius: 5,
                         }}>
-                        <Text>Message Seller</Text>
+                        <Text>Write a Review</Text>
                     </View>
                 </TouchableOpacity>
                 <View

@@ -329,7 +329,8 @@ const HomeScreen = () => {
                             <TouchableOpacity onPress={() => {
                                 navigation.navigate("Channel",{recommended:true})
                             }}>
-                            <MaterialIcons name="arrow-forward" size={30} /></TouchableOpacity>
+                            {/* <MaterialIcons name="arrow-forward" size={30} /> */}
+                            </TouchableOpacity>
                         </View>
                             <ProductListing title="" productList={recommendedProdutcs} />
                         </View>
@@ -339,7 +340,8 @@ const HomeScreen = () => {
                             <TouchableOpacity onPress={() => {
                                 navigation.navigate("Channel",{arrivals:true})
                             }}>
-                            <MaterialIcons name="arrow-forward" size={30} /></TouchableOpacity>
+                            {/* <MaterialIcons name="arrow-forward" size={30} /> */}
+                            </TouchableOpacity>
                         </View>
                             <ProductListing title="" productList={newArrivals} />
                         </View>

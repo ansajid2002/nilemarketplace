@@ -12,47 +12,89 @@ import { updateReviewlistener } from "../../store/slices/reviewSlice";
 import { useTranslation } from "react-i18next";
 import { SafeAreaView } from "react-native";
 import { Colors } from "../../constants/styles";
-
 const MyOrdersScreen = ({ navigation }) => {
+
+
   const { ordersData } = useSelector((store) => store.ordersdata);
   const cartItems = useSelector((state) => state.cart.cartItems);
   const { customerData } = useSelector((store) => store.userData)
-  const { reviewItems } = useSelector((store) => store.reviews)
+  // const { reviewItems } = useSelector((store) => store.reviews)
 
+  const [myOrdersData, setMyOrdersData] = useState(null)
+  const [reviewItems,setReviewItems] = useState(null)
+
+  const customerId = customerData[0]?.customer_id
 
   const [cartCount] = useState(cartItems?.length);
   const dispatch = useDispatch()
   const { t } = useTranslation()
   const [rating, setRating] = useState(0);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const customer_id = customerData?.[0]?.customer_id
   const handleRatingChange = (newRating) => {
     setRating(newRating);
   };
 
+
+  const getAllCustomerOrder = async () => {
+    setLoading(true)
+    if (customerId === null || customerId === undefined) {
+      // Handle the case when customerId is null or undefined, such as displaying an error message or taking appropriate action.
+      return;
+    }
+    try {
+      const response = await fetch(`${AdminUrl}/api/getAllCustomerOrder/${customerId}`);
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      setMyOrdersData(data)
+      // Log the data
+      // dispatch(addOrders(data))
+      // You can dispatch or process the data here as needed.
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+
+
   const fetchRatings = async () => {
+    console.log("FETCHING__________________________________________________________");
     try {
       const response = await fetch(`${AdminUrl}/api/fetchRatings?customer_id=${customer_id}`);
       if (response.ok) {
         const data = await response.json();
-        dispatch(updateReviewlistener(data?.ratingsData))
+        setReviewItems(data.ratingsData)
       } else {
         console.error('Failed to fetch ratings:', response.status);
       }
-      setLoading(false)
     } catch (error) {
       console.error('Error fetching ratings:', error);
+    } finally {
+      setLoading(false)
     }
   };
 
   useEffect(() => {
-    // Fetch ratings when the component mounts
-    fetchRatings();
-  }, [customer_id]);
+    if (!myOrdersData) {
+      getAllCustomerOrder()
+    }
+    if (myOrdersData && !reviewItems) {
+      fetchRatings();
+    }
+
+  }, [customer_id,myOrdersData,reviewItems]);
+
+
 
   const renderitem = ({ item }) => {
+    console.log('item from myorders');
+    console.log(item);
+    console.log('item');
     const { product_name, order_status, product_image, product_uniqueid, label } = item;
-    const ratingData = reviewItems.find((ratingItem) => {
+    const ratingData = reviewItems?.find((ratingItem) => {
       // Convert the product_uniqueid to an integer for comparison
       const itemProductUniqueId = parseInt(ratingItem.product_uniqueid, 10);
       if (label && ratingItem.label === label) {
@@ -64,8 +106,6 @@ const MyOrdersScreen = ({ navigation }) => {
       }
       return false;
     });
-
-
     return (
       <TouchableOpacity className="mt-4 border border-b-2 border-gray-300 py-4 border-t-0 border-l-0 border-r-0" onPress={() => navigation.navigate("order details", item)}>
         <View className="m-2 flex-row item  ">
@@ -159,7 +199,7 @@ const MyOrdersScreen = ({ navigation }) => {
     >
       {
         !loading ?
-          ordersData.length === 0 ? (
+          myOrdersData?.length === 0 ? (
             <SafeAreaView style={{ flex: 1, backgroundColor: Colors.whiteColor }} className="">
 
               <EmptyOrdersMessage />
@@ -167,7 +207,7 @@ const MyOrdersScreen = ({ navigation }) => {
           ) : (
             <SafeAreaView style={{ flex: 1, backgroundColor: Colors.whiteColor }} className="">
 
-              <FlatList ListHeaderComponent={<CustomHeader cartCount={cartCount} />} data={ordersData} renderItem={renderitem} keyExtractor={(item) => item.order_id} />
+              <FlatList ListHeaderComponent={<CustomHeader cartCount={cartCount} />} data={myOrdersData} renderItem={renderitem} keyExtractor={(item) => item.order_id} />
             </SafeAreaView>) : <FullPageLoader />
       }
     </View>

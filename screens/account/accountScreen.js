@@ -260,11 +260,11 @@ const AccountScreen = ({ navigation }) => {
                     style={{ flexDirection: 'row', alignItems: 'center', padding: Sizes.fixPadding * 2.0 }}
                 >
                     {icon}
-                    <TouchableOpacity  className="flex-row ">
+                    <View  className="flex-row ">
                         <Text className="" style={{ marginLeft: Sizes.fixPadding, ...Fonts.blackColor14SemiBold }}>
                             {t(`${option}`)}
                         </Text>
-                    </TouchableOpacity>
+                    </View>
 
                 </TouchableOpacity>
             )
@@ -292,11 +292,11 @@ const AccountScreen = ({ navigation }) => {
                 style={{ flexDirection: 'row', alignItems: 'center', padding: Sizes.fixPadding * 2.0 }}
             >
                 {icon}
-                <TouchableOpacity  className="flex-row ">
+                <View  className="flex-row ">
                     <Text className="" style={{ marginLeft: Sizes.fixPadding, ...Fonts.blackColor14SemiBold }}>
                         {t(`${option}`)}
                     </Text>
-                </TouchableOpacity>
+                </View>
 
             </TouchableOpacity>
             )
@@ -324,11 +324,11 @@ const AccountScreen = ({ navigation }) => {
                 style={{ flexDirection: 'row', alignItems: 'center', padding: Sizes.fixPadding * 2.0 }}
             >
                 {icon}
-                <TouchableOpacity  className="flex-row ">
+                <View  className="flex-row ">
                     <Text className="" style={{ marginLeft: Sizes.fixPadding, ...Fonts.blackColor14SemiBold }}>
                         {t(`${option}`)}
                     </Text>
-                </TouchableOpacity>
+                </View>
 
             </TouchableOpacity>
             )
@@ -345,14 +345,14 @@ const AccountScreen = ({ navigation }) => {
                 style={{ flexDirection: 'row', alignItems: 'center', padding: Sizes.fixPadding * 2.0, }}
             >
                 {icon}
-                <TouchableOpacity  className="flex-row ">
+                <View  className="flex-row ">
                     <Text style={{ marginLeft: Sizes.fixPadding, ...Fonts.blackColor14SemiBold }}>
                         {t(`${option}`)}
                     </Text>
                     {option === "Language" && <Text className="ml-3 font-bold text-sm tracking-wider">{`(${selectedLangname})`} </Text>}
                     {option === "Currency" && <Text className="ml-3 font-bold text-sm tracking-wider">{`(${currencyCode})`} </Text>}
                     {option === "Country / Region" && <Text className="ml-3 font-bold text-sm tracking-wider ">{`(${appcountry})`} </Text>}
-                </TouchableOpacity>
+                </View>
 
             </TouchableOpacity>
         );
@@ -376,6 +376,18 @@ const AccountScreen = ({ navigation }) => {
         } else if (picture) {
             placeholderImageUrl = picture
         }
+        // useEffect(() => {
+
+        //     if (picture) {
+        //       if (google_id && google_id.trim() !== "" || !picture.startsWith("https")) {
+        //         setImage(`${AdminUrl}/uploads/customerProfileImages/${picture}`);
+        //       } else {
+        //         setImage(picture);
+        //       }
+        //     } else {
+        //       setImage("/avatarplaceholder.png");
+        //     }
+        //   }, [customerData, picture, google_id]);
 
 
 
@@ -409,12 +421,7 @@ const AccountScreen = ({ navigation }) => {
 }
 
 const styles = StyleSheet.create({
-    headerWrapStyle: {
-        padding: Sizes.fixPadding * 2.0,
-        backgroundColor: Colors.primaryColor,
-        borderBottomLeftRadius: Sizes.fixPadding + 5.0,
-        borderBottomRightRadius: Sizes.fixPadding + 5.0,
-    },
+    
     accountInfoWrapStyle: {
         margin: Sizes.fixPadding * 2.0,
         flexDirection: 'row',

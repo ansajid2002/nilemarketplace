@@ -120,7 +120,6 @@ const ProductDetailScreen = ({ navigation, route }) => {
     const ShareProduct = ({ product }) => {
         const shareProduct = async () => {
 
-            console.log("SAJID ");
             try {
                 const sharedMessage = `Check out this product: ${product.ad_title}\n\nProduct URL: https://stg.nilegmp.com/product-detail?product=${product.prod_slug}&uniqueid=${product.uniquepid}`;
 
@@ -244,28 +243,6 @@ const ProductDetailScreen = ({ navigation, route }) => {
         }
     };
 
-    // state to dynamically set container styles
-    const [containerStyles, setContainerStyles] = useState({});
-
-    // ref
-    const bottomSheetModalRef = useRef(null);
-
-    // variables
-    const snapPoints = useMemo(() => ["40%", '50%', '90%'], []);
-
-    // callbacks
-    const handlePresentModalPress = useCallback(() => {
-        bottomSheetModalRef.current?.present();
-        setContainerStyles(styles.container);
-    }, []);
-
-    const handleSheetChanges = useCallback((index) => {
-        if (index >= 0) {
-            setContainerStyles(styles.container);
-        } else {
-            setContainerStyles({});
-        }
-    }, []);
 
 
 
@@ -335,15 +312,11 @@ const ProductDetailScreen = ({ navigation, route }) => {
                 <View >
                     <View className="relative">
                         <Slider singleData={singleData} />
-                        <View className="flex-row justify-between items-center absolute right-5 bottom-5">
-                            <TouchableOpacity className="flex-row bg-white justify-center items-center p-3 border border-gray-200 rounded-full shadow-full" onPress={handlePresentModalPress}>
-                                <MaterialCommunityIcons name="information" size={14} color={'blue'} />
-                                <Text className="text-blue-800 text-[14px] ml-1 tracking-wider font-bold">{t("Details")}</Text>
-                            </TouchableOpacity>
-                        </View>
+
                     </View>
 
                     {productDetail(singleData)}
+                    {moreDetails(singleData)}
                     {postedByInfo(singleData)}
                     <View className="border border-t-3 border-b-0 border-l-0 border-r-0 border-gray-200 p-4">
                         <ReviewComponent review={[]} item={singleData} />
@@ -355,68 +328,60 @@ const ProductDetailScreen = ({ navigation, route }) => {
 
             {chatcall(singleData)}
 
-            <BottomSheetModalProvider>
-                <View style={containerStyles}>
 
-                    <BottomSheetModal
-                        ref={bottomSheetModalRef}
-                        index={1}
-                        snapPoints={snapPoints}
-                        onChange={handleSheetChanges}
-                        backdropComponent={renderBackdrop}
-
-                        enableDismissOnPress={true}
-
-                    >
-                        <ScrollView className="p-4" showsVerticalScrollIndicator={false}>
-                            <View className="flex-row items-center">
-                                <Text className=" text-[14px] mb-2">Category : </Text>
-                                <Text className="font-medium text-base mb-2" >{singleData?.category}</Text>
-                            </View>
-                            <View className="flex-row items-center -mt-1 mb-3">
-                                <Text className=" text-[14px] mb-2">Subcategory : </Text>
-                                <Text className="font-medium text-base mb-2" >{singleData?.subcategory}</Text>
-                            </View>
-                            {/* <Text className="text-base">Category : </Text></Text> */}
-
-                            {
-                                singleData?.additionaldescription && singleData?.additionaldescription.length > 0 ? <View >
-                                    <Text className="font-bold text-base mb-2">Description</Text>
-                                    <Text className="leading-5">
-                                        {singleData?.additionaldescription}
-                                    </Text>
-                                </View> : <Text className="italic">No Description Available</Text>
-                            }
-                            {
-                                singleData?.keyfeatures && <View >
-                                    <Text className="font-bold text-xl py-4">Key Features</Text>
-                                    <Text>
-                                        {singleData.keyfeatures}
-                                    </Text>
-                                </View>
-                            }
-                            <View>
-                                {Object.entries(updatedAttributesSpecification).length > 0 ? (
-                                    <Text className="font-bold text-xl py-4">Specifications</Text>
-                                ) : (
-                                    <Text className="italic mt-4">No Specifications Available</Text>
-                                )}
-
-                                {Object.entries(updatedAttributesSpecification).map(([key, value]) => (
-                                    <View key={key} className="flex-row justify-between">
-                                        <Text className="capitalize font-bold py-2 text-gray-500">{key}:</Text>
-                                        <Text className="text-left">{value}</Text>
-                                    </View>
-                                ))}
-                            </View>
-                        </ScrollView>
-                    </BottomSheetModal>
-                </View>
-            </BottomSheetModalProvider>
 
         </SafeAreaView>
     )
 
+    function moreDetails() {
+        return (
+            <View className="m-4 ">
+
+
+                <View className="flex-row items-center">
+                    <Text className="  text-gray-500 mb-2 font-bold">Category : </Text>
+                    <Text className="font-medium text-base mb-2" >{singleData?.category}</Text>
+                </View>
+                <View className="flex-row items-center -mt-1 mb-3">
+                    <Text className=" text-gray-500 mb-2 font-bold">Subcategory : </Text>
+                    <Text className="font-medium text-base mb-2" >{singleData?.subcategory}</Text>
+                </View>
+                {/* <Text className="text-base">Category : </Text></Text> */}
+
+                {
+                    singleData?.additionaldescription && singleData?.additionaldescription.length > 0 ? <View >
+                        <Text className="font-bold text-xl mb-2">Description</Text>
+                        <Text className="leading-5">
+                            {singleData?.additionaldescription}
+                        </Text>
+                    </View> : <Text className="italic">No Description Available</Text>
+                }
+                {
+                    singleData?.keyfeatures && <View >
+                        <Text className="font-bold text-xl py-4">Key Features</Text>
+                        <Text>
+                            {singleData.keyfeatures}
+                        </Text>
+                    </View>
+                }
+                <View>
+                    {Object.entries(updatedAttributesSpecification).length > 0 ? (
+                        <Text className="font-bold text-xl py-4">Specifications</Text>
+                    ) : (
+                        <Text className="italic mt-4">No Specifications Available</Text>
+                    )}
+
+                    {Object.entries(updatedAttributesSpecification).map(([key, value]) => (
+                        <View key={key} className="flex-row items-center  space-x-2">
+                            <Text className="capitalize font-bold py-2 text-gray-500">{key} : </Text>
+                            <Text className="text-left">{value}</Text>
+                        </View>
+                    ))}
+                </View>
+
+            </View>
+        )
+    }
 
     function chatcall() {
         return (
@@ -550,16 +515,18 @@ const ProductDetailScreen = ({ navigation, route }) => {
             return (
                 <View style={{ margin: Sizes.fixPadding * 1.0, }}>
                     <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                        <Text className="text-xl font-medium">
+                        <Text className="text-xl font-bold">
                             {t('Posted By')}
                         </Text>
-                        <TouchableOpacity
-                            onPress={debounce(() => navigation.push('UserProfile', { item: singleData }), 500)}
+                        <TouchableOpacity className="flex-row items-center space-x-1"
+                            onPress={debounce(() => {
+                                const screenName = customerData?.length > 0 ? 'InboxChatScreen' : 'Login';
+                                navigation.navigate(screenName, { data: singleData?.vendorInfo });
+                            }, 300)}
                         >
-                            <Text
-                                style={{ ...Fonts.primaryColor14Bold }}
-                            >
-                                {t('View Profile')}
+                        <MaterialCommunityIcons name="chat" size={20} color="gray" />
+                            <Text className="text-base font-medium">
+                                {t('Message Seller')}
                             </Text>
                         </TouchableOpacity>
 
@@ -829,11 +796,13 @@ const priceSection = (discountPercentageSimple, mrp, sellingprice, c_symbol) => 
             </View>
             <View className="mx-4">
 
-                <View className="gap-2 flex-row items-center">
+                <View className="gap-1 flex-row items-center">
+                <Text className="text-lg font-medium text-gray-700">Price:</Text>
                     {discountPercentageSimple && discountPercentageSimple > 0 && (
                         <Text className="text-lg" style={{ color: 'green' }}>-{discountPercentageSimple?.toFixed(2)}%</Text>
                     )}
                     <View className="flex-row ">
+                        
                         <Text className="text-[14px] ml-1 font-medium">{`${c_symbol} `}</Text>
                         <Text className="text-gray-900 text-lg" style={{ fontWeight: 'bold' }}>
                             {`${sellingprice % 1 === 0 ? Math.trunc(sellingprice) : sellingprice}`}

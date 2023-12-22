@@ -4,7 +4,6 @@ import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import axios from 'axios'
 import { updateproductsList } from '../store/slices/productSlice'
-import { updateproductsListwishlist } from '../store/slices/wishlistSlice'
 import { addCarts, addItem, updateproductsListcart } from '../store/slices/cartSlice'
 import { AdminUrl, getVariantsOfCatSubcat } from '../constant'
 import { updatecategoriesList } from '../store/slices/categoriesSlice'
@@ -40,48 +39,7 @@ const Currencyconvertedfile = () => {
     }
   };
 
-  const getAllCustomerOrder = async () => {
-    if (customerId === null || customerId === undefined) {
-      // Handle the case when customerId is null or undefined, such as displaying an error message or taking appropriate action.
-      return;
-    }
-    try {
-      const response = await fetch(`${AdminUrl}/api/getAllCustomerOrder/${customerId}`);
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-
-      const data = await response.json();
-      // Log the data
-      dispatch(addOrders(data))
-      // You can dispatch or process the data here as needed.
-    } catch (error) {
-      console.error('Error:', error);
-    }
-  };
-
-  const getCustomerWishlist = async () => {
-    if (customerId === null || customerId === undefined) {
-      // Handle the case when customerId is null or undefined, such as displaying an error message or taking appropriate action.
-      return;
-    }
-    try {
-      const response = await fetch(`${AdminUrl}/api/wishlistdata?customer_id=${customerId}`);
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-
-      const data = await response.json();
-      // Log the data
-      dispatch(updateproductsListwishlist(data))
-      // dispatch(addOrders(data))
-      // You can dispatch or process the data here as needed.
-    } catch (error) {
-      console.error('Error:', error);
-    }
-  };
 
 
   useEffect(() => {
@@ -103,9 +61,7 @@ const Currencyconvertedfile = () => {
 
   useEffect(() => {
     getAllProducts();
-    getAllCustomerOrder()
-    getCustomerWishlist()
-  }, [customerId, currencyCode])
+  }, [customerId])
 
 
 

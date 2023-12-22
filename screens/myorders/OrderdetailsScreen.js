@@ -9,6 +9,7 @@ import Progress from '../../components/Progress';
 import moment from 'moment/moment';
 import { SafeAreaView } from 'react-native';
 import { Colors } from '../../constants/styles';
+import { debounce } from "lodash";
 
 const OrderdetailsScreen = ({ route }) => {
   const orderData = route.params
