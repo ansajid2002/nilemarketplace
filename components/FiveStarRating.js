@@ -10,7 +10,6 @@ const StarRating = ({ rating, onRatingChange, item, enable = true, size = '2xl',
     const { vendor_id, customer_id, product_uniqueid, label } = item
     const [data, setData] = useState(ratingData || [])
     const navigation = useNavigation()
-    console.log(item, 'item');
     const handleRatingPress = async (newRating, type) => {
         setSelectedRating(newRating);
         onRatingChange(newRating);
@@ -41,7 +40,6 @@ const StarRating = ({ rating, onRatingChange, item, enable = true, size = '2xl',
 
                     const data = await response.json()
                     setData(data?.data)
-
                     // dispatch(updateReviewlistener(data?.data))
                 } else {
                     // If the response status is not okay, handle the error

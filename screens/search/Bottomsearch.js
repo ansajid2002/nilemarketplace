@@ -1,7 +1,7 @@
 import { View, Text, ScrollView, StatusBar, SafeAreaView } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
 import { TouchableOpacity } from 'react-native'
-import { Feather,MaterialIcons,MaterialCommunityIcons } from '@expo/vector-icons'
+import { Feather, MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons'
 import { StyleSheet } from 'react-native'
 import { Colors, Sizes } from '../../constants/styles'
 import { useSelector } from 'react-redux'
@@ -11,7 +11,7 @@ import { AdminUrl } from '../../constant'
 import { debounce } from 'lodash'
 import { Keyboard } from "react-native";
 
-const Bottomsearch = ({navigation}) => {
+const Bottomsearch = ({ navigation }) => {
     const [searchInput, setSearchInput] = useState("")
     const [isFocused, setIsFocused] = useState(false);
     const [MatchingKeyword, setMatchingKeyword] = useState([]);
@@ -20,8 +20,8 @@ const Bottomsearch = ({navigation}) => {
     const inputRef = useRef(null);
 
     useEffect(() => {
-      // Focus the input once the component is mounted
-      inputRef.current.focus();
+        // Focus the input once the component is mounted
+        inputRef.current.focus();
     }, []);
 
 
@@ -45,7 +45,9 @@ const Bottomsearch = ({navigation}) => {
     };
 
     const handleKeywordPress = async (selectedKeyword) => {
-        navigation.navigate('SearchResults', selectedKeyword)
+        if (searchInput) {
+            navigation.navigate('SearchResults', selectedKeyword)
+        }
     };
 
 
@@ -54,14 +56,14 @@ const Bottomsearch = ({navigation}) => {
             <View style={styles.headerWrapStyle} className="bg-[#ffffff]">
                 <View className="relative">
                     <TextInput
-                      ref={inputRef}
+                        ref={inputRef}
                         className="h-9 border rounded-md bg-white py-1 pl-2 tracking-wider focus:ring-0 focus:outline-none active:ring-0  hover:ring-0 hover:outline-none"
                         placeholder={t('Search here')}
                         value={searchInput}
                         onChangeText={(text) => handleSearchInput(text)}
                         onFocus={handleFocus}
                         onBlur={handleBlur}
-                        onSubmitEditing={() => {handleKeywordPress(searchInput)}}
+                        onSubmitEditing={() => { handleKeywordPress(searchInput) }}
 
                     />
 
@@ -86,25 +88,25 @@ const Bottomsearch = ({navigation}) => {
         )
     }
 
-  return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: Colors.whiteColor }} className="">
+    return (
+        <SafeAreaView style={{ flex: 1, backgroundColor: Colors.whiteColor }} className="">
 
-    <StatusBar translucent={false} backgroundColor={Colors.primaryColor} />
-    {header()}
-        <ScrollView className="bg-white">
-                        {MatchingKeyword.length > 0 && MatchingKeyword.map((keyword, index) => (
-                            <TouchableOpacity key={index} onPress={debounce(() => handleKeywordPress(keyword), 500)}>
-                                <View style={styles.keywordContainer}>
-                                    <Feather name="arrow-up-right" size={24} color="black" />
-                                    <Text style={styles.keywordText}>{keyword}</Text>
-                                </View>
-                            </TouchableOpacity>
-                        ))}
-                    </ScrollView>
-    </SafeAreaView>
-  )
+            <StatusBar translucent={false} backgroundColor={Colors.primaryColor} />
+            {header()}
+            <ScrollView className="bg-white">
+                {MatchingKeyword.length > 0 && MatchingKeyword.map((keyword, index) => (
+                    <TouchableOpacity key={index} onPress={debounce(() => handleKeywordPress(keyword), 500)}>
+                        <View style={styles.keywordContainer}>
+                            <Feather name="arrow-up-right" size={24} color="black" />
+                            <Text style={styles.keywordText}>{keyword}</Text>
+                        </View>
+                    </TouchableOpacity>
+                ))}
+            </ScrollView>
+        </SafeAreaView>
+    )
 
-  
+
 }
 
 

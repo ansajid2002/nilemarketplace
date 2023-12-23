@@ -28,6 +28,7 @@ const Reviews = ({ navigation, route }) => {
 
     const fetchOrderRATING = async () => {
         try {
+            if (!rate?.id) return
             const response = await fetch(`${AdminUrl}/api/fetchRatings?rate_id=${rate?.id}`);
             if (response.ok) {
                 const data = await response.json();
@@ -35,7 +36,7 @@ const Reviews = ({ navigation, route }) => {
                 setreviewData(data?.ratingsData?.[0])
                 setReviewText(data?.ratingsData?.[0]?.review_text || '')
             } else {
-                console.error('Failed to fetch ratings:', response.status);
+                // console.error('Failed to fetch ratings:', response.status);
             }
         } catch (error) {
             console.error('Error fetching ratings:', error);
@@ -48,9 +49,8 @@ const Reviews = ({ navigation, route }) => {
 
     useEffect(() => {
         !reviewData && fetchOrderRATING()
-    }, [reviewData])
-    // const reviewData = reviewItems && reviewItems.find((rdata, i) => Number(rdata.product_uniqueid) == item.product_uniqueid)
-    // console.log(reviewItems.find((rdata, i) => Number(rdata.product_uniqueid) == item.product_uniqueid),"truefalse",item.product_uniqueid,data,item);
+    }, [reviewData, rate])
+
     const isReviewEmpty = reviewText?.trim() === '';
     const [formDataArray, setformDataArray] = useState([]);
     const [selectedImages, setSelectedImages] = useState([]);
@@ -66,7 +66,6 @@ const Reviews = ({ navigation, route }) => {
             setVendorId(route.params.vendor_id)
         } else {
             setVendorId(reviewData?.vendor_id || null)
-
         }
     }, [route])
     // console.log( route.params, ' route.params');
@@ -267,18 +266,20 @@ const Reviews = ({ navigation, route }) => {
         setShowSellerReview(true)
     }
 
-
     return (
         <SafeAreaView className="flex-1" >
-
             <HeaderBar title={showSellerReview ? "Review Seller" : "Review Product"} goback={true} navigation={navigation} />
             {
                 loader ? <FullPageLoader /> :
                     <>
-                        <View className="flex-row items-center bg-white ">
-                            <TouchableOpacity className={`flex-1 py-2 ${!showSellerReview && "bg-gray-200"} border border-gray-300 rounded-md m-2`} onPress={() => setShowSellerReview(false)} ><Text className={`text-center text-base  `}>Review Product</Text></TouchableOpacity>
-                            <TouchableOpacity className={`flex-1 py-2 ${showSellerReview && "bg-gray-200"} border  border-gray-300 rounded-md m-2`} onPress={() => handleSellerInfo()}><Text className={`text-center text-base  `}>Review Seller</Text></TouchableOpacity>
-                        </View>
+                        {
+                            route.params.type !== 'seller' && <View className="flex-row items-center bg-white ">
+                                <TouchableOpacity className={`flex-1 py-2 ${!showSellerReview && "bg-gray-200"} border border-gray-300 rounded-md m-2`} onPress={() => {
+                                    route.params.type !== 'seller' && setShowSellerReview(false)
+                                }} ><Text className={`text-center text-base  `}>Review Product</Text></TouchableOpacity>
+                                <TouchableOpacity className={`flex-1 py-2 ${showSellerReview && "bg-gray-200"} border  border-gray-300 rounded-md m-2`} onPress={() => handleSellerInfo()}><Text className={`text-center text-base  `}>Review Seller</Text></TouchableOpacity>
+                            </View>
+                        }
                         {
                             showSellerReview ?
                                 <SellerRating vendor_id={vendorSelleId} />

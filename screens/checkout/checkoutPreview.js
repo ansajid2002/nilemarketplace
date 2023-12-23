@@ -283,20 +283,20 @@ const CheckoutPreview = ({ route, navigation }) => {
 
         >
           <View style={{ width: 110, overflow: 'hidden' }} className="m-auto ">
-          <Image
-                            resizeMode="contain"
-                            source={
-                                item.images.length === 0
-                                    ? require('../../assets/noimage.jpg')
-                                    : { uri: `${AdminUrl}/uploads/UploadedProductsFromVendors/${item.images[0]}` }
-                            }
+            <Image
+              resizeMode="contain"
+              source={
+                item.images.length === 0
+                  ? require('../../assets/noimage.jpg')
+                  : { uri: `${AdminUrl}/uploads/UploadedProductsFromVendors/${item.images[0]}` }
+              }
 
-                            defaultSource={require('../../assets/noimage.jpg')}
+              defaultSource={require('../../assets/noimage.jpg')}
 
-                            style={{ width: '100%', height: undefined, aspectRatio: 4 / 4 }} className="rounded-md"
+              style={{ width: '100%', height: undefined, aspectRatio: 4 / 4 }} className="rounded-md"
 
-                           
-                        />
+
+            />
 
           </View>
 
@@ -332,8 +332,8 @@ const CheckoutPreview = ({ route, navigation }) => {
             </View>
             <View className="flex-row items-center">
 
-            <Text className="text-[13px] text-gray-600 my-0.5">{t("Expected Delivery By : ")}</Text>
-            <Text className="text-[#00008b] font-medium text-[15px]">{formattedDate}</Text>
+              <Text className="text-[13px] text-gray-600 my-0.5">{t("Expected Delivery By : ")}</Text>
+              <Text className="text-[#00008b] font-medium text-[15px]">{formattedDate}</Text>
             </View>
           </View>
 
@@ -381,7 +381,7 @@ const CheckoutPreview = ({ route, navigation }) => {
         </View>
 
       </View>
-      {applycoupon()}
+      {/* {applycoupon()} */}
       {Cartdetails()}
       <View className="my-1 mb-2 py-4 p-2 bg-white">
         {/* <View className="border w-full border-gray-300 my-3"></View> */}
@@ -415,7 +415,7 @@ const CheckoutPreview = ({ route, navigation }) => {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: Colors.whiteColor }} className="">
-    {
+      {
         showLoader && <FullScreenLoader />
       }
       <StripeProvider

@@ -5,11 +5,12 @@ import { MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { BottomSheet } from '@rneui/themed';
 import { debounce } from "lodash";
 import { useSelector } from "react-redux";
-import { HeaderBar } from "../../constant";
+import { AdminUrl, HeaderBar } from "../../constant";
 
 const AccountSettingsScreen = ({ navigation }) => {
     const { customerData } = useSelector((store) => store.userData)
-    const { family_name, given_name, city, country, picture } = customerData?.[0]
+    const { family_name, given_name, city, country, picture, google_id } = customerData?.[0]
+    const [profileImage, setImage] = useState('../../assets/avatarplaceholder.png');
 
     const [state, setState] = useState({
         family_name: 'Sajid Ansari',
@@ -18,6 +19,18 @@ const AccountSettingsScreen = ({ navigation }) => {
         password: '12345678901',
         showBottomSheet: false,
     })
+
+    useEffect(() => {
+        if (picture) {
+            if (google_id && google_id.trim() !== "" || !picture.startsWith("https")) {
+                setImage(`${AdminUrl}/uploads/customerProfileImages/${picture}`);
+            } else {
+                setImage(picture);
+            }
+        } else {
+            setImage('../../assets/avatarplaceholder.png');
+        }
+    }, [customerData, picture, google_id]);
 
     const updateState = (data) => setState((state) => ({ ...state, ...data }))
 

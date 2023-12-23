@@ -24,6 +24,8 @@ import { Colors } from '../../constants/styles';
 
 const EditProfile = ({ route, navigation }) => {
     const { given_name, family_name, email, bio, phone_number, verified_with, picture, google_id, customer_id } = route.params?.[0];
+    const [profileImage, setImage] = useState('../../assets/avatarplaceholder.png');
+
     const dispatch = useDispatch()
     const { t } = useTranslation()
     // State to manage the user profile
@@ -43,7 +45,6 @@ const EditProfile = ({ route, navigation }) => {
     const [loader, setloader] = useState(false);
     const [originalUserProfile, setOriginalUserProfile] = useState({ ...userProfile });
     const [formValueChanged, setFormValueChanged] = useState(false);
-    const [image, setImage] = useState('https://www.sfb1425.uni-freiburg.de/wp-content/uploads/2021/05/dummy-profile-pic-360x360.png');
     const [modalVisible, setModalVisible] = useState(false);
     const [imageOptions] = useState([
         { label: <AntDesign name="camera" size={24} color="white" />, value: 'camera' },
@@ -51,6 +52,20 @@ const EditProfile = ({ route, navigation }) => {
         // { label: <Feather name="trash" size={24} color="white" />, value: 'remove' },
     ]);
 
+    useEffect(() => {
+        if (picture) {
+            if (google_id && google_id.trim() !== "" || !picture.startsWith("https")) {
+                setImage(`${AdminUrl}/uploads/customerProfileImages/${picture}`);
+            } else {
+                setImage(picture);
+            }
+        } else {
+            setImage('../../assets/avatarplaceholder.png');
+        }
+    }, [picture, google_id]);
+
+
+    console.log(profileImage);
     useEffect(() => {
         // Compare the current form values with the original values
         const hasFormValueChanged = !isEqual(userProfile, originalUserProfile);
@@ -250,7 +265,7 @@ const EditProfile = ({ route, navigation }) => {
                         </View>
                         <TouchableOpacity onPress={debounce(() => setModalVisible(true), 500)}>
                             <View style={{ padding: 20, alignItems: 'center' }}>
-                                <Image resizeMode='contain' source={{ uri: image }} style={{ width: 80, height: 80, borderRadius: 100 }} />
+                                <Image resizeMode='contain' source={{ uri: profileImage }} style={{ width: 80, height: 80, borderRadius: 100 }} />
                                 <Text style={{ color: '#3493D9' }}>{t("Change profile photo")}</Text>
                             </View>
                         </TouchableOpacity>

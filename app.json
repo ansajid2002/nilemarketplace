@@ -48,7 +48,7 @@
     ],
     "ios": {
       "bundleIdentifier": "com.ngmp.ios",
-      "buildNumber": "10",
+      "buildNumber": "14",
       "supportsTablet": true
     },
     "android": {

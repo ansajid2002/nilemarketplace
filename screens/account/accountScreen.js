@@ -14,8 +14,7 @@ import { AdminUrl, HeaderBar } from "../../constant";
 import { emptyOrder } from "../../store/slices/myordersSlice";
 import { emptyWishlist } from "../../store/slices/wishlistSlice";
 import FullPageLoader from "../../components/FullPageLoader";
-import { Link, useNavigation } from "@react-navigation/native";
-
+import avatarPlaceholder from '../../assets/avatarplaceholder.png'
 
 const AccountScreen = ({ navigation }) => {
     const dispatch = useDispatch()
@@ -27,12 +26,28 @@ const AccountScreen = ({ navigation }) => {
     const { appcountry } = useSelector((store) => store.selectedCurrency)
     const { t } = useTranslation();
     const wishlistItems = useSelector((state) => state.wishlist.wishlistItems)
+    const { family_name = '', given_name = '', city = '', state = '', picture = '', google_id = '' } = customerData?.[0] || {}
+    const [profileImage, setImage] = useState('../../assets/avatarplaceholder.png');
 
     useEffect(() => {
         setTimeout(() => {
             setLoading(false)
         }, 500);
     }, [])
+
+    useEffect(() => {
+
+        if (picture) {
+            if (google_id && google_id.trim() !== "" || !picture.startsWith("https")) {
+                setImage(`${AdminUrl}/uploads/customerProfileImages/${picture}`);
+            } else {
+                setImage(picture);
+            }
+        } else {
+            setImage('../../assets/avatarplaceholder.png');
+        }
+    }, [customerData, picture, google_id]);
+
 
     return (
         <>
@@ -114,7 +129,6 @@ const AccountScreen = ({ navigation }) => {
                                     dispatch(emptyAddress())
                                     dispatch(emptyWishlist())
                                     setShowLogoutDialog(false);
-                                    // navigation.push('Login');
                                 } catch (error) {
                                     console.error('Error clearing AsyncStorage:', error);
                                 }
@@ -142,10 +156,9 @@ const AccountScreen = ({ navigation }) => {
                     source={require('../../assets/images/icons/logout.png')}
                     style={{ width: 18.0, height: 18.0, resizeMode: 'contain' }}
                 />
-                <TouchableOpacity >
 
-                    <Text style={{ marginLeft: Sizes.fixPadding, ...Fonts.primaryColor14SemiBold }}>{t("Logout")}</Text>
-                </TouchableOpacity>
+
+                <Text style={{ marginLeft: Sizes.fixPadding, ...Fonts.primaryColor14SemiBold }}>{t("Logout")}</Text>
             </TouchableOpacity>
         )
     }
@@ -260,7 +273,7 @@ const AccountScreen = ({ navigation }) => {
                     style={{ flexDirection: 'row', alignItems: 'center', padding: Sizes.fixPadding * 2.0 }}
                 >
                     {icon}
-                    <View  className="flex-row ">
+                    <View className="flex-row ">
                         <Text className="" style={{ marginLeft: Sizes.fixPadding, ...Fonts.blackColor14SemiBold }}>
                             {t(`${option}`)}
                         </Text>
@@ -272,65 +285,65 @@ const AccountScreen = ({ navigation }) => {
         else if (option === "About us") {
             return (
                 <TouchableOpacity
-                activeOpacity={0.9}
-                className=""
-                onPress={debounce(async () => {
-                    setLoading(true);
-                    try {
-                        const externalURL = 'https://stg.nilegmp.com/company/about-us'; // Replace with your URL
-                        const supported = await Linking.canOpenURL(externalURL);
-                        if (supported) {
-                            await Linking.openURL(externalURL);
-                        } else {
-                            console.log("Can't handle URL: " + externalURL);
+                    activeOpacity={0.9}
+                    className=""
+                    onPress={debounce(async () => {
+                        setLoading(true);
+                        try {
+                            const externalURL = 'https://stg.nilegmp.com/company/about-us'; // Replace with your URL
+                            const supported = await Linking.canOpenURL(externalURL);
+                            if (supported) {
+                                await Linking.openURL(externalURL);
+                            } else {
+                                console.log("Can't handle URL: " + externalURL);
+                            }
+                        } catch (error) {
+                            console.error('Error opening URL:', error);
                         }
-                    } catch (error) {
-                        console.error('Error opening URL:', error);
-                    }
-                    setLoading(false);
-                }, 500)}
-                style={{ flexDirection: 'row', alignItems: 'center', padding: Sizes.fixPadding * 2.0 }}
-            >
-                {icon}
-                <View  className="flex-row ">
-                    <Text className="" style={{ marginLeft: Sizes.fixPadding, ...Fonts.blackColor14SemiBold }}>
-                        {t(`${option}`)}
-                    </Text>
-                </View>
+                        setLoading(false);
+                    }, 500)}
+                    style={{ flexDirection: 'row', alignItems: 'center', padding: Sizes.fixPadding * 2.0 }}
+                >
+                    {icon}
+                    <View className="flex-row ">
+                        <Text className="" style={{ marginLeft: Sizes.fixPadding, ...Fonts.blackColor14SemiBold }}>
+                            {t(`${option}`)}
+                        </Text>
+                    </View>
 
-            </TouchableOpacity>
+                </TouchableOpacity>
             )
         }
         else if (option === "Contact us") {
             return (
                 <TouchableOpacity
-                className=""
-                activeOpacity={0.9}
-                onPress={debounce(async () => {
-                    setLoading(true);
-                    try {
-                        const externalURL = 'https://stg.nilegmp.com/company/contact-us'; // Replace with your URL
-                        const supported = await Linking.canOpenURL(externalURL);
-                        if (supported) {
-                            await Linking.openURL(externalURL);
-                        } else {
-                            console.log("Can't handle URL: " + externalURL);
+                    className=""
+                    activeOpacity={0.9}
+                    onPress={debounce(async () => {
+                        setLoading(true);
+                        try {
+                            const externalURL = 'https://stg.nilegmp.com/company/contact-us'; // Replace with your URL
+                            const supported = await Linking.canOpenURL(externalURL);
+                            if (supported) {
+                                await Linking.openURL(externalURL);
+                            } else {
+                                console.log("Can't handle URL: " + externalURL);
+                            }
+                        } catch (error) {
+                            console.error('Error opening URL:', error);
                         }
-                    } catch (error) {
-                        console.error('Error opening URL:', error);
-                    }
-                    setLoading(false);
-                }, 500)}
-                style={{ flexDirection: 'row', alignItems: 'center', padding: Sizes.fixPadding * 2.0 }}
-            >
-                {icon}
-                <View  className="flex-row ">
-                    <Text className="" style={{ marginLeft: Sizes.fixPadding, ...Fonts.blackColor14SemiBold }}>
-                        {t(`${option}`)}
-                    </Text>
-                </View>
+                        setLoading(false);
+                    }, 500)}
+                    style={{ flexDirection: 'row', alignItems: 'center', padding: Sizes.fixPadding * 2.0 }}
+                >
+                    {icon}
+                    <View className="flex-row ">
+                        <Text className="" style={{ marginLeft: Sizes.fixPadding, ...Fonts.blackColor14SemiBold }}>
+                            {t(`${option}`)}
+                        </Text>
+                    </View>
 
-            </TouchableOpacity>
+                </TouchableOpacity>
             )
         }
         return (
@@ -345,7 +358,7 @@ const AccountScreen = ({ navigation }) => {
                 style={{ flexDirection: 'row', alignItems: 'center', padding: Sizes.fixPadding * 2.0, }}
             >
                 {icon}
-                <View  className="flex-row ">
+                <View className="flex-row ">
                     <Text style={{ marginLeft: Sizes.fixPadding, ...Fonts.blackColor14SemiBold }}>
                         {t(`${option}`)}
                     </Text>
@@ -367,36 +380,12 @@ const AccountScreen = ({ navigation }) => {
     }
 
     function accountInfo() {
-        const { family_name, given_name, city, country, state, picture, google_id } = customerData?.[0]
-
-        let placeholderImageUrl = 'https://www.sfb1425.uni-freiburg.de/wp-content/uploads/2021/05/dummy-profile-pic-360x360.png';
-
-        if (!google_id && picture) {
-            placeholderImageUrl = `${AdminUrl}/uploads/customerProfileImages/${picture}`
-        } else if (picture) {
-            placeholderImageUrl = picture
-        }
-        // useEffect(() => {
-
-        //     if (picture) {
-        //       if (google_id && google_id.trim() !== "" || !picture.startsWith("https")) {
-        //         setImage(`${AdminUrl}/uploads/customerProfileImages/${picture}`);
-        //       } else {
-        //         setImage(picture);
-        //       }
-        //     } else {
-        //       setImage("/avatarplaceholder.png");
-        //     }
-        //   }, [customerData, picture, google_id]);
-
-
-
         return (
             <View style={styles.accountInfoWrapStyle}>
                 <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
                     <Image
                         resizeMode="contain"
-                        source={{ uri: placeholderImageUrl }}
+                        source={profileImage ? { uri: profileImage } : { uri: avatarPlaceholder }}
                         style={{
                             width: 50.0,
                             height: 50.0,
@@ -408,9 +397,11 @@ const AccountScreen = ({ navigation }) => {
                             {given_name} {family_name}
                         </Text>
                         {
-                            city || state && <Text style={{ ...Fonts.grayColor12Medium }}>
-                                {city}, {state}
-                            </Text>
+                            state && <>
+                                <Text style={{ ...Fonts.grayColor12Medium }}>
+                                    {city || ''}, {state || ''}
+                                </Text>
+                            </>
                         }
                     </View>
                 </View>
@@ -421,7 +412,7 @@ const AccountScreen = ({ navigation }) => {
 }
 
 const styles = StyleSheet.create({
-    
+
     accountInfoWrapStyle: {
         margin: Sizes.fixPadding * 2.0,
         flexDirection: 'row',
