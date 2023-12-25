@@ -13,13 +13,12 @@ import { toggleFavouriteProductslice } from '../../store/slices/productSlice';
 import { addItemToWishlist } from '../../store/slices/wishlistSlice';
 import { Alert } from 'react-native';
 import FullPageLoader from "../../components/FullPageLoader";
-import Animated from 'react-native-reanimated';
+import { Modal } from 'react-native';
 
 const ChatsScreen = ({ navigation }) => {
     const [loading, setLoading] = useState(true)
     const { customerData } = useSelector((store) => store.userData)
-    const [imageError, setImageError] = useState(false);
-
+    const [modalVisible, setModalVisible] = useState(false);
 
     const [inFavorite, setinFavorite] = useState(false);
 
@@ -31,20 +30,8 @@ const ChatsScreen = ({ navigation }) => {
     const dispatch = useDispatch()
     const cartItems = useSelector((state) => state.cart.cartItems);
 
-    useEffect(() => {
-        const getAllProducts = async () => {
-            try {
-                const response = await fetch(`${AdminUrl}/api/getProductsData`);
-                if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}`);
-                }
-                const data = await response.json();
-            } catch (error) {
-                console.error('Error:', error);
-            }
-        };
-        getAllProducts()
-    }, [])
+// const cartorigincountry = [...new Set(cartItems.map(obj => obj.countryoforigin))]
+// console.log( nnn,"countryValuesArray");
 
     useEffect(() => {
         // Check if cartItems have been loaded successfully
@@ -52,6 +39,8 @@ const ChatsScreen = ({ navigation }) => {
             setLoading(false)
         }
     }, [cartItems]);
+
+
     const handleRemove = async (itemId, item, type) => {
         try {
             setLoading(true)
@@ -297,6 +286,10 @@ const ChatsScreen = ({ navigation }) => {
         dispatch(toggleFavouriteProductslice(singleData))
     }
 
+    function handlepickup() {
+        setModalVisible(false)
+    }
+
     function header() {
         const myCart = t("My Cart")
         return (
@@ -318,8 +311,6 @@ const ChatsScreen = ({ navigation }) => {
                     onPress={debounce(() => navigation.push('ProductDetail', item), 500)}
                 >
                     <View style={{ width: 110, overflow: 'hidden' }} className="m-auto ">
-
-
 
                         <Image
                             resizeMode="contain"
@@ -390,7 +381,7 @@ const ChatsScreen = ({ navigation }) => {
                 </TouchableOpacity>
                 <View className="flex-row border border-gray-300 border-l-0">
                     <TouchableOpacity className="flex-1 flex-row     justify-center items-center"
-                        onPress={debounce(() => handleRemove(id, item,"cart"))}>
+                        onPress={debounce(() => handleRemove(id, item, "cart"))}>
 
                         <MaterialCommunityIcons name="delete-outline" size={20} color={'black'} />
 
@@ -407,6 +398,7 @@ const ChatsScreen = ({ navigation }) => {
             </View>
         )
     }
+
 
     const Cartdetails = () => {
         return (
@@ -482,21 +474,45 @@ const ChatsScreen = ({ navigation }) => {
                                 <TouchableOpacity onPress={debounce(() => {
                                     if (customerData.length === 0) {
                                         navigation.push("Login")
-
                                     }
                                     else {
-                                        navigation.push("Checkout Address")
-
+                                        // navigation.push("Checkout Address")
+                                        setModalVisible(true);
                                     }
                                 }, 500)}>
                                     <Text
                                         style={{
-                                            // color: Colors.whiteColor, // Customize the text color
                                             fontSize: 16, // Customize the font size
                                         }}
                                         className=" tracking-wider bg-[#fb9b01] px-6 py-2 rounded-md font-bold"
                                     >{t("Place Order")}</Text>
                                 </TouchableOpacity>
+                                <Modal
+                                
+                                    visible={modalVisible}
+                                    transparent={true}
+                                    animationType="fade"
+                                    onRequestClose={() => setModalVisible(false)}
+                                >
+                                    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
+                                        <View style={{ backgroundColor: 'white', padding: 20, borderRadius: 10, alignItems: 'center' }}>
+                                            <Text className="text-lg font-bold text-gray-500 ">Select A Deliver Mode</Text>
+                                            <View className="mt-6 space-y-4" >
+
+                                                <TouchableOpacity className="bg-gray-200" onPress={() => handlepickup()} style={{ padding: 10,borderRadius:5 }}>
+                                                    <Text className="text-center" style={{ fontWeight: 'bold' }}>Pickup From Store</Text>
+                                                </TouchableOpacity>
+                                                <TouchableOpacity  className="bg-gray-200"
+                                                onPress={() => {
+                                                    navigation.push('Checkout Address')
+                                                    setModalVisible(false)
+                                                }} style={{ padding: 10,borderRadius:5 }}>
+                                                    <Text className="text-center" style={{ fontWeight: 'bold' }}>Delivery Address</Text>
+                                                </TouchableOpacity>
+                                            </View>
+                                        </View>
+                                    </View>
+                                </Modal>
                             </View>
                         </View>
                     }

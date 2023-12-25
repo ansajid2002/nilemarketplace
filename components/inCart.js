@@ -8,6 +8,7 @@ import { debounce } from 'lodash';
 
 const InCart = ({ cartItems, navigation }) => {
 
+
     const { t } = useTranslation()
     return (
         <View style={styles.container}>
@@ -23,7 +24,11 @@ const InCart = ({ cartItems, navigation }) => {
                         <View key={product.uniquepid} style={styles.productItem} className="border p-2 border-gray-300">
                             <Image
                                 resizeMode='contain'
-                                source={{ uri: `${AdminUrl}/uploads/UploadedProductsFromVendors/${product.images?.[0]}` }}
+                                defaultSource={"../assets/noimage.jpg"}
+                                source={
+                                    !product.images
+                                        ? require('../assets/noimage.jpg')
+                                        : { uri: `${AdminUrl}/uploads/UploadedProductsFromVendors/${product.images?.[0]}` }}
                                 style={styles.productImage} />
                             <Text numberOfLines={1} style={styles.productTitle}>{product.ad_title}</Text>
                             <Text style={styles.productPrice}>Price: ${product.sellingprice}</Text>

@@ -137,8 +137,8 @@ const ProductItem = ({ item }) => {
     }, [item.uniquepid, setRating, setReviewData, setReviewText]);
 
     useEffect(() => {
-        reviewData.length === 0 && fetchReviewData();
-    }, [fetchReviewData, reviewData.length]);
+        reviewData?.length === 0 && fetchReviewData();
+    }, [fetchReviewData, reviewData?.length]);
 
     const handlePress = debounce(() => navigation.push('ProductDetail', item), 100);
 
@@ -185,7 +185,11 @@ const ProductItem = ({ item }) => {
                     </TouchableOpacity>
                 </View>
                 <View style={{ padding: 1 }} className="py-2">
-                    <Text numberOfLines={1}>{item?.ad_title}</Text>
+                <Text numberOfLines={1} className="font-medium">
+                        {item?.condition === "Refurbished" && "(Refurbished) "}
+                        {item?.condition === "Used" && "(Used) "}
+                        {item?.ad_title}
+                    </Text>
 
                     <View className="gap-1" style={{ flexDirection: 'row', alignItems: 'center', paddingTop: 8 }}>
                     <Text className="text-lg font-medium text-gray-700">Price:</Text>

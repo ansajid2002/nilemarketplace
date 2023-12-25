@@ -65,7 +65,7 @@ const EditProfile = ({ route, navigation }) => {
     }, [picture, google_id]);
 
 
-    console.log(profileImage);
+    console.log(profileImage,"profile image which is not displayed");
     useEffect(() => {
         // Compare the current form values with the original values
         const hasFormValueChanged = !isEqual(userProfile, originalUserProfile);

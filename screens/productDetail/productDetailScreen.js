@@ -339,11 +339,18 @@ const ProductDetailScreen = ({ navigation, route }) => {
 
 
                 <View className="flex-row items-center">
-                    <Text className="  text-gray-500 mb-2 font-bold">Category : </Text>
+                    <Text className="  text-gray-600 mb-2 font-bold">Condition : </Text>
+                    {singleData?.condition === "New" &&
+                    <Text className="font-medium text-base mb-2">Used</Text>}
+                {singleData?.condition === "Refurbished" &&
+                    <Text className="font-medium text-base mb-2">Refurbished</Text>}
+                    </View>
+                <View className="flex-row items-center">
+                    <Text className="  text-gray-600 mb-2 font-bold">Category : </Text>
                     <Text className="font-medium text-base mb-2" >{singleData?.category}</Text>
                 </View>
-                <View className="flex-row items-center -mt-1 mb-3">
-                    <Text className=" text-gray-500 mb-2 font-bold">Subcategory : </Text>
+                <View className="flex-row items-center  mb-3">
+                    <Text className=" text-gray-600 mb-2 font-bold">Subcategory : </Text>
                     <Text className="font-medium text-base mb-2" >{singleData?.subcategory}</Text>
                 </View>
                 {/* <Text className="text-base">Category : </Text></Text> */}
@@ -524,7 +531,7 @@ const ProductDetailScreen = ({ navigation, route }) => {
                                 navigation.navigate(screenName, { data: singleData?.vendorInfo });
                             }, 300)}
                         >
-                        <MaterialCommunityIcons name="chat" size={20} color="gray" />
+                            <MaterialCommunityIcons name="chat" size={20} color="gray" />
                             <Text className="text-base font-medium">
                                 {t('Message Seller')}
                             </Text>
@@ -558,6 +565,7 @@ const ProductDetailScreen = ({ navigation, route }) => {
             uniquepid,
             ad_title,
             created_at,
+            condition,
             mrp,
             sellingprice,
             isvariant,
@@ -726,12 +734,10 @@ const ProductDetailScreen = ({ navigation, route }) => {
 
         return (
             <View>
-                <View className='flex-row items-center m-3 mb-1.5 '>
-                    <Text className="text-lg">
-                        {ad_title}
-                    </Text>
-                </View>
 
+                <Text className="mx-3 my-1.5 text-lg">
+                    {ad_title}
+                </Text>
                 <View className="border border-b-4 border-gray-200 border-l-0 border-r-0 border-t-0">
                     {isvariant === 'Variant' ? (
                         // Display variant details
@@ -797,12 +803,12 @@ const priceSection = (discountPercentageSimple, mrp, sellingprice, c_symbol) => 
             <View className="mx-4">
 
                 <View className="gap-1 flex-row items-center">
-                <Text className="text-lg font-medium text-gray-700">Price:</Text>
+                    <Text className="text-lg font-medium text-gray-700">Price:</Text>
                     {discountPercentageSimple && discountPercentageSimple > 0 && (
                         <Text className="text-lg" style={{ color: 'green' }}>-{discountPercentageSimple?.toFixed(2)}%</Text>
                     )}
                     <View className="flex-row ">
-                        
+
                         <Text className="text-[14px] ml-1 font-medium">{`${c_symbol} `}</Text>
                         <Text className="text-gray-900 text-lg" style={{ fontWeight: 'bold' }}>
                             {`${sellingprice % 1 === 0 ? Math.trunc(sellingprice) : sellingprice}`}
@@ -818,6 +824,7 @@ const priceSection = (discountPercentageSimple, mrp, sellingprice, c_symbol) => 
                         </Text>
                     </View>
                 }
+
             </View>
         </View>
     </>

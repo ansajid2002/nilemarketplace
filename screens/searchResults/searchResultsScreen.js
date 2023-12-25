@@ -92,7 +92,7 @@ const SearchResultsScreen = ({ navigation, route }) => {
                             </View>
                         }
                         {
-                                    !hasMore &&
+                            ( !hasMore && VendorProductList.length!==0) &&
                                     <View className="flex-row items-center justify-center">
                                         <Text className="text-xl my-10 text-gray-300 font-bold">No More Products!</Text>
                                     </View>

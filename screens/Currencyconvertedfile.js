@@ -23,22 +23,6 @@ const Currencyconvertedfile = () => {
 
 ////////////////////////////////////////////////////////////////////////////////////
 
-  const getAllProducts = async () => {
-    try {
-      const response = await fetch(`${AdminUrl}/api/AllProductsVendors?currency=${currencyCode}`);
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-
-      const data = await response.json();
-      // Log the data
-      dispatch(updateproductsList(data));
-    } catch (error) {
-      console.error('Error:', error);
-    }
-  };
-
 
 
 
@@ -59,9 +43,6 @@ const Currencyconvertedfile = () => {
 
   // Call the function to fetch and log the data
 
-  useEffect(() => {
-    getAllProducts();
-  }, [customerId])
 
 
 

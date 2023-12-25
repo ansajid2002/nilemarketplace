@@ -8,7 +8,6 @@ import { useNavigation } from "@react-navigation/native";
 import { changeSearchFocus, changetabbarIndex } from "../../store/slices/counterslice";
 import StarRating from "../../components/FiveStarRating";
 import FullPageLoader from "../../components/FullPageLoader";
-import { updateReviewlistener } from "../../store/slices/reviewSlice";
 import { useTranslation } from "react-i18next";
 import { SafeAreaView } from "react-native";
 import { Colors } from "../../constants/styles";
@@ -97,13 +96,19 @@ const MyOrdersScreen = ({ navigation, route }) => {
       }
       return false;
     });
+
     return (
       <TouchableOpacity className="mt-4 border border-b-2 border-gray-300 py-4 border-t-0 border-l-0 border-r-0" onPress={() => navigation.navigate("order details", item)}>
         <View className="m-2 flex-row item  ">
           <Image className="mr-2"
             resizeMode="contain"
-            source={{ uri: `${AdminUrl}/uploads/UploadedProductsFromVendors/${product_image}` }}
+            source={
+              !product_image
+                ? require('../../assets/noimage.jpg')
+                :
+                { uri: `${AdminUrl}/uploads/UploadedProductsFromVendors/${product_image}` }}
             style={{ width: 80, height: 80 }}
+            defaultSource={"../../assets/noimage.jpg"}
           />
 
           <View className="w-[65%]">

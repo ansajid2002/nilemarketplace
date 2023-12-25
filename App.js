@@ -18,7 +18,6 @@ import verificationScreen from "./screens/auth/verificationScreen";
 import { Provider } from 'react-redux';
 import { store } from "./store/index"
 import ServicesList from './screens/services/servicesList';
-import ProductsList from './screens/services/productsList';
 import Language from './screens/Language/Language';
 import { I18nextProvider, useTranslation } from 'react-i18next';
 import i18n from './services/i18next';
@@ -178,10 +177,9 @@ const App = () => {
             <Stack.Screen name="Onboarding" component={onboardingScreen} />
             <Stack.Screen name="Login" component={loginScreen} options={{ ...TransitionPresets.DefaultTransition }} />
             <Stack.Screen name="Register" component={registerScreen} />
-            <Stack.Screen name="Channel" component={Channels} />
+            <Stack.Screen name="Channel" component={Channels}/>
             <Stack.Screen name="Verification" component={verificationScreen} />
             <Stack.Screen name="servicesList" component={ServicesList} />
-            <Stack.Screen name="productsList" component={ProductsList} />
             <Stack.Screen name="CategoriesItems" component={categoriesItemsScreen} />
             <Stack.Screen name="ProductDetail" component={productDetailScreen} />
             <Stack.Screen name="UserProfile" component={userProfileScreen} />

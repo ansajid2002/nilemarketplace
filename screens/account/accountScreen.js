@@ -73,15 +73,13 @@ const AccountScreen = ({ navigation }) => {
                                 </>
                                 : <>
                                     <Text className="font-medium text-xl text-center mt-4 mb-1">Sign In For Better Experience</Text>
-                                    <View className="bg-[#fb7701] rounded-full mb-3 mx-4 mt-3">
 
-                                        <TouchableOpacity className=" mx-auto flex-row items-center">
+                                        <TouchableOpacity style={{borderRadius:20}}  onPress={debounce(() => navigation.push("Login"), 500)} className=" bg-[#fb7701] flex-row items-center my-2 mx-3 ">
                                             {/* <MaterialCommunityIcons name="login" size={25} color={Colors.whiteColor} /> */}
-                                            <Text className="text-xl px-4 py-2.5 text-white font-bold rounded "
-                                                onPress={debounce(() => navigation.push("Login"), 500)}>Sign in / Register</Text>
+                                            <Text className="text-xl px-4 w-full py-2.5 text-white font-bold rounded text-center "
+                                               >Sign in / Register</Text>
                                         </TouchableOpacity>
 
-                                    </View>
                                     <ScrollView showsVerticalScrollIndicator={false}
                                         contentContainerStyle={{ paddingBottom: Sizes.fixPadding * 7.0, }}>
                                         {accountOptions()}
@@ -105,22 +103,27 @@ const AccountScreen = ({ navigation }) => {
                     <Text style={{ ...Fonts.blackColor16SemiBold, }}>
                         {t("Sure you want to Logout?")}
                     </Text>
-                    <View style={{ marginHorizontal: Sizes.fixPadding, marginTop: Sizes.fixPadding * 2.0, flexDirection: 'row', alignItems: 'center', }}>
+                    <View
+                    className="space-x-2"
+                     style={{ marginHorizontal: Sizes.fixPadding, marginTop: Sizes.fixPadding * 2.0, flexDirection: 'row', alignItems: 'center', }}>
                         <TouchableOpacity
+                        style={{borderRadius:5}}
                             activeOpacity={0.9}
                             onPress={debounce(() => setShowLogoutDialog(false), 500)}
-                            style={styles.cancelButtonStyle}
+                            className="flex-1 bg-gray-200 py-3"
                         >
-                            <Text style={{ ...Fonts.primaryColor14Bold }}>
+                            <Text className="text-center text-base font-semibold">
                                 {("CANCEL")}
                             </Text>
                         </TouchableOpacity>
                         <TouchableOpacity
+                         style={{borderRadius:5}}
+                        className="flex-1 bg-[#fb7701] py-3"
                             activeOpacity={0.9}
                             onPress={debounce(async () => {
                                 // Clear both AsyncStorage values
                                 try {
-                                    // await AsyncStorage.removeItem('loggedid');
+                                    await AsyncStorage.removeItem('loggedid');
                                     await AsyncStorage.removeItem('customerData');
                                     await AsyncStorage.removeItem('cartData');
                                     dispatch(emptyCustomer())
@@ -133,9 +136,8 @@ const AccountScreen = ({ navigation }) => {
                                     console.error('Error clearing AsyncStorage:', error);
                                 }
                             }, 500)}
-                            style={styles.logoutButtonStyle}
                         >
-                            <Text style={{ ...Fonts.whiteColor14Bold }}>{("LOGOUT")}</Text>
+                            <Text className=" text-center  text-base font-semibold">{("LOGOUT")}</Text>
                         </TouchableOpacity>
                     </View>
                 </View>

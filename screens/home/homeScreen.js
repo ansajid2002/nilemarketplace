@@ -51,6 +51,16 @@ const HomeScreen = () => {
     const { customerData } = useSelector((store) => store.userData)
     const customerId = customerData[0]?.customer_id
 
+//     const scrollViewRef = useRef(null);
+
+//   useFocusEffect(
+//     React.useCallback(() => {
+//       if (scrollViewRef.current) {
+//         scrollViewRef.current.scrollTo({ y: 0, animated: true });
+//       }
+//     }, [])
+//   );
+
     const getservicesData = async () => {
         try {
             const response = await fetch(`${AdminUrl}/api/getServicesData`);
@@ -261,6 +271,7 @@ const HomeScreen = () => {
             }}
         >
             <StatusBar translucent={false} backgroundColor={Colors.primaryColor} />
+            {/* <ScrollView showsVerticalScrollIndicator={false}  ref={scrollViewRef} > */}
             <ScrollView showsVerticalScrollIndicator={false} >
                 <LinearGradient
                     colors={['#ffc363', '#fff', '#fff']}
@@ -329,7 +340,7 @@ const HomeScreen = () => {
                             <TouchableOpacity onPress={() => {
                                 navigation.navigate("Channel",{recommended:true})
                             }}>
-                            {/* <MaterialIcons name="arrow-forward" size={30} /> */}
+                            <MaterialIcons name="arrow-forward" size={30} />
                             </TouchableOpacity>
                         </View>
                             <ProductListing title="" productList={recommendedProdutcs} />
@@ -340,7 +351,7 @@ const HomeScreen = () => {
                             <TouchableOpacity onPress={() => {
                                 navigation.navigate("Channel",{arrivals:true})
                             }}>
-                            {/* <MaterialIcons name="arrow-forward" size={30} /> */}
+                            <MaterialIcons name="arrow-forward" size={30} />
                             </TouchableOpacity>
                         </View>
                             <ProductListing title="" productList={newArrivals} />
@@ -379,7 +390,7 @@ const HomeScreen = () => {
                                 {
                                     servicesData?.map((item, index) => {
                                         return (
-                                            <TouchableOpacity key={index} className=" mx-4 my-4"
+                                            <TouchableOpacity key={index} className=" mx-3 my-4"
                                                 activeOpacity={0.9}
 
                                                 style={styles.categoryWrapStyle}
