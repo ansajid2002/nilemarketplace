@@ -1,12 +1,12 @@
 import { View, Text, StyleSheet, StatusBar, SafeAreaView, TouchableOpacity, Image, Button, Touchable } from 'react-native'
 import React, { useCallback, useEffect, useState } from 'react'
-import { Colors, Fonts, Sizes, } from "../../constants/styles";
+import { Colors, Sizes, } from "../../constants/styles";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { FlatList } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
-import { removeItem, incrementItem, decrementItem, addItem } from '../../store/slices/cartSlice';
+import { removeItem, incrementItem, decrementItem, fetchcart, incrementCartTotal, decrementCartTotal } from '../../store/slices/cartSlice';
 import { debounce } from 'lodash';
-import { AdminUrl, HeaderBar, getVariantsOfCatSubcat } from '../../constant';
+import { AdminUrl, HeaderBar } from '../../constant';
 import emptyCart from "../../assets/images/icons/empty-cart.png"
 import { useTranslation } from 'react-i18next';
 import { toggleFavouriteProductslice } from '../../store/slices/productSlice';
@@ -16,12 +16,11 @@ import FullPageLoader from "../../components/FullPageLoader";
 import { Modal } from 'react-native';
 
 const ChatsScreen = ({ navigation }) => {
-    const [loading, setLoading] = useState(true)
+    const [loading, setLoading] = useState(false)
     const { customerData } = useSelector((store) => store.userData)
     const [modalVisible, setModalVisible] = useState(false);
-
     const [inFavorite, setinFavorite] = useState(false);
-
+    const [cartData, setCartData] = useState(false)
     const { t } = useTranslation()
 
     const customerId = customerData[0]?.customer_id
@@ -30,15 +29,48 @@ const ChatsScreen = ({ navigation }) => {
     const dispatch = useDispatch()
     const cartItems = useSelector((state) => state.cart.cartItems);
 
-// const cartorigincountry = [...new Set(cartItems.map(obj => obj.countryoforigin))]
-// console.log( nnn,"countryValuesArray");
 
-    useEffect(() => {
-        // Check if cartItems have been loaded successfully
-        if (cartItems) {
+    const fetchCartData = async () => {
+        setLoading(true)
+        try {
+            if (!customerId) {
+
+            }
+            else {
+                const urlWithCustomerId = `${AdminUrl}/api/cart?customer_id=${customerId}`;
+                const requestOptions = {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                };
+                // Send the GET request and await the response
+                const response = await fetch(urlWithCustomerId, requestOptions);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                const data = await response.json()
+                dispatch(fetchcart(data))
+                setCartData(true)
+                console.log(data, "CARTDATa--------------------");
+            }
+
+        } catch (error) {
+            // Handle any errors here
+            console.error('Error fetching cart sdata:', error);
+        }
+        finally {
             setLoading(false)
         }
-    }, [cartItems]);
+    }
+
+    useEffect(() => {
+        if (!cartData) {
+            fetchCartData()
+        }
+    }, [cartData])
+    console.log(cartItems, "carstData");
 
 
     const handleRemove = async (itemId, item, type) => {
@@ -90,6 +122,7 @@ const ChatsScreen = ({ navigation }) => {
     const handleIncrement = async (itemId, item) => {
         try {
             dispatch(incrementItem(item));
+            dispatch(incrementCartTotal())
 
             if (customerId) {
                 const { category, subcategory, uniquepid, vendorid, label } = item;
@@ -127,9 +160,6 @@ const ChatsScreen = ({ navigation }) => {
                 if (isError) {
                     throw new Error('One or more API requests failed.');
                 }
-
-                // Process the responses if needed
-                const responseData = await Promise.all(responses.map(response => response.json()));
             }
         } catch (error) {
             console.error('Error updating cart:', error);
@@ -139,6 +169,7 @@ const ChatsScreen = ({ navigation }) => {
     const handleDecrement = async (itemId, item) => {
         try {
             dispatch(decrementItem(item));
+            dispatch(decrementCartTotal())
 
             if (customerId) {
                 const { category, subcategory, uniquepid, vendorid, label } = item;
@@ -180,56 +211,16 @@ const ChatsScreen = ({ navigation }) => {
         }
     };
 
-    const Total = cartItems.map(item => item?.sellingprice * item?.added_quantity).reduce((prevValue, currValue) => prevValue + currValue, 0);
-    const cartTotal = parseFloat(Total.toFixed(2))
+    const Total = cartItems?.map(item => item?.sellingprice * item?.added_quantity).reduce((prevValue, currValue) => prevValue + currValue, 0);
+    const cartTotal = parseFloat(Total?.toFixed(2))
 
-    const TotalSellingPrice = cartItems.map(item => item?.sellingprice * item?.added_quantity).reduce((prevValue, currValue) => prevValue + currValue, 0);
+    const TotalSellingPrice = cartItems?.map(item => item?.sellingprice * item?.added_quantity).reduce((prevValue, currValue) => prevValue + currValue, 0);
 
-    const TotalMRP = cartItems.map(item => item?.mrp * item?.added_quantity).reduce((prevValue, currValue) => prevValue + currValue, 0);
+    const TotalMRP = cartItems?.map(item => item?.mrp * item?.added_quantity).reduce((prevValue, currValue) => prevValue + currValue, 0);
 
-    const cartTotalSellingPrice = parseFloat(TotalSellingPrice.toFixed(2));
-    const cartTotalMRP = parseFloat(TotalMRP.toFixed(2));
+    const cartTotalSellingPrice = parseFloat(TotalSellingPrice?.toFixed(2));
+    const cartTotalMRP = parseFloat(TotalMRP?.toFixed(2));
     const cartDiscount = 0
-
-    const TotalDeliveryCharges = cartItems.map(item => {
-        // Extract local, zonal, and national (international) delivery charges
-        const localDeliveryCharge = parseFloat(item?.localdeliverycharge) * parseFloat(item?.added_quantity);
-        const zonalDeliveryCharge = parseFloat(item?.zonaldeliverycharge) * parseFloat(item?.added_quantity);
-        const nationalDeliveryCharge = parseFloat(item?.nationaldeliverycharge) * parseFloat(item?.added_quantity);
-
-        return {
-            local: localDeliveryCharge,
-            zonal: zonalDeliveryCharge,
-            national: nationalDeliveryCharge,
-        };
-    }).reduce((prevValue, currValue) => {
-        return {
-            local: prevValue.local + currValue.local,
-            zonal: prevValue.zonal + currValue.zonal,
-            national: prevValue.national + currValue.national,
-        };
-    }, { local: 0, zonal: 0, national: 0 });
-
-    // Calculate the sum of all delivery charges
-    const sumOfAllDeliveryCharges = (
-        TotalDeliveryCharges.local +
-        TotalDeliveryCharges.zonal +
-        TotalDeliveryCharges.national
-    );
-
-    const cartTotalDeliveryCharges = parseFloat(sumOfAllDeliveryCharges.toFixed(2));
-    ///////////////////DELIVERY DATE//////////////////////////////////////
-    const today = new Date();
-    const futureDate = new Date(today);
-    futureDate.setDate(today.getDate() + 6);
-
-    // Define an array of month names
-    const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-
-    // Define an array of day names
-    const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-
-    const formattedDate = `${dayNames[futureDate.getDay()]} ${futureDate.getDate()} ${monthNames[futureDate.getMonth()]}`;
 
 
     /////////////////////SAVE FOR LATER/////////////////////////
@@ -352,30 +343,31 @@ const ChatsScreen = ({ navigation }) => {
                             item.label && <Text className="text-[14px] text-gray-500 ">{item.label.split("/").join(" / ")}</Text>
                         }
 
-                        <View className="flex-row space-x-1 items-center my-1">
-                            <Text className={'text-[#fb7701] text-[20px] font-bold mr-1'}>
-                                {`${c_symbol} ${item.sellingprice % 1 === 0 ? Math.trunc(item.sellingprice) : item.sellingprice}`}
-                            </Text>
-                            <Text className="ml-0.5 mr-1" style={{ textDecorationLine: 'line-through', fontSize: 15, fontWeight: 'medium', color: 'gray' }}>
-                                {`${c_symbol} ${item.mrp % 1 === 0 ? Math.trunc(item.mrp) : item.mrp}`}
-                            </Text>
-                            {
-                                discountPercentageSimple &&
-                                <Text className={'text-[#fb7701] text-[11px] border px-1 py-0.5 rounded-sm border-[#fb7701]'}>
-                                    {discountPercentageSimple?.toFixed(2)}%
+
+
+
+                        <View className="gap-1" style={{ flexDirection: 'row', alignItems: 'center', paddingTop: 4 }}>
+                            <Text className="text-lg font-medium text-gray-700">Price:</Text>
+                            {discountPercentageSimple && discountPercentageSimple > 0 && (
+                                <Text className="text-lg" style={{ color: 'green' }}>-{discountPercentageSimple?.toFixed(2)}%</Text>
+                            )}
+                            <View className="flex-row items-center ">
+                                <Text className="text-base ml-1.5 mr-0.5 font-medium">{`${c_symbol}`}</Text>
+                                <Text className="text-gray-900 text-lg" style={{ fontWeight: 'bold' }}>
+                                    {`${item.sellingprice % 1 === 0 ? Math.trunc(item.sellingprice) : item.sellingprice}`}
                                 </Text>
-                            }
-
-
+                            </View>
                         </View>
+                        {
+                            discountPercentageSimple !== 0 &&
+                            <View className="flex-row items-center">
+                                <Text className="text-gray-500 font-medium">List Price: </Text>
+                                <Text style={styles.mrpPrice} className="font-medium">
+                                    {`$${item.mrp % 1 === 0 ? Math.trunc(item.mrp) : item.mrp}`}
+                                </Text>
+                            </View>
+                        }
 
-
-                        {/* <Text className="text-base text-gray-600 my-0.5">Published By : <Text className="text-black">{`${item?.vendorInfo?.vendorname}`}</Text></Text> */}
-                        <View className="flex-row items-center">
-
-                            <Text className="text-[14px] text-gray-600 mt-1">{t("Expected  By : ")}</Text>
-                            <Text className="text-[#00008b] font-medium text-base">{formattedDate}</Text>
-                        </View>
                     </View>
 
                 </TouchableOpacity>
@@ -399,7 +391,6 @@ const ChatsScreen = ({ navigation }) => {
         )
     }
 
-
     const Cartdetails = () => {
         return (
             <View className="m-1 p-2 mt-2 ">
@@ -410,17 +401,17 @@ const ChatsScreen = ({ navigation }) => {
                 </View>
                 <View className="flex-row justify-between items-center items  ">
                     <Text className="text-[14px]">{t("Discount")}</Text>
-                    <Text className="text-[16px] text-green-600 font-medium">{`${(((cartTotalMRP - cartTotalSellingPrice) / cartTotalMRP) * 100).toFixed(2)} %`} ({`${c_symbol}${(cartTotalMRP - cartTotalSellingPrice).toFixed(2)}`})</Text>
+                    <Text className="text-[16px] text-green-600 font-medium">{`-${(((cartTotalMRP - cartTotalSellingPrice) / cartTotalMRP) * 100).toFixed(2)} %`} ({`${c_symbol}${(cartTotalMRP - cartTotalSellingPrice).toFixed(2)}`})</Text>
                 </View>
-                <View className="flex-row justify-between items-center  my-1 py-0.5">
+                {/* <View className="flex-row justify-between items-center  my-1 py-0.5">
                     <Text className="text-[14px]">{t("Delivery Charges")}</Text>
                     <Text className="text-[16px] font-medium">{`${cartTotalDeliveryCharges || 0}`}</Text>
-                </View>
-                <View className="flex-row justify-between items-center  my-1 py-1 border-t border-gray-200">
+                </View> */}
+                <View className="flex-row justify-between items-center  my-2 py-1.5 border-t border-gray-200">
                     <Text className="text-base font-medium">{t("Total Amount")}</Text>
-                    <Text className="text-[16px] font-medium">{`${c_symbol} ${cartTotalSellingPrice - cartDiscount + (cartTotalDeliveryCharges || 0)}`}</Text>
+                    <Text className="text-[16px] font-medium">{`${c_symbol} ${cartTotalSellingPrice - cartDiscount}`}</Text>
                 </View>
-                <Text className="text-[16px] text-green-600 font-medium tracking-wider my-1">{` ${t("You will save")} ${c_symbol} ${(cartTotalMRP - cartTotalSellingPrice).toFixed(2)} ${t("on this order")}`}</Text>
+                <Text className="text-[16px] text-green-600 font-medium tracking-wider ">{` ${t("You will save")} ${c_symbol} ${(cartTotalMRP - cartTotalSellingPrice).toFixed(2)} ${t("on this order")}`}</Text>
 
             </View>
         )
@@ -434,7 +425,7 @@ const ChatsScreen = ({ navigation }) => {
             {
                 <View style={{ flex: 1 }}>
                     {
-                        cartItems.length > 0 ?
+                        cartItems?.length > 0 ?
                             <FlatList
                                 data={cartItems}
                                 keyExtractor={(item) => `${item?.uniquepid}${item?.label}`}
@@ -457,7 +448,7 @@ const ChatsScreen = ({ navigation }) => {
                             </View>
                     }
                     {
-                        cartItems.length > 0 &&
+                        cartItems?.length > 0 &&
                         <View className="mb-[10px] border border-t-1 border-b-0 border-l-0 border-r-0 border-gray-300">
                             {/* Your "Move to Checkout" section content goes here */}
                             <View
@@ -470,7 +461,7 @@ const ChatsScreen = ({ navigation }) => {
                                 }}
 
                             >
-                                <Text className="text-black font-bold text-base  tracking-wider">{` ${t("Total : ")} ${c_symbol} ${cartTotal + (cartTotalDeliveryCharges || 0)}`}</Text>
+                                <Text className="text-black font-bold text-base  tracking-wider">{` ${t("Total : ")} ${c_symbol} ${cartTotal}`}</Text>
                                 <TouchableOpacity onPress={debounce(() => {
                                     if (customerData.length === 0) {
                                         navigation.push("Login")
@@ -488,7 +479,7 @@ const ChatsScreen = ({ navigation }) => {
                                     >{t("Place Order")}</Text>
                                 </TouchableOpacity>
                                 <Modal
-                                
+
                                     visible={modalVisible}
                                     transparent={true}
                                     animationType="fade"
@@ -499,14 +490,14 @@ const ChatsScreen = ({ navigation }) => {
                                             <Text className="text-lg font-bold text-gray-500 ">Select A Deliver Mode</Text>
                                             <View className="mt-6 space-y-4" >
 
-                                                <TouchableOpacity className="bg-gray-200" onPress={() => handlepickup()} style={{ padding: 10,borderRadius:5 }}>
+                                                <TouchableOpacity className="bg-gray-200" onPress={() => handlepickup()} style={{ padding: 10, borderRadius: 5 }}>
                                                     <Text className="text-center" style={{ fontWeight: 'bold' }}>Pickup From Store</Text>
                                                 </TouchableOpacity>
-                                                <TouchableOpacity  className="bg-gray-200"
-                                                onPress={() => {
-                                                    navigation.push('Checkout Address')
-                                                    setModalVisible(false)
-                                                }} style={{ padding: 10,borderRadius:5 }}>
+                                                <TouchableOpacity className="bg-gray-200"
+                                                    onPress={() => {
+                                                        navigation.push('Checkout Address')
+                                                        setModalVisible(false)
+                                                    }} style={{ padding: 10, borderRadius: 5 }}>
                                                     <Text className="text-center" style={{ fontWeight: 'bold' }}>Delivery Address</Text>
                                                 </TouchableOpacity>
                                             </View>
@@ -520,7 +511,6 @@ const ChatsScreen = ({ navigation }) => {
         </SafeAreaView>
     )
 }
-
 const styles = StyleSheet.create({
     headerWrapStyle: {
         padding: Sizes.fixPadding * 1.0,
@@ -551,6 +541,11 @@ const styles = StyleSheet.create({
         paddingBottom: 4,
 
     },
+    mrpPrice: {
+        textDecorationLine: 'line-through',
+        fontSize: 14,
+        color: 'gray',
+    },
     buttonText: {
         color: 'black',
         fontSize: 20,
@@ -563,6 +558,5 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
 })
-
 
 export default ChatsScreen

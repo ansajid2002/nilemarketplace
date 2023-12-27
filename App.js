@@ -135,7 +135,7 @@ const App = () => {
             component={ChatsScreen}
             options={({ route }) => ({
               tabBarIcon: ({ color, size }) => (
-                <Carttab color={color} size={size} count={5} /> // Replace '5' with your actual count
+                <Carttab color={color}  />
               ), headerShown: false,
               tabBarLabel: `${t("Cart")}`,
               tabBarLabelStyle: { fontSize: 10, marginBottom: 4, marginTop: 0, fontWeight: '600' },
@@ -162,7 +162,6 @@ const App = () => {
   const Mainnavigator = () => {
     return (
       <Provider store={store}>
-        <Currencyconvertedfile />
         <NavigationContainer>
           <NotificationExpo />
           <Stack.Navigator

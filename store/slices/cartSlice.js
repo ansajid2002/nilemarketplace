@@ -2,7 +2,9 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   cartItems: [],
+  cartTotal:0
 };
+console.log(initialState.cartTotal,"FROM REDUX");
 
 
 export const cartSlice = createSlice({
@@ -57,9 +59,6 @@ export const cartSlice = createSlice({
       }).filter(item => item.added_quantity !== 0);
     },
 
-    updateproductsListcart: (state, action) => {
-      state.cartItems = action.payload;
-    },
 
     decrementItem(state, action) {
       state.cartItems = state.cartItems.map(item => {
@@ -72,6 +71,10 @@ export const cartSlice = createSlice({
 
     emptyCart: (state) => {
       state.cartItems = initialState.cartItems; // Clears the cartItems array
+    },
+    fetchcart(state,action) {
+      console.log(action.payload,"action.payload");
+      state.cartItems= action.payload
     },
 
     addCarts(state, action) {
@@ -86,9 +89,25 @@ export const cartSlice = createSlice({
 
       // Append the filtered new items to the existing cartItems array
       state.cartItems = [...state.cartItems, ...filteredNewItems];
+    },
+
+////////////////////////FOR CartTotal///////////////////////////////////////////
+    getCartTotal(state,action) {
+      console.log(action.payload,"payload");
+      state.cartTotal = action.payload
+    },
+    incrementCartTotal: (state, action) => {
+      state.cartTotal += 1;
+    },
+    decrementCartTotal: (state, action) => {
+      state.cartTotal -= 1;
     }
+
+
   },
 });
 
-export const { addItem, removeItem, incrementItem, decrementItem, updateproductsListcart, emptyCart, addCarts } = cartSlice.actions;
+
+
+export const { addItem, removeItem,fetchcart, incrementItem, decrementItem, updateproductsListcart, emptyCart, addCarts,getCartTotal,incrementCartTotal,decrementCartTotal } = cartSlice.actions;
 export default cartSlice.reducer;

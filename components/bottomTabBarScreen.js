@@ -18,8 +18,6 @@ const BottomTabBarScreen = ({ navigation }) => {
     const dispatch = useDispatch()
     const { customerData } = useSelector((store) => store.userData)
 
-    const customerId = customerData[0]?.customer_id
-
     const backAction = () => {
         backClickCount == 1 ? BackHandler.exitApp() : _spring();
         return true;

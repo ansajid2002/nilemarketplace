@@ -3,7 +3,8 @@ import { View, Text, StyleSheet, Image, Dimensions, TouchableOpacity } from 'rea
 import StarRating from './FiveStarRating';
 import SlideItem from './Slider/SlideItem';
 import { FlatList } from 'react-native';
-import { getReviewData } from '../screens/Currencyconvertedfile';
+// import { getReviewData } from '../screens/Currencyconvertedfile';
+import { getReviewData } from './getReviewData';
 import { AdminUrl } from '../constant';
 import { useTranslation } from 'react-i18next';
 
@@ -16,7 +17,7 @@ export function calculateAverageRating(data) {
 }
 
 export function countNonEmptyReviews(data) {
-    return data.filter((review) => review.review_text && review.review_text.trim() !== '').length;
+    return data?.filter((review) => review.review_text && review.review_text.trim() !== '').length;
 }
 
 
@@ -31,7 +32,7 @@ const ReviewComponent = ({ review, item }) => {
         (review.medias || []).map((item, index) => ({
             id: index.toString(),
             url: item ? `${AdminUrl}/uploads/ReviewImages/${item}` : '' // Handle null or undefined items
-        })).filter((item) => item.url)
+        }))?.filter((item) => item.url)
     );
 
 

@@ -143,154 +143,201 @@ const Login = ({ navigation }) => {
         },
     };
 
-    const updateCartData = async (customerId) => {
-        try {
 
-            for (const cartItem of cartItems) {
-                // Extract necessary data
-                const { category, subcategory, uniquepid, vendorInfo, added_quantity, mrp, sellingprice, label } = cartItem;
+    // const updateCartData = async (customerId) => {
+    //     try {
 
-                const replacecategory = category.replace(/[^\w\s]/g, "").replace(/\s/g, "");
-                const replacesubcategory = subcategory.replace(/[^\w\s]/g, "").replace(/\s/g, "");
+    //         for (const cartItem of cartItems) {
+    //             // Extract necessary data
+    //             const { category, subcategory, uniquepid, vendorInfo, added_quantity, mrp, sellingprice, label } = cartItem;
 
-                // Prepare the request data
-                const requestData = {
-                    customer_id: customerId,
-                    vendor_id: vendorInfo.id,
-                    product_uniqueid: uniquepid,
-                    category: replacecategory,
-                    subcategory: replacesubcategory,
-                    variantlabel: label,
-                    mrp,
-                    sellingprice,
-                    quantity: added_quantity,
-                };
+    //             const replacecategory = category.replace(/[^\w\s]/g, "").replace(/\s/g, "");
+    //             const replacesubcategory = subcategory.replace(/[^\w\s]/g, "").replace(/\s/g, "");
 
-                // Make a POST request to your API endpoint for updating the cart
-                const response = await fetch(`${AdminUrl}/api/addProductcart`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(requestData),
-                });
+    //             // Prepare the request data
+    //             const requestData = {
+    //                 customer_id: customerId,
+    //                 vendor_id: vendorInfo.id,
+    //                 product_uniqueid: uniquepid,
+    //                 category: replacecategory,
+    //                 subcategory: replacesubcategory,
+    //                 variantlabel: label,
+    //                 mrp,
+    //                 sellingprice,
+    //                 quantity: added_quantity,
+    //             };
 
-                if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}`);
-                }
-            }
+    //             // Make a POST request to your API endpoint for updating the cart
+    //             const response = await fetch(`${AdminUrl}/api/addProductcart`, {
+    //                 method: 'POST',
+    //                 headers: {
+    //                     'Content-Type': 'application/json',
+    //                 },
+    //                 body: JSON.stringify(requestData),
+    //             });
 
-
-            // Fetch cart data
-            const urlWithCustomerId = `${AdminUrl}/api/cart?customer_id=${customerId}`;
-            const response = await fetch(urlWithCustomerId, requestOptions);
-
-            if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
-            }
+    //             if (!response.ok) {
+    //                 throw new Error(`HTTP error! Status: ${response.status}`);
+    //             }
+    //         }
 
 
-            const cartData = await response.json();
-            let matchingProducts = [...cartItems]
-            cartData.forEach((cartItem) => {
-                const productMatch = productsList.find(
-                    (product) => product.uniquepid === parseInt(cartItem.product_uniqueid)
-                );
-                if (productMatch) {
-                    // Create a new product for each matching cart item
-                    const newProduct = { ...productMatch };
-                    newProduct.mrp = cartItem.mrp; // Change 'mrp' based on cartItem
-                    newProduct.sellingprice = cartItem.sellingprice; // Change 'sellingprice' based on cartItem
-                    newProduct.label = cartItem.variantlabel; // Change 'label' based on cartItem
-                    newProduct.added_quantity = cartItem.total_quantity; // Change 'label' based on cartItem
-                    matchingProducts.push(newProduct);
-                }
-            });
+    //         // Fetch cart data
+    //         const urlWithCustomerId = `${AdminUrl}/api/cart?customer_id=${customerId}`;
+    //         const response = await fetch(urlWithCustomerId, requestOptions);
 
-            const asyncCart = await AsyncStorage.getItem('cartData');
-            const parseCartData = asyncCart ? JSON.parse(asyncCart) : [];
-            // Process and update cart items
-            const updatedCartItems = [...parseCartData, ...matchingProducts];
+    //         if (!response.ok) {
+    //             throw new Error(`HTTP error! Status: ${response.status}`);
+    //         }
 
 
-            const itemMap = {};
+    //         const cartData = await response.json();
+    //         let matchingProducts = [...cartItems]
+    //         cartData.forEach((cartItem) => {
+    //             const productMatch = productsList.find(
+    //                 (product) => product.uniquepid === parseInt(cartItem.product_uniqueid)
+    //             );
+    //             if (productMatch) {
+    //                 // Create a new product for each matching cart item
+    //                 const newProduct = { ...productMatch };
+    //                 newProduct.mrp = cartItem.mrp; // Change 'mrp' based on cartItem
+    //                 newProduct.sellingprice = cartItem.sellingprice; // Change 'sellingprice' based on cartItem
+    //                 newProduct.label = cartItem.variantlabel; // Change 'label' based on cartItem
+    //                 newProduct.added_quantity = cartItem.total_quantity; // Change 'label' based on cartItem
+    //                 matchingProducts.push(newProduct);
+    //             }
+    //         });
 
-            updatedCartItems.forEach((currentItem) => {
-                const { uniquepid, label, added_quantity } = currentItem;
-                // Convert added_quantity to a number
-                const quantity = parseInt(added_quantity, 10);
-                const key = label ? `${uniquepid}_${label}` : uniquepid;
-
-                if (itemMap[key]) {
-                    // If the key already exists, update its added_quantity
-                    itemMap[key].added_quantity += quantity;
-                } else {
-                    // If the key doesn't exist, create a new entry
-                    itemMap[key] = { ...currentItem, added_quantity: quantity };
-                }
-            });
-
-            const outputArray = Object.values(itemMap);
+    //         const asyncCart = await AsyncStorage.getItem('cartData');
+    //         const parseCartData = asyncCart ? JSON.parse(asyncCart) : [];
+    //         // Process and update cart items
+    //         const updatedCartItems = [...parseCartData, ...matchingProducts];
 
 
-            let cartUpdatedItem = []
-            for (const cartItem of outputArray) {
-                const { category, subcategory, uniquepid, label, vendorid, mrp, sellingprice } = cartItem;
-                const replacecategory = category
-                    .replace(/[^\w\s]/g, "")
-                    .replace(/\s/g, "");
-                const replacesubcategory = subcategory
-                    .replace(/[^\w\s]/g, "")
-                    .replace(/\s/g, "");
+    //         const itemMap = {};
 
-                const matchingCartItem = cartData.find(item => item.product_uniqueid === uniquepid && (item.variantlabel === label || !label));
-                // Initialize addedQuantity to the current added_quantity (if available), or 0
-                let addedQuantity = parseInt(cartItem.added_quantity, 10) || 0;
+    //         updatedCartItems.forEach((currentItem) => {
+    //             const { uniquepid, label, added_quantity } = currentItem;
+    //             // Convert added_quantity to a number
+    //             const quantity = parseInt(added_quantity, 10);
+    //             const key = label ? `${uniquepid}_${label}` : uniquepid;
 
-                if (matchingCartItem) {
-                    // If a matching cart item is found, parse its total_quantity
-                    addedQuantity = parseInt(matchingCartItem.total_quantity, 10);
-                }
+    //             if (itemMap[key]) {
+    //                 // If the key already exists, update its added_quantity
+    //                 itemMap[key].added_quantity += quantity;
+    //             } else {
+    //                 // If the key doesn't exist, create a new entry
+    //                 itemMap[key] = { ...currentItem, added_quantity: quantity };
+    //             }
+    //         });
 
-                if (parseCartData && parseCartData?.length > 0) {
-                    const requestData = {
-                        customer_id: customerId,
-                        vendor_id: vendorid,
-                        product_uniqueid: uniquepid,
-                        category: replacecategory,
-                        subcategory: replacesubcategory,
-                        variantlabel: label,
-                        mrp,
-                        sellingprice,
-                        quantity: addedQuantity,
-                    };
+    //         const outputArray = Object.values(itemMap);
 
-                    const updateResponse = await fetch(`${AdminUrl}/api/addProductcart`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify(requestData),
-                    });
 
-                    if (!updateResponse.ok) {
-                        throw new Error(`HTTP error! Status: ${updateResponse.status}`);
-                    }
-                    dispatch(addItem(cartItem))
-                }
-                // Update the cart item with added_quantity
-                cartUpdatedItem.push({ ...cartItem, added_quantity: addedQuantity });
+    //         let cartUpdatedItem = []
+    //         for (const cartItem of outputArray) {
+    //             const { category, subcategory, uniquepid, label, vendorid, mrp, sellingprice } = cartItem;
+    //             const replacecategory = category
+    //                 .replace(/[^\w\s]/g, "")
+    //                 .replace(/\s/g, "");
+    //             const replacesubcategory = subcategory
+    //                 .replace(/[^\w\s]/g, "")
+    //                 .replace(/\s/g, "");
 
-            }
+    //             const matchingCartItem = cartData.find(item => item.product_uniqueid === uniquepid && (item.variantlabel === label || !label));
+    //             // Initialize addedQuantity to the current added_quantity (if available), or 0
+    //             let addedQuantity = parseInt(cartItem.added_quantity, 10) || 0;
 
-            dispatch(addCarts(cartUpdatedItem));
+    //             if (matchingCartItem) {
+    //                 // If a matching cart item is found, parse its total_quantity
+    //                 addedQuantity = parseInt(matchingCartItem.total_quantity, 10);
+    //             }
 
-            // Dispatch an action to update the cart items in the Redux store
-        } catch (error) {
-            console.error('Error updating cart:', error);
-        }
-    };
+    //             if (parseCartData && parseCartData?.length > 0) {
+    //                 const requestData = {
+    //                     customer_id: customerId,
+    //                     vendor_id: vendorid,
+    //                     product_uniqueid: uniquepid,
+    //                     category: replacecategory,
+    //                     subcategory: replacesubcategory,
+    //                     variantlabel: label,
+    //                     mrp,
+    //                     sellingprice,
+    //                     quantity: addedQuantity,
+    //                 };
 
+    //                 const updateResponse = await fetch(`${AdminUrl}/api/addProductcart`, {
+    //                     method: 'POST',
+    //                     headers: {
+    //                         'Content-Type': 'application/json',
+    //                     },
+    //                     body: JSON.stringify(requestData),
+    //                 });
+
+    //                 if (!updateResponse.ok) {
+    //                     throw new Error(`HTTP error! Status: ${updateResponse.status}`);
+    //                 }
+    //                 dispatch(addItem(cartItem))
+    //             }
+    //             // Update the cart item with added_quantity
+    //             cartUpdatedItem.push({ ...cartItem, added_quantity: addedQuantity });
+
+    //         }
+
+    //         dispatch(addCarts(cartUpdatedItem));
+
+    //         // Dispatch an action to update the cart items in the Redux store
+    //     } catch (error) {
+    //         console.error('Error updating cart:', error);
+    //     }
+    // };
+
+    // const updateCartData = async (customerId) => {
+    //     console.log("function called-----------------------------------------------------------------");
+    //     try {
+    //         const urlWithCustomerId = `${AdminUrl}/api/cart?customer_id=${customerId}`;
+    //         const requestData = {
+    //             customer_id: customerId,
+    //             vendor_id: vendorInfo.id,
+    //             product_uniqueid: uniquepid,
+    //             category: replacecategory,
+    //             subcategory: replacesubcategory,
+    //             variantlabel: label,
+    //             mrp,
+    //             sellingprice,
+    //             quantity: added_quantity,
+    //         };
+    //         const response = await fetch(urlWithCustomerId, {
+    //             method: 'POST',
+    //             headers: {
+    //                 'Content-Type': 'application/json',
+    //             },
+    //             body: JSON.stringify(requestData),
+    //         });
+
+    //         if (!response.ok) {
+    //             throw new Error(`HTTP error! Status: ${response.status}`);
+    //         }
+    //         const responseData = await response.json();
+    //         console.log(responseData, "COming from backend");
+
+    //         if (responseData.length > 0) {
+    //             // Append the new cart data to the existing cartItems array
+    //             const updatedCartItems = [...cartItems, ...responseData];
+
+    //             // Dispatch action to update the cartItems in Redux
+    //             dispatch(fetchcart(updatedCartItems));
+    //         }
+    //         else {
+    //             const updatedCartItems = [...cartItems];
+    //             dispatch(fetchcart(updatedCartItems));
+
+    //         }
+
+    //     } catch (error) {
+    //         console.log(error, "error while integrating cart data with fetched cart data");
+    //     }
+    // }
     const handleCrossIconPress = () => {
         navigation.navigate("Home")
     };

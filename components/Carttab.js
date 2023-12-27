@@ -3,27 +3,29 @@ import React from 'react'
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useSelector } from 'react-redux';
 
-const Carttab = ({ color, size, count }) => {
+const Carttab = ({ color, }) => {
 
-  const cartItems = useSelector((state) => state.cart.cartItems);
+
+  const {cartTotal} = useSelector((state) => state.cart);
+  console.log(cartTotal,"s");
   return (
     <View>
       <MaterialCommunityIcons name="cart-outline" size={25} color={color} />
-      {count > 0 && (
+      {(
         <View
           style={{
             position: 'absolute',
-            top: 0, // Adjust the vertical position as needed
+            top: -2, // Adjust the vertical position as needed
             right: -6, // Adjust the horizontal position as needed
             backgroundColor: 'red',
-            borderRadius: 20,
-            width: 17,
-            height: 17,
+            borderRadius: 50,
+            width: 15,
+            height: 15,
             justifyContent: 'center',
             alignItems: 'center',
           }}
         >
-          <Text style={{ color: 'white', fontSize: 12 }} className="">{cartItems.length}</Text>
+          <Text style={{ color: 'white', fontSize: 12 }} className="">{cartTotal}</Text>
         </View>
       )}
     </View>

@@ -6,7 +6,7 @@ import { Snackbar } from "react-native-paper";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
-import { addItem, decrementItem, incrementItem, removeItem } from "../../store/slices/cartSlice";
+import { addItem, decrementItem, decrementCartTotal,incrementCartTotal, incrementItem, removeItem } from "../../store/slices/cartSlice";
 import { addItemToWishlist, removeItemFromWishlist } from "../../store/slices/wishlistSlice";
 import { toggleFavouriteProductslice } from "../../store/slices/productSlice";
 import { debounce } from "lodash";
@@ -158,6 +158,7 @@ const ProductDetailScreen = ({ navigation, route }) => {
     const handleIncrement = async (itemId, item) => {
         try {
             dispatch(incrementItem(item));
+            dispatch(incrementCartTotal())
 
             if (customerId) {
                 const { category, subcategory, uniquepid, vendorid, label } = item;
@@ -202,6 +203,7 @@ const ProductDetailScreen = ({ navigation, route }) => {
     const handleDecrement = async (itemId, item) => {
         try {
             dispatch(decrementItem(item));
+            dispatch(decrementCartTotal())
 
             if (customerId) {
                 const { category, subcategory, uniquepid, vendorid, label } = item;
@@ -441,6 +443,7 @@ const ProductDetailScreen = ({ navigation, route }) => {
 
                                     const responseData = await response.json();
                                     dispatch(addItem(updatedSingleData))
+                                    dispatch(incrementCartTotal())
                                     setisUniquepidMatched(true)
 
                                     updateState({ inCart: true, showSnackBarcart: true, })
@@ -449,6 +452,7 @@ const ProductDetailScreen = ({ navigation, route }) => {
                                 }
                             } else {
                                 dispatch(addItem(updatedSingleData))
+                                dispatch(incrementCartTotal())
 
                             }
 

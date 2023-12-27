@@ -16,7 +16,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { debounce } from 'lodash';
 
 import StarRating from './FiveStarRating';
-import { getReviewData } from '../screens/Currencyconvertedfile';
+// import { getReviewData } from '../screens/Currencyconvertedfile';
+import { getReviewData } from './getReviewData';
 import { useTranslation } from 'react-i18next';
 import { ProductSkeleton } from './Skeleton';
 import { calculateAverageRating, countNonEmptyReviews } from './ReviewsComponent';

@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { debounce } from "lodash";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { emptyCart } from "../../store/slices/cartSlice";
+import { emptyCart, getCartTotal } from "../../store/slices/cartSlice";
 import { emptyCustomer } from "../../store/slices/customerData";
 import { MaterialIcons } from '@expo/vector-icons';
 import { emptyAddress } from "../../store/slices/customerSlice";
@@ -126,7 +126,9 @@ const AccountScreen = ({ navigation }) => {
                                     await AsyncStorage.removeItem('loggedid');
                                     await AsyncStorage.removeItem('customerData');
                                     await AsyncStorage.removeItem('cartData');
+                                    await AsyncStorage.removeItem('cartTotal');
                                     dispatch(emptyCustomer())
+                                    dispatch(getCartTotal(0))
                                     dispatch(emptyCart())
                                     dispatch(emptyOrder())
                                     dispatch(emptyAddress())

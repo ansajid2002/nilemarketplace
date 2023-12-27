@@ -19,26 +19,22 @@ import { TouchableOpacity } from "react-native";
 import ProductListing from "../../components/ProductList";
 import ImageCarousel from "../../components/ImageCarousel";
 import { AdminUrl } from "../../constant";
-import FullPageLoader from "../../components/FullPageLoader";
 import { LinearGradient } from 'expo-linear-gradient';
 import Notificationtab from "../../components/Notificationtab";
-import { useCallback } from "react";
-import { useMemo } from "react";
 import InCart from "../../components/inCart";
 import { AntDesign } from '@expo/vector-icons';
 import { CategoryPlaceholder, ServicesPlaceholder } from "../../components/Skeleton";
 import NoLogin from "../../components/NoLogin";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import {  getCartTotal } from "../../store/slices/cartSlice";
+import { updateCustomerData } from "../../store/slices/customerData";
 
 
 const { width } = Dimensions.get('window');
 const HomeScreen = () => {
+    const dispatch = useDispatch()
     const [recommendedProdutcs, setRecommendedProducts] = useState(null)
     const [newArrivals, setNewArrivals] = useState(null)
-    const [recommendedProductsFetched, setRecommendedProductsFetched] = useState(false);
-    const [newArrivalsFetched, setNewArrivalsFetched] = useState(false);
-    const [error, setError] = useState(null);
-
     const [servicesData, setServicesData] = useState(null)
     const [productCatData, setProductCatData] = useState(null)
 
@@ -50,6 +46,67 @@ const HomeScreen = () => {
     
     const { customerData } = useSelector((store) => store.userData)
     const customerId = customerData[0]?.customer_id
+    const [cartTotal,setCartTotal] = useState(false)
+
+    useEffect(() => {
+        // Check if loggedid and customerData are available in AsyncStorage
+        async function checkAuthentication() {
+          // const loggedid = await AsyncStorage.getItem('loggedid');
+          const storedCustomerData = await AsyncStorage.getItem('customerData');
+    
+          // If both loggedid and customerData are available, set isAuthenticated to true
+          if (storedCustomerData) {
+            dispatch(updateCustomerData(JSON.parse(storedCustomerData)))
+          }
+        }
+    
+        checkAuthentication();
+      }, []);
+
+    const getCartTotaldata = async() => {
+        try {
+          if (!customerId) {
+            console.log("GUEST MODE");
+            const cartTotal = await AsyncStorage.getItem("cartTotal");
+            if (cartTotal) {
+              setCartTotal(true)
+              dispatch(getCartTotal(cartTotal))
+            }
+            setCartTotal(true)
+              dispatch(getCartTotal(0))
+          }
+          else {
+            console.log("WELCOME CUSTOMER ");
+            const urlWithCustomerId = `${AdminUrl}/api/cartTotal?customer_id=${customerId}`;
+            const requestOptions = {
+              method: 'GET',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+            };
+      
+            const response = await fetch(urlWithCustomerId, requestOptions);
+            if (!response.ok) {
+              throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            const data = await response.json()
+            console.log(data.total,"cartTotal");
+            dispatch(getCartTotal(data.total))
+            setCartTotal(true)
+            console.log(data.total,"Data.totla");
+            await AsyncStorage.setItem('cartTotal', JSON.stringify(data.total));
+      
+          }
+      
+        } catch (error) {
+          console.log(error,"error while fetching cart total");
+        }
+      }
+      useEffect(() => {
+        if (!cartTotal) {
+          getCartTotaldata()
+        }
+      },[cartTotal])
 
 //     const scrollViewRef = useRef(null);
 
@@ -155,25 +212,22 @@ const HomeScreen = () => {
         }
     }, [servicesData, productCatData]);
 
-    const fetchRecommendedProducts = useCallback(async () => {
+    const fetchRecommendedProducts = async () => {
         try {
             const recommendedResponse = await fetch(`${AdminUrl}/api/recommendedProducts/${customerId}`);
             if (!recommendedResponse.ok) {
                 throw new Error(`HTTP error! Status: ${recommendedResponse.status}`);
             }
             const recommendedData = await recommendedResponse.json();
+            console.log(recommendedData,"recommendedData");
             setRecommendedProducts(recommendedData);
 
-            // Save the new data and timestamp to AsyncStorage
-            const currentTimestamp = new Date().getTime();
-            await AsyncStorage.setItem('recommendedProducts', JSON.stringify(recommendedData));
-            await AsyncStorage.setItem('recommendedProductsTimestamp', currentTimestamp.toString());
         } catch (error) {
             console.log(error);
         }
-    }, [customerId, setRecommendedProducts]);
+    }
 
-    const fetchNewArrivals = useCallback(async () => {
+    const fetchNewArrivals =async () => {
         try {
             const newArrivalsResponse = await fetch(`${AdminUrl}/api/newArrivals/${customerId}`);
             if (!newArrivalsResponse.ok) {
@@ -182,85 +236,21 @@ const HomeScreen = () => {
             const newArrivalsData = await newArrivalsResponse.json();
             setNewArrivals(newArrivalsData);
 
-            // Save the new data and timestamp to AsyncStorage
-            const currentTimestamp = new Date().getTime();
-            await AsyncStorage.setItem('newArrivals', JSON.stringify(newArrivalsData));
-            await AsyncStorage.setItem('newArrivalsTimestamp', currentTimestamp.toString());
         } catch (error) {
-            setError(error.message || 'An error occurred while fetching new arrivals.');
+            console.log(error,"Error fetching new arrivals data");
         }
-    }, [customerId, setNewArrivals, setError]);
+    }
 
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                // Check if there is stored recommended products data and if it is still valid
-                const storedRecommendedProducts = await AsyncStorage.getItem('recommendedProducts');
-                const storedRecommendedProductsTimestamp = await AsyncStorage.getItem('recommendedProductsTimestamp');
-                const currentTimestamp = new Date().getTime();
-
-                if (
-                    storedRecommendedProducts &&
-                    storedRecommendedProductsTimestamp &&
-                    currentTimestamp - parseInt(storedRecommendedProductsTimestamp) <= 30 * 60 * 1000
-                ) {
-                    console.log('storage');
-                    // Use stored recommended products data if it's still valid
-                    setRecommendedProducts(JSON.parse(storedRecommendedProducts));
-
-                } else {
-                    console.log('backend');
-                    // Fetch new recommended products data if there is no stored data or if it's expired
-                    await fetchRecommendedProducts();
-                    await fetchNewArrivals()
-
-                }
-            } catch (error) {
-                console.log(error);
-            }
-        };
-
-        if (customerId && !recommendedProductsFetched && servicesData?.length > 0) {
-            fetchData();
-            setRecommendedProductsFetched(true); // Mark data as fetched
+        if (!newArrivals) {
+            fetchNewArrivals()
         }
-    }, [customerId, recommendedProductsFetched, servicesData, fetchRecommendedProducts]);
-
+    },[newArrivals])
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                // Check if there is stored new arrivals data and if it is still valid
-                const storedNewArrivals = await AsyncStorage.getItem('newArrivals');
-                const storedNewArrivalsTimestamp = await AsyncStorage.getItem('newArrivalsTimestamp');
-                const currentTimestamp = new Date().getTime();
-
-                if (
-                    storedNewArrivals &&
-                    storedNewArrivalsTimestamp &&
-                    currentTimestamp - parseInt(storedNewArrivalsTimestamp) <= 30 * 60 * 1000
-                ) {
-                    console.log('storage arrivals');
-
-                    // Use stored new arrivals data if it's still valid
-                    setNewArrivals(JSON.parse(storedNewArrivals));
-                } else {
-                    console.log('backend arrivals');
-
-                    // Fetch new new arrivals data if there is no stored data or if it's expired
-                    await fetchNewArrivals();
-                }
-            } catch (error) {
-                console.log(error);
-            }
-        };
-
-        if (customerId && !newArrivalsFetched && recommendedProdutcs?.length > 0) {
-            fetchData();
-            setNewArrivalsFetched(true); // Mark data as fetched
+        if (!recommendedProdutcs) {
+            fetchRecommendedProducts()
         }
-    }, [customerId, newArrivalsFetched, recommendedProdutcs, fetchNewArrivals]);
-
-    ////////////////////////////////////////////////////////////////////
+    },[recommendedProdutcs])
 
     return (
         <SafeAreaView
@@ -495,38 +485,7 @@ const HomeScreen = () => {
 
 
 const styles = StyleSheet.create({
-    headerWrapStyle: {
-        backgroundColor: Colors.primaryColor,
-        // borderBottomLeftRadius: Sizes.fixPadding + 5.0,
-        // borderBottomRightRadius: Sizes.fixPadding + 5.0,
-    },
-    cityAndMapInfoWrapStyle: {
-        marginTop: Sizes.fixPadding,
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between'
-    },
-    activeDotStyle: {
-        marginHorizontal: Sizes.fixPadding - 7.0,
-        width: 12.0,
-        height: 12.0,
-        borderRadius: 6.0,
-        backgroundColor: Colors.primaryColor
-    },
-    inActiveDotStyle: {
-        marginHorizontal: Sizes.fixPadding - 7.0,
-        width: 8.0,
-        height: 8.0,
-        borderRadius: 4.0,
-        backgroundColor: Colors.grayColor
-    },
-    sliderPaginationWrapStyle: {
-        position: 'absolute',
-        bottom: -60.0,
-        left: 0.0,
-        right: 0.0,
-    },
-
+   
     categoryImageWrapStyle: {
         width: 110.0,
         height: 110.0,
@@ -534,70 +493,13 @@ const styles = StyleSheet.create({
         backgroundColor: Colors.whiteColor,
         alignItems: 'center',
         justifyContent: 'center',
-        // elevation: 5,
-        // borderWidth: 1,
-        // borderColor: '#ececec',
+        
     },
     categoryWrapStyle: {
         maxWidth: width / 4.0 - 10.0,
         marginBottom: Sizes.fixPadding + 10,
         flex: 1,
         alignItems: 'center'
-    },
-    freshRecommendationWrapStyle: {
-        flex: 1,
-        maxWidth: (width / 2.0) - 25.0,
-        backgroundColor: Colors.whiteColor,
-        elevation: 4.0,
-        borderRadius: Sizes.fixPadding - 5.0,
-        marginHorizontal: Sizes.fixPadding - 5.0,
-        marginBottom: Sizes.fixPadding,
-    },
-    favoriteIconWrapStyle: {
-        backgroundColor: "rgb(230,230,230)",
-        margin: 4,
-        alignSelf: 'flex-end',
-        padding: Sizes.fixPadding - 5.0,
-        borderRadius: 50 / 2
-    },
-    productInfoOuterWrapStyle: {
-        position: 'absolute',
-        borderBottomLeftRadius: Sizes.fixPadding - 5.0,
-        borderBottomRightRadius: Sizes.fixPadding - 5.0,
-        bottom: 0.0,
-        left: 0.0,
-        right: 0.0,
-        overflow: 'hidden',
-        paddingTop: Sizes.fixPadding - 5.0,
-    },
-    productInfoWrapStyle: {
-        backgroundColor: Colors.whiteColor,
-        elevation: 10.0,
-        paddingBottom: Sizes.fixPadding - 5.0,
-        paddingHorizontal: Sizes.fixPadding - 5.0,
-    },
-    productDetailWrapStyle: {
-        marginTop: Sizes.fixPadding - 5.0,
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between'
-    },
-    snackBarStyle: {
-        position: 'absolute',
-        bottom: 40.0,
-        left: -10.0,
-        right: -10.0,
-        backgroundColor: '#333333',
-        elevation: 0.0,
-    },
-    searchInputWrapper: {
-        position: 'relative', // Use relative positioning for the wrapper
-        borderRadius: 5,
-        paddingVertical: 5,
-        paddingHorizontal: Sizes.fixPadding - 10.0,
-    },
-    searchInput: {
-        paddingLeft: 2,
     },
     searchIcon: {
         color: "gray",
