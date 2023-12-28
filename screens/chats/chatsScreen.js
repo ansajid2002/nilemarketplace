@@ -465,7 +465,7 @@ const ChatsScreen = ({ navigation }) => {
                                 <Text className="text-black font-bold text-base  tracking-wider">{` ${t("Total : ")} ${c_symbol} ${cartTotal}`}</Text>
                                 <TouchableOpacity onPress={debounce(() => {
                                     if (customerData?.length === 0) {
-                                        navigation.push("Login",{fromcart:true})
+                                        navigation.navigate("Login")
                                     }
                                     else {
                                         // navigation.push("Checkout Address")

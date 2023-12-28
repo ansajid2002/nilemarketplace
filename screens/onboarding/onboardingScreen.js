@@ -99,7 +99,7 @@ const OnboardingScreen = ({ navigation }) => {
     return (
         <SafeAreaView style={{ flex: 1 }}>
             <StatusBar backgroundColor={Colors.primaryColor} />
-            <View style={{ flex: 1, backgroundColor: "#fb7701" }}>
+            <View style={{ flex: 1, backgroundColor: "white" }}>
                 <>
                     <Carousel
                         ref={flatListRef}

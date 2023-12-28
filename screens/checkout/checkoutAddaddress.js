@@ -20,6 +20,7 @@ import axios from 'axios'
 import FullPageLoader from '../../components/FullPageLoader'
 import { SafeAreaView } from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'; // You may need to install this package
+import { KeyboardAvoidingView } from 'react-native'
 
 const CheckoutAddaddress = ({ route, navigation }) => {
     const [locationloader, setLocationloader] = useState(false)
@@ -197,7 +198,11 @@ const CheckoutAddaddress = ({ route, navigation }) => {
 
 
     return (
-        <SafeAreaView style={{ flex: 1, backgroundColor: Colors.whiteColor }} className="">
+        <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height mt-10'}
+        style={{ flex: 1 }}
+      >
+              <SafeAreaView style={{ flex: 1, backgroundColor: Colors.whiteColor }} className="">
 
             {loading && <FullPageLoader />}
             <View className="p-2 bg-white" style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -209,7 +214,7 @@ const CheckoutAddaddress = ({ route, navigation }) => {
         <Text style={{ marginLeft: 10, fontSize: 20, fontWeight: 600 }}>{t("Select a delivery Address")}</Text>
       
       </View>
-      <ScrollView className="pb-4 bg-white">
+      <ScrollView className="pb-4 bg-white" showsVerticalScrollIndicator={false}>
 
                 {/* <Text className="text-xl font-semibold tracking-wide mt-4 mb-6 ml-3">{t("Your Delivery Address")}</Text> */}
                 <View>
@@ -235,6 +240,8 @@ const CheckoutAddaddress = ({ route, navigation }) => {
                             </TouchableOpacity>
                     }
                 </View>
+                <View>
+
                 <View className="flex-row">
 
                     <View className=" m-2 flex-1">
@@ -250,9 +257,9 @@ const CheckoutAddaddress = ({ route, navigation }) => {
                             }}
                             onBlur={handleBlur('given_name_address')}
                         />
-                        {touched.given_name_address && errors.given_name_address && (
+                        {/* {touched.given_name_address && errors.given_name_address && (
                             <Text className="mt-1 ml-2" style={{ color: 'red' }}>{errors.given_name_address}</Text>
-                        )}
+                        )} */}
                     </View>
                     <View className=" m-2 flex-1">
                         <Text className=" text-base mb-1 font-semibold tracking-wide">Last Name</Text>
@@ -267,9 +274,9 @@ const CheckoutAddaddress = ({ route, navigation }) => {
                             }}
                             onBlur={handleBlur('family_name_address')}
                         />
-                        {touched.family_name_address && errors.family_name_address && (
+                        {/* {touched.family_name_address && errors.family_name_address && (
                             <Text className="mt-1 ml-2" style={{ color: 'red' }}>{errors.family_name_address}</Text>
-                        )}
+                        )} */}
                     </View>
                 </View>
 
@@ -286,9 +293,9 @@ const CheckoutAddaddress = ({ route, navigation }) => {
                         }}
                         onBlur={handleBlur('email_address')}
                     />
-                    {touched.email_address && errors.email_address && (
+                    {/* {touched.email_address && errors.email_address && (
                         <Text className="mt-1 ml-2" style={{ color: 'red' }}>{errors.email_address}</Text>
-                    )}
+                    )} */}
 
                 </View>
                 <View style={{ marginBottom: 12 }} className="mx-4">
@@ -315,9 +322,9 @@ const CheckoutAddaddress = ({ route, navigation }) => {
                         }}
                     />
 
-                    {touched.phone_address && errors.phone_address && (
+                    {/* {touched.phone_address && errors.phone_address && (
                         <Text className="mt-1 ml-2" style={{ color: 'red' }}>{errors.phone_address}</Text>
-                    )}
+                    )} */}
 
                 </View>
                 <View className="m-3">
@@ -333,40 +340,11 @@ const CheckoutAddaddress = ({ route, navigation }) => {
                         }}
                         onBlur={handleBlur('apt_address')}
                     />
-                    {touched.apt_address && errors.apt_address && (
+                    {/* {touched.apt_address && errors.apt_address && (
                         <Text className="mt-1 ml-2" style={{ color: 'red' }}>{errors.apt_address}</Text>
-                    )}
+                    )} */}
 
                 </View>
-
-                {/* <View className="m-3 ">
-                <Text className=" text-base mb-1 font-semibold tracking-wide">Select Country</Text>
-                <Picker
-                    selectedValue={selected_country}
-                    onValueChange={(itemValue, itemIndex) => {
-                        // setSelectedCountry(itemValue)
-                        updateState({ selected_country: itemValue })
-                    }}
-
-                    style={{
-                        flex: .55,
-                        borderWidth: 1,       // Add border width
-                        borderColor: 'red', // Adjust border color
-                        borderRadius: 5,     // Add border radius if desired
-                        padding: 5,
-                        // Add padding if desired
-                    }}
-                >
-                    <Picker.Item label="India " value="IN" />
-                    <Picker.Item label="Somalia " value="SO" />
-                    <Picker.Item label="Ethiopia" value="ET" />
-                    <Picker.Item label="France" value="FR" />
-                    <Picker.Item label="Kenya" value="KE" />
-                    <Picker.Item label='Nigeria' value="NG" />
-
-                </Picker>
-
-            </View> */}
 
                 <View className="m-3">
                     <Text className=" text-base mb-1 font-semibold tracking-wide">Country</Text>
@@ -381,9 +359,9 @@ const CheckoutAddaddress = ({ route, navigation }) => {
                         }}
                         onBlur={handleBlur('country_address')}
                     />
-                    {touched.country_address && errors.country_address && (
+                    {/* {touched.country_address && errors.country_address && (
                         <Text className="mt-1 ml-2" style={{ color: 'red' }}>{errors.country_address}</Text>
-                    )}
+                    )} */}
                 </View>
 
                 <View className="m-3">
@@ -399,9 +377,9 @@ const CheckoutAddaddress = ({ route, navigation }) => {
                         }}
                         onBlur={handleBlur('zip_address')}
                     />
-                    {touched.zip_address && errors.zip_address && (
+                    {/* {touched.zip_address && errors.zip_address && (
                         <Text className="mt-1 ml-2" style={{ color: 'red' }}>{errors.zip_address}</Text>
-                    )}
+                    )} */}
 
                 </View>
                 <View className="m-3">
@@ -417,9 +395,9 @@ const CheckoutAddaddress = ({ route, navigation }) => {
                         }}
                         onBlur={handleBlur('city_address')}
                     />
-                    {touched.city_address && errors.city_address && (
+                    {/* {touched.city_address && errors.city_address && (
                         <Text className="mt-1 ml-2" style={{ color: 'red' }}>{errors.city_address}</Text>
-                    )}
+                    )} */}
 
                 </View>
                 <View className="m-3">
@@ -435,9 +413,9 @@ const CheckoutAddaddress = ({ route, navigation }) => {
                         }}
                         onBlur={handleBlur('subregion_address')}
                     />
-                    {touched.subregion_address && errors.subregion_address && (
+                    {/* {touched.subregion_address && errors.subregion_address && (
                         <Text className="mt-1 ml-2" style={{ color: 'red' }}>{errors.subregion_address}</Text>
-                    )}
+                    )} */}
 
                 </View>
                 <View className="m-3">
@@ -453,9 +431,9 @@ const CheckoutAddaddress = ({ route, navigation }) => {
                         }}
                         onBlur={handleBlur('region_address')}
                     />
-                    {touched.region_address && errors.region_address && (
+                    {/* {touched.region_address && errors.region_address && (
                         <Text className="mt-1 ml-2" style={{ color: 'red' }}>{errors.region_address}</Text>
-                    )}
+                    )} */}
 
                 </View>
 
@@ -485,11 +463,15 @@ const CheckoutAddaddress = ({ route, navigation }) => {
 
 
                 </View>
-                <TouchableOpacity onPress={debounce(handleSubmit, 500)} className="bg-[#00008b] mb-4 mx-4 rounded-md">
+                </View>
+
+            </ScrollView>
+                <TouchableOpacity onPress={debounce(handleSubmit, 500)} className="bg-[#00008b] py-1 ">
                     <Text className=" text-2xl m-2 mt-1 text-white text-center font-bold tracking-widest">{t("Save")}</Text>
                 </TouchableOpacity>
-            </ScrollView>
         </SafeAreaView>
+        </KeyboardAvoidingView>
+
     )
 }
 

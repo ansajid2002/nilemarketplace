@@ -56,7 +56,7 @@ const CheckoutPreview = ({ route, navigation }) => {
   ]
 
   useEffect(() => {
-    if (cartItems.length === 0) {
+    if (cartItems?.length === 0) {
       navigation.navigate("Home");
     }
   }, [cartItems]);
@@ -185,55 +185,18 @@ const CheckoutPreview = ({ route, navigation }) => {
   );
 
   ////////////////FROM CART//////////////////////////////////////////////////////////
-  const Total = cartItems.map(item => item?.sellingprice * item?.added_quantity).reduce((prevValue, currValue) => prevValue + currValue, 0);
+  const Total = cartItems?.map(item => item?.sellingprice * item?.added_quantity).reduce((prevValue, currValue) => prevValue + currValue, 0);
   const cartTotal = parseFloat(Total.toFixed(2))
 
-  const TotalSellingPrice = cartItems.map(item => item?.sellingprice * item?.added_quantity).reduce((prevValue, currValue) => prevValue + currValue, 0);
+  const TotalSellingPrice = cartItems?.map(item => item?.sellingprice * item?.added_quantity).reduce((prevValue, currValue) => prevValue + currValue, 0);
 
-  const TotalMRP = cartItems.map(item => item?.mrp * item?.added_quantity).reduce((prevValue, currValue) => prevValue + currValue, 0);
+  const TotalMRP = cartItems?.map(item => item?.mrp * item?.added_quantity).reduce((prevValue, currValue) => prevValue + currValue, 0);
 
   const cartTotalSellingPrice = parseFloat(TotalSellingPrice.toFixed(2));
   const cartTotalMRP = parseFloat(TotalMRP.toFixed(2));
   const cartDiscount = 0
 
-  const TotalDeliveryCharges = cartItems.map(item => {
-    // Extract local, zonal, and national (international) delivery charges
-    const localDeliveryCharge = parseFloat(item?.localdeliverycharge) * parseFloat(item?.added_quantity);
-    const zonalDeliveryCharge = parseFloat(item?.zonaldeliverycharge) * parseFloat(item?.added_quantity);
-    const nationalDeliveryCharge = parseFloat(item?.nationaldeliverycharge) * parseFloat(item?.added_quantity);
 
-    return {
-      local: localDeliveryCharge,
-      zonal: zonalDeliveryCharge,
-      national: nationalDeliveryCharge,
-    };
-  }).reduce((prevValue, currValue) => {
-    return {
-      local: prevValue.local + currValue.local,
-      zonal: prevValue.zonal + currValue.zonal,
-      national: prevValue.national + currValue.national,
-    };
-  }, { local: 0, zonal: 0, national: 0 });
-
-  // Calculate the sum of all delivery charges
-  const sumOfAllDeliveryCharges = (
-    TotalDeliveryCharges.local +
-    TotalDeliveryCharges.zonal +
-    TotalDeliveryCharges.national
-  );
-  ///////////////////DELIVERY DATE//////////////////////////////////////
-  const today = new Date();
-  const futureDate = new Date(today);
-  futureDate.setDate(today.getDate() + 6);
-
-  // Define an array of month names
-  const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-
-  // Define an array of day names
-  const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-
-  const formattedDate = `${dayNames[futureDate.getDay()]} ${futureDate.getDate()} ${monthNames[futureDate.getMonth()]}`;
-  const cartTotalDeliveryCharges = parseFloat(sumOfAllDeliveryCharges.toFixed(2));
   const Cartdetails = () => {
     return (
       <View className=" p-4 bg-white">
@@ -246,13 +209,10 @@ const CheckoutPreview = ({ route, navigation }) => {
           <Text className="text-[14px]">{t("Discount")}</Text>
           <Text className="text-[16px] text-green-600 font-medium">{`${(((cartTotalMRP - cartTotalSellingPrice) / cartTotalMRP) * 100).toFixed(2)} %`} ({`${c_symbol}${cartTotalMRP - cartTotalSellingPrice}`})</Text>
         </View>
-        <View className="flex-row justify-between items-center  my-1 py-0.5">
-          <Text className="text-[14px]">{t("Delivery Charges")}</Text>
-          <Text className="text-[16px] font-medium">{`${cartTotalDeliveryCharges || 0}`}</Text>
-        </View>
+
         <View className="flex-row justify-between items-center  my-1 py-1 border-t border-gray-200">
           <Text className="text-base font-medium">{t("Total Amount")}</Text>
-          <Text className="text-[16px] font-medium">{`${c_symbol} ${(cartTotalSellingPrice - cartDiscount + (cartTotalDeliveryCharges || 0)).toFixed(2)}`}</Text>
+          <Text className="text-[16px] font-medium">{`${c_symbol} ${(cartTotalSellingPrice - cartDiscount).toFixed(2)}`}</Text>
         </View>
         <Text className="text-[16px] text-green-600 font-medium tracking-wider my-1">{` ${t("You will save")} ${c_symbol} ${(cartTotalMRP - cartTotalSellingPrice).toFixed(2)} ${t("on this order")}`}</Text>
 
@@ -277,7 +237,7 @@ const CheckoutPreview = ({ route, navigation }) => {
     const discountPercentageSimple = ((item.mrp - item.sellingprice) / item.mrp) * 100;
 
     return (
-      <View className=" my-0.5 bg-white border  border-gray-200 shadow-md px-1 ">
+      <View className="  py-1.5 bg-white border  border-gray-200 shadow-md px-1 ">
 
         <TouchableOpacity className="flex-row  rounded-sm p-2  "
 
@@ -286,58 +246,46 @@ const CheckoutPreview = ({ route, navigation }) => {
             <Image
               resizeMode="contain"
               source={
-                item.images.length === 0
-                  ? require('../../assets/noimage.jpg')
-                  : { uri: `${AdminUrl}/uploads/UploadedProductsFromVendors/${item.images[0]}` }
+                item.images
+                  ? { uri: `${AdminUrl}/uploads/UploadedProductsFromVendors/${item.images[0]}` }
+                  : require('../../assets/noimage.jpg')
               }
 
               defaultSource={require('../../assets/noimage.jpg')}
 
               style={{ width: '100%', height: undefined, aspectRatio: 4 / 4 }} className="rounded-md"
-
-
             />
-
           </View>
+          <View className=" flex-1 ml-4 " >
 
-          <View className=" flex-1 ml-5 " >
-
-            <Text numberOfLines={2} className="text-base font-medium">
+            <Text numberOfLines={2} className="text-lg font-medium">
               {item?.ad_title}
             </Text>
+            {
+              item.label && <Text className="text-[14px] text-gray-500 ">{item.label.split("/").join(" / ")}</Text>
+            }
 
-
-            <View className="flex-row items-center">
-              <Text className="text-[14px] tracking-widest">Qty </Text>
-              <Text className="text-[14px] text-gray-500  font-bold">{item.added_quantity}</Text>
-              {
-                item.label && <Text className="text-[14px] text-gray-500 ml-4 ">{item.label.split("/").join(" / ")}</Text>
-              }
-            </View>
-            <View className="flex-row space-x-1 items-center my-1">
-
-              <Text className={'text-[#fb7701] text-[20px] font-bold mr-1'}>
-                {`${c_symbol} ${item.sellingprice % 1 === 0 ? Math.trunc(item.sellingprice) : item.sellingprice}`}
-              </Text>
-              <Text className="ml-0.5 mr-1" style={{ textDecorationLine: 'line-through', fontSize: 15, fontWeight: 'medium', color: 'gray' }}>
-                {`${c_symbol} ${item.mrp % 1 === 0 ? Math.trunc(item.mrp) : item.mrp}`}
-              </Text>
-              {
-                discountPercentageSimple &&
-                <Text className={'text-[#fb7701] text-[11px] border px-1 py-0.5 rounded-sm border-[#fb7701]'}>
-                  {discountPercentageSimple?.toFixed(2)}%
+            <View className="gap-1" style={{ flexDirection: 'row', alignItems: 'center', paddingTop: 4 }}>
+              <Text className="text-lg font-medium text-gray-700">Price:</Text>
+              {discountPercentageSimple && discountPercentageSimple > 0 && (
+                <Text className="text-lg" style={{ color: 'green' }}>-{discountPercentageSimple?.toFixed(2)}%</Text>
+              )}
+              <View className="flex-row items-center ">
+                <Text className="text-base ml-1.5 mr-0.5 font-medium">{`${c_symbol}`}</Text>
+                <Text className="text-gray-900 text-lg" style={{ fontWeight: 'bold' }}>
+                  {`${item.sellingprice % 1 === 0 ? Math.trunc(item.sellingprice) : item.sellingprice}`}
                 </Text>
-              }
-
+              </View>
             </View>
-            <View className="flex-row items-center">
-
-              <Text className="text-[13px] text-gray-600 my-0.5">{t("Expected Delivery By : ")}</Text>
-              <Text className="text-[#00008b] font-medium text-[15px]">{formattedDate}</Text>
-            </View>
-          </View>
-
-          <View>
+            {
+              discountPercentageSimple !== 0 &&
+              <View className="flex-row items-center">
+                <Text className="text-gray-500 font-medium">List Price: </Text>
+                <Text style={styles.mrpPrice} className="font-medium">
+                  {`$${item.mrp % 1 === 0 ? Math.trunc(item.mrp) : item.mrp}`}
+                </Text>
+              </View>
+            }
 
           </View>
 
@@ -353,12 +301,7 @@ const CheckoutPreview = ({ route, navigation }) => {
   // Define ListFooterComponent
   const ListFooterComponent = () => (
     <View className=" my-1">
-      {/* <Text
-        className="tracking-wider mx-2 text-lg font-bold text-right "
-      >
-        {`Total (${cartItems.reduce((total, item) => total + item.added_quantity, 0)})  :  ${c_symbol} ${cartTotal}`}
-      </Text> */}
-      {/* <View className="border w-full border-gray-300 mt-3  "></View> */}
+
       <View className="bg-white p-2">
         <Text className="text-[18px] font-medium mb-2 mx-1">{t("Delivery Address")}</Text>
 
@@ -384,7 +327,6 @@ const CheckoutPreview = ({ route, navigation }) => {
       {/* {applycoupon()} */}
       {Cartdetails()}
       <View className="my-1 mb-2 py-4 p-2 bg-white">
-        {/* <View className="border w-full border-gray-300 my-3"></View> */}
         <Text className="text-[18px] font-medium mb-2 mx-1">{t("Choose Payment Mode")}</Text>
 
         <View>
@@ -396,19 +338,9 @@ const CheckoutPreview = ({ route, navigation }) => {
             <Text className={`text-lg ${selectedPaymentMode === "Stripe" && 'font-bold'}`}>Stripe</Text>
           </TouchableOpacity>
 
-          {/* <TouchableOpacity
-            className="flex-row items-center m-1"
-            onPress={() => handlePaymentModeChange('Other')}
-          >
-            <RadioButton selected={selectedPaymentMode === 'Other'} />
-            <Text className="text-lg">Other Payment Method</Text>
-          </TouchableOpacity> */}
         </View>
       </View>
-      <TouchableOpacity className="" onPress={debounce(() => handlePaymentSubmit(), 500)}>
-        <Text className="text-[22px] bg-[#00008b] py-2 pb-3 mt-2 tracking-widest rounded-md  text-center text-white font-bold">
-          {` ${t("Pay")} ${c_symbol} ${cartTotalSellingPrice - cartDiscount + (cartTotalDeliveryCharges || 0)}`} </Text>
-      </TouchableOpacity>
+      
     </View>
   );
 
@@ -431,6 +363,10 @@ const CheckoutPreview = ({ route, navigation }) => {
           showsVerticalScrollIndicator={false}
           ListFooterComponent={<ListFooterComponent />}
         />
+        <TouchableOpacity className="bg-[#00008b] " onPress={debounce(() => handlePaymentSubmit(), 500)}>
+        <Text className="text-[22px]  py-2 pb-3  tracking-widest rounded-md  text-center text-white font-bold">
+          {` ${t("Pay")} ${c_symbol} ${cartTotalSellingPrice - cartDiscount}`} </Text>
+      </TouchableOpacity>
       </StripeProvider>
     </SafeAreaView>
 

@@ -193,13 +193,13 @@ const ProductItem = ({ item }) => {
                         {item?.condition === "Used" && "(Used) "}
                         {item?.ad_title}
                     </Text>
-                    <View className="gap-1" style={{ flexDirection: 'row', alignItems: 'center', paddingTop: 8 }}>
-                        <Text className="text-lg font-medium text-gray-700">Price:</Text>
+                    <View className="gap-1 flex-wrap" style={{ flexDirection: 'row', alignItems: 'center', paddingTop: 8 }}>
+                    <Text className="text-lg font-medium text-gray-700">Price:</Text>
                         {discountPercentageSimple && discountPercentageSimple > 0 && (
-                            <Text className="text-lg" style={{ color: 'green' }}>-{discountPercentageSimple?.toFixed(2)}%</Text>
+                            <Text className="text-base" style={{ color: 'green' }}>-{discountPercentageSimple?.toFixed(2)}%</Text>
                         )}
                         <View className="flex-row  ">
-                            <Text className="text-[14px] ml-1 font-medium">{`${c_symbol} `}</Text>
+                            <Text className="text-[16px] ml-1 font-medium">{`${c_symbol} `}</Text>
                             <Text className="text-gray-900 text-lg" style={{ fontWeight: 'bold' }}>
                                 {`${item.sellingprice % 1 === 0 ? Math.trunc(item.sellingprice) : item.sellingprice}`}
                             </Text>

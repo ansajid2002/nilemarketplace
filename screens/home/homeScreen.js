@@ -369,7 +369,8 @@ const HomeScreen = () => {
                                     {t('Browse Services')}
                                 </Text>
                                 <TouchableOpacity
-                                    onPress={debounce(() => navigation.navigate('servicesList'), 500)
+                                    // onPress={debounce(() => navigation.navigate('servicesList'), 500)
+                                    onPress={debounce(() => navigation.navigate('bottomtabbar'), 500)
                                     }
                                 >
                                     <AntDesign name="arrowright" size={24} color="black" />

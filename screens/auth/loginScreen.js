@@ -18,11 +18,12 @@ import * as Google from "expo-auth-session/providers/google"
 import * as Facebook from "expo-auth-session/providers/facebook"
 import { debounce } from 'lodash';
 import { sendNotificationWithNavigation } from '../NotificationExpo';
+import { KeyboardAvoidingView } from 'react-native';
+
 
 WebBrowser.maybeCompleteAuthSession()
 const Login = ({ navigation,route }) => {
     const [isPasswordShown, setIsPasswordShown] = useState(true);
-    const [isChecked, setIsChecked] = useState(false);
 
     const [request, response, promptAsync] = Google.useAuthRequest({
         androidClientId: "216641462687-7mv9inako2l7n3rmp5gq72qu8lquvnn0.apps.googleusercontent.com",
@@ -277,15 +278,14 @@ const Login = ({ navigation,route }) => {
 
             if (!isEmailValid()) {
                 Alert.alert("Error", 'Invalid email address')
-                return; // Stop execution if email is invalid
+                return; 
             }
 
             if (!isPasswordValid()) {
                 Alert.alert("Error", "Password must be at least 8 characters")
-                return; // Stop execution if password is invalid
+                return;
             }
 
-            // Construct the request body
             const requestBody = {
                 email: email,
                 password: password,
@@ -303,17 +303,12 @@ const Login = ({ navigation,route }) => {
             const data = await response.json();
 
             if (data.status === 200) {
-                // Successful login
                 dispatch(updateCustomerData(data?.customerData))
                 updateCartData(data?.customerData?.customer_id)
                 await AsyncStorage.setItem('customerData', JSON.stringify(data.customerData));
-                // await AsyncStorage.setItem('loggedid', data.loggedid);
-
-
-
+            
                 if (data.customerData.customer_interest !== null && data.customerData.customer_interest !== undefined && data.customerData.customer_interest.length > 0) {
-                    // The customer_interest is not null, not undefined, and not empty
-                    // You can proceed with your code here
+                    
                     navigation.navigate("Home")
                 } else {
                     // The customer_interest is null, undefined, or empty
@@ -355,6 +350,10 @@ const Login = ({ navigation,route }) => {
     } = state;
 
     return (
+        <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height mt-10'}
+        style={{ flex: 1 }}
+      >
         <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.white }}>
             <View style={{ flex: 1, marginHorizontal: 22 }}>
                 <View style={{ marginVertical: 22 }}>
@@ -466,17 +465,7 @@ const Login = ({ navigation,route }) => {
                     marginVertical: 6,
                     justifyContent: 'space-between'
                 }}>
-                    <View className="flex-row">
-                        {/* <Checkbox
-                            style={{ marginRight: 8 }}
-                            value={isChecked}
-                            onValueChange={setIsChecked}
-                            color={isChecked ? COLORS.primary : undefined}
-                        />
-
-                        <Text>Remenber Me</Text> */}
-                    </View>
-
+                  
                     <TouchableOpacity onPress={debounce(() => navigation.navigate('ForgotPassword'), 500)}>
                         <View>
                             <Text>Forgot Passowrd ?</Text>
@@ -605,6 +594,7 @@ const Login = ({ navigation,route }) => {
             </View>
 
         </SafeAreaView>
+        </KeyboardAvoidingView>
     )
 }
 

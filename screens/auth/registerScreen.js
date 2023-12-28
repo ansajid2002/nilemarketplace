@@ -4,6 +4,8 @@ import { Ionicons } from "@expo/vector-icons";
 import Button from '../../components/Button';
 import { AdminUrl } from '../../constant';
 import { debounce } from 'lodash';
+import { SafeAreaView } from 'react-native';
+import { KeyboardAvoidingView } from 'react-native';
 
 export const COLORS = {
     white: "#FFFFFF",
@@ -140,9 +142,16 @@ const RegisterScreen = ({ navigation }) => {
     };
 
     return (
+        <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height mt-10'}
+        style={{ flex: 1 }}
+      >
+        <SafeAreaView  style={{ flex: 1, backgroundColor:"white"}}>
+
         <ScrollView style={{ backgroundColor: COLORS.white }}>
             <View style={{ flex: 1, marginHorizontal: 22 }}>
-                <View style={{ marginVertical: 22 }}>
+          
+                <View style={{  }}>
                     <Text style={{
                         fontSize: 22,
                         fontWeight: 'bold',
@@ -394,104 +403,11 @@ const RegisterScreen = ({ navigation }) => {
                     onPress={debounce(handleSignUp, 500)}
                 />
 
-                {/* <View style={{ flexDirection: 'row', alignItems: 'center', marginVertical: 20 }}>
-                    <View
-                        style={{
-                            flex: 1,
-                            height: 1,
-                            backgroundColor: COLORS.grey,
-                            marginHorizontal: 10
-                        }}
-                    />
-                    <Text style={{ fontSize: 14 }}>Or Sign up with</Text>
-                    <View
-                        style={{
-                            flex: 1,
-                            height: 1,
-                            backgroundColor: COLORS.grey,
-                            marginHorizontal: 10
-                        }}
-                    />
-                </View> */}
-
-                {/* <View style={{
-                    flexDirection: 'row',
-                    justifyContent: 'center'
-                }}>
-                    <TouchableOpacity
-                       
-                        style={{
-                            flex: 1,
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            flexDirection: 'row',
-                            height: 52,
-                            borderWidth: 1,
-                            borderColor: COLORS.grey,
-                            marginRight: 4,
-                            borderRadius: 10
-                        }}
-                    >
-                        <Image
-                            source={require("../../assets/facebook.png")}
-                            style={{
-                                height: 36,
-                                width: 36,
-                                marginRight: 8
-                            }}
-                            resizeMode='contain'
-                        />
-
-                        <Text>Facebook</Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity
-              
-                        style={{
-                            flex: 1,
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            flexDirection: 'row',
-                            height: 52,
-                            borderWidth: 1,
-                            borderColor: COLORS.grey,
-                            marginRight: 4,
-                            borderRadius: 10
-                        }}
-                    >
-                        <Image
-                            source={require("../../assets/google.png")}
-                            style={{
-                                height: 36,
-                                width: 36,
-                                marginRight: 8
-                            }}
-                            resizeMode='contain'
-                        />
-
-                        <Text>Google</Text>
-                    </TouchableOpacity>
-                </View>
-
-                <View style={{
-                    flexDirection: "row",
-                    justifyContent: "center",
-                    marginVertical: 22
-                }}>
-                    <Text style={{ fontSize: 16, color: COLORS.black }}>Already have an account</Text>
-                    <Pressable
-                        onPress={() => navigation.navigate("Login")}
-                    >
-                        <Text style={{
-                            fontSize: 16,
-                            color: COLORS.primary,
-                            fontWeight: "bold",
-                            marginLeft: 6
-                        }}>Login</Text>
-                    </Pressable>
-                </View> */}
             </View>
         </ScrollView>
+        </SafeAreaView>
+        </KeyboardAvoidingView>
+
     );
 };
 
