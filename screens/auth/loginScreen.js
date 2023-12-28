@@ -5,10 +5,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import Button from '../../components/Button'
 import { COLORS } from './registerScreen';
-import Checkbox from 'expo-checkbox';
 import { useDispatch, useSelector } from 'react-redux';
-import { addCarts, addItem, emptyCart } from '../../store/slices/cartSlice';
-import { changetabbarIndex } from '../../store/slices/counterslice';
+import {  fetchcart, getCartTotal } from '../../store/slices/cartSlice';
 import { AdminUrl } from '../../constant';
 import { useFocusEffect } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -22,7 +20,7 @@ import { debounce } from 'lodash';
 import { sendNotificationWithNavigation } from '../NotificationExpo';
 
 WebBrowser.maybeCompleteAuthSession()
-const Login = ({ navigation }) => {
+const Login = ({ navigation,route }) => {
     const [isPasswordShown, setIsPasswordShown] = useState(true);
     const [isChecked, setIsChecked] = useState(false);
 
@@ -117,13 +115,13 @@ const Login = ({ navigation }) => {
                 setLoading(false); // Remove the activity indicator when component re-renders
             }
             else if (data.status === 200) {
+                dispatch(updateCustomerData(data?.userdata))
+                updateCartData(data?.userdata?.customer_id)
                 await AsyncStorage.setItem('customerData', JSON.stringify(data.userdata));
                 await sendNotificationWithNavigation(`Great, ${data?.userdata?.given_name}`, 'You have logged in Successfully...✅')
-                updateCartData(data?.userdata?.customer_id)
-                dispatch(updateCustomerData(data?.userdata))
-                setLoading(false)
-
+                
                 navigation.navigate('Home')
+                setLoading(false)
             }
         } catch (error) {
             console.error('Error while sending the access token:', error);
@@ -131,215 +129,109 @@ const Login = ({ navigation }) => {
     }
 
     const dispatch = useDispatch()
-    const { customerData } = useSelector((store) => store.userData)
-    const { productsList } = useSelector((store) => store.products)
     const cartItems = useSelector((state) => state.cart.cartItems);
 
-    const customerId = customerData[0]?.customer_id
-    const requestOptions = {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-    };
+    const updateCartData = async (customerId) => {
+        try {
 
+            if ( cartItems?.length === 0) {
+                const urlWithCustomerId1 = `${AdminUrl}/api/cartTotal?customer_id=${customerId}`;
+                const requestOptions1 = {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                };
+                
+                const response1 = await fetch(urlWithCustomerId1, requestOptions1);
+                if (!response1.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                const data1 = await response1.json()
+                dispatch(getCartTotal(data1.total))
+                const urlWithCustomerId = `${AdminUrl}/api/cart?customer_id=${customerId}`;
+                const requestOptions = {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                };
+    
+                const response2 = await fetch(urlWithCustomerId, requestOptions);
+    
+                if (!response2.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+    
+                const data = await response2.json();
+                dispatch(fetchcart(data));             
+            }
 
-    // const updateCartData = async (customerId) => {
-    //     try {
+            for (const singleCartItem of cartItems) {
+                const { category, subcategory, uniquepid, vendorid, label } = singleCartItem;
 
-    //         for (const cartItem of cartItems) {
-    //             // Extract necessary data
-    //             const { category, subcategory, uniquepid, vendorInfo, added_quantity, mrp, sellingprice, label } = cartItem;
+                const replaceCategory = category.replace(/[^\w\s]/g, "").replace(/\s/g, "");
+                const replaceSubcategory = subcategory.replace(/[^\w\s]/g, "").replace(/\s/g, "");
 
-    //             const replacecategory = category.replace(/[^\w\s]/g, "").replace(/\s/g, "");
-    //             const replacesubcategory = subcategory.replace(/[^\w\s]/g, "").replace(/\s/g, "");
+                const requestData = {
+                    customer_id: customerId,
+                    vendor_id: vendorid,
+                    product_uniqueid: uniquepid,
+                    category: replaceCategory,
+                    subcategory: replaceSubcategory,
+                    quantity: 1,
+                    variantlabel: label
+                };
 
-    //             // Prepare the request data
-    //             const requestData = {
-    //                 customer_id: customerId,
-    //                 vendor_id: vendorInfo.id,
-    //                 product_uniqueid: uniquepid,
-    //                 category: replacecategory,
-    //                 subcategory: replacesubcategory,
-    //                 variantlabel: label,
-    //                 mrp,
-    //                 sellingprice,
-    //                 quantity: added_quantity,
-    //             };
+                const response = await fetch(`${AdminUrl}/api/addProductcart`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(requestData),
+                });
 
-    //             // Make a POST request to your API endpoint for updating the cart
-    //             const response = await fetch(`${AdminUrl}/api/addProductcart`, {
-    //                 method: 'POST',
-    //                 headers: {
-    //                     'Content-Type': 'application/json',
-    //                 },
-    //                 body: JSON.stringify(requestData),
-    //             });
+                if (!response.ok) {
+                    console.log("REQUEST WAS NOT SENT TO BACKEND");
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
 
-    //             if (!response.ok) {
-    //                 throw new Error(`HTTP error! Status: ${response.status}`);
-    //             }
-    //         }
+                console.log("Response sent");
+            }
+            const urlWithCustomerId1 = `${AdminUrl}/api/cartTotal?customer_id=${customerId}`;
+            const requestOptions1 = {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            };
+            
+            const response1 = await fetch(urlWithCustomerId1, requestOptions1);
+            if (!response1.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            const data1 = await response1.json()
+            dispatch(getCartTotal(data1.total))
+            const urlWithCustomerId = `${AdminUrl}/api/cart?customer_id=${customerId}`;
+            const requestOptions = {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            };
 
-
-    //         // Fetch cart data
-    //         const urlWithCustomerId = `${AdminUrl}/api/cart?customer_id=${customerId}`;
-    //         const response = await fetch(urlWithCustomerId, requestOptions);
-
-    //         if (!response.ok) {
-    //             throw new Error(`HTTP error! Status: ${response.status}`);
-    //         }
-
-
-    //         const cartData = await response.json();
-    //         let matchingProducts = [...cartItems]
-    //         cartData.forEach((cartItem) => {
-    //             const productMatch = productsList.find(
-    //                 (product) => product.uniquepid === parseInt(cartItem.product_uniqueid)
-    //             );
-    //             if (productMatch) {
-    //                 // Create a new product for each matching cart item
-    //                 const newProduct = { ...productMatch };
-    //                 newProduct.mrp = cartItem.mrp; // Change 'mrp' based on cartItem
-    //                 newProduct.sellingprice = cartItem.sellingprice; // Change 'sellingprice' based on cartItem
-    //                 newProduct.label = cartItem.variantlabel; // Change 'label' based on cartItem
-    //                 newProduct.added_quantity = cartItem.total_quantity; // Change 'label' based on cartItem
-    //                 matchingProducts.push(newProduct);
-    //             }
-    //         });
-
-    //         const asyncCart = await AsyncStorage.getItem('cartData');
-    //         const parseCartData = asyncCart ? JSON.parse(asyncCart) : [];
-    //         // Process and update cart items
-    //         const updatedCartItems = [...parseCartData, ...matchingProducts];
-
-
-    //         const itemMap = {};
-
-    //         updatedCartItems.forEach((currentItem) => {
-    //             const { uniquepid, label, added_quantity } = currentItem;
-    //             // Convert added_quantity to a number
-    //             const quantity = parseInt(added_quantity, 10);
-    //             const key = label ? `${uniquepid}_${label}` : uniquepid;
-
-    //             if (itemMap[key]) {
-    //                 // If the key already exists, update its added_quantity
-    //                 itemMap[key].added_quantity += quantity;
-    //             } else {
-    //                 // If the key doesn't exist, create a new entry
-    //                 itemMap[key] = { ...currentItem, added_quantity: quantity };
-    //             }
-    //         });
-
-    //         const outputArray = Object.values(itemMap);
-
-
-    //         let cartUpdatedItem = []
-    //         for (const cartItem of outputArray) {
-    //             const { category, subcategory, uniquepid, label, vendorid, mrp, sellingprice } = cartItem;
-    //             const replacecategory = category
-    //                 .replace(/[^\w\s]/g, "")
-    //                 .replace(/\s/g, "");
-    //             const replacesubcategory = subcategory
-    //                 .replace(/[^\w\s]/g, "")
-    //                 .replace(/\s/g, "");
-
-    //             const matchingCartItem = cartData.find(item => item.product_uniqueid === uniquepid && (item.variantlabel === label || !label));
-    //             // Initialize addedQuantity to the current added_quantity (if available), or 0
-    //             let addedQuantity = parseInt(cartItem.added_quantity, 10) || 0;
-
-    //             if (matchingCartItem) {
-    //                 // If a matching cart item is found, parse its total_quantity
-    //                 addedQuantity = parseInt(matchingCartItem.total_quantity, 10);
-    //             }
-
-    //             if (parseCartData && parseCartData?.length > 0) {
-    //                 const requestData = {
-    //                     customer_id: customerId,
-    //                     vendor_id: vendorid,
-    //                     product_uniqueid: uniquepid,
-    //                     category: replacecategory,
-    //                     subcategory: replacesubcategory,
-    //                     variantlabel: label,
-    //                     mrp,
-    //                     sellingprice,
-    //                     quantity: addedQuantity,
-    //                 };
-
-    //                 const updateResponse = await fetch(`${AdminUrl}/api/addProductcart`, {
-    //                     method: 'POST',
-    //                     headers: {
-    //                         'Content-Type': 'application/json',
-    //                     },
-    //                     body: JSON.stringify(requestData),
-    //                 });
-
-    //                 if (!updateResponse.ok) {
-    //                     throw new Error(`HTTP error! Status: ${updateResponse.status}`);
-    //                 }
-    //                 dispatch(addItem(cartItem))
-    //             }
-    //             // Update the cart item with added_quantity
-    //             cartUpdatedItem.push({ ...cartItem, added_quantity: addedQuantity });
-
-    //         }
-
-    //         dispatch(addCarts(cartUpdatedItem));
-
-    //         // Dispatch an action to update the cart items in the Redux store
-    //     } catch (error) {
-    //         console.error('Error updating cart:', error);
-    //     }
-    // };
-
-    // const updateCartData = async (customerId) => {
-    //     console.log("function called-----------------------------------------------------------------");
-    //     try {
-    //         const urlWithCustomerId = `${AdminUrl}/api/cart?customer_id=${customerId}`;
-    //         const requestData = {
-    //             customer_id: customerId,
-    //             vendor_id: vendorInfo.id,
-    //             product_uniqueid: uniquepid,
-    //             category: replacecategory,
-    //             subcategory: replacesubcategory,
-    //             variantlabel: label,
-    //             mrp,
-    //             sellingprice,
-    //             quantity: added_quantity,
-    //         };
-    //         const response = await fetch(urlWithCustomerId, {
-    //             method: 'POST',
-    //             headers: {
-    //                 'Content-Type': 'application/json',
-    //             },
-    //             body: JSON.stringify(requestData),
-    //         });
-
-    //         if (!response.ok) {
-    //             throw new Error(`HTTP error! Status: ${response.status}`);
-    //         }
-    //         const responseData = await response.json();
-    //         console.log(responseData, "COming from backend");
-
-    //         if (responseData.length > 0) {
-    //             // Append the new cart data to the existing cartItems array
-    //             const updatedCartItems = [...cartItems, ...responseData];
-
-    //             // Dispatch action to update the cartItems in Redux
-    //             dispatch(fetchcart(updatedCartItems));
-    //         }
-    //         else {
-    //             const updatedCartItems = [...cartItems];
-    //             dispatch(fetchcart(updatedCartItems));
-
-    //         }
-
-    //     } catch (error) {
-    //         console.log(error, "error while integrating cart data with fetched cart data");
-    //     }
-    // }
-    const handleCrossIconPress = () => {
-        navigation.navigate("Home")
+            const response = await fetch(urlWithCustomerId, requestOptions);
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            else {
+                const data3 = await response.json();
+                dispatch(fetchcart(data3));
+    
+            }
+        } catch (error) {
+            console.log("Error while integrating redux cart with database login", error);
+        } 
     };
 
     const backAction = () => {
@@ -412,12 +304,11 @@ const Login = ({ navigation }) => {
 
             if (data.status === 200) {
                 // Successful login
+                dispatch(updateCustomerData(data?.customerData))
+                updateCartData(data?.customerData?.customer_id)
                 await AsyncStorage.setItem('customerData', JSON.stringify(data.customerData));
                 // await AsyncStorage.setItem('loggedid', data.loggedid);
 
-                // updateCartData(data?.customerData?.customer_id) // do it with redux persist
-                dispatch(updateCustomerData(data?.customerData))
-                updateCartData(data?.customerData?.customer_id)
 
 
                 if (data.customerData.customer_interest !== null && data.customerData.customer_interest !== undefined && data.customerData.customer_interest.length > 0) {

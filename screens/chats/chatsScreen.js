@@ -69,7 +69,7 @@ const ChatsScreen = ({ navigation }) => {
         if (!cartData) {
             fetchCartData()
         }
-    }, [cartData])
+    }, [cartData,customerId])
     console.log(cartItems, "carstData");
 
 
@@ -292,12 +292,13 @@ const ChatsScreen = ({ navigation }) => {
     }
 
     const renderItem = ({ item }) => {
+        console.log(item,"item");
         const discountPercentageSimple = ((item.mrp - item.sellingprice) / item.mrp) * 100;
 
         const id = item?.uniquepid;
 
         return (
-            <View className=" mt-2 mb-4  ">
+            <View className=" mt-2 mb-4">
                 <TouchableOpacity className="flex-row my-1 mb-0  rounded-sm p-2  "
                     onPress={debounce(() => navigation.push('ProductDetail', item), 500)}
                 >
@@ -306,9 +307,9 @@ const ChatsScreen = ({ navigation }) => {
                         <Image
                             resizeMode="contain"
                             source={
-                                item.images.length === 0
-                                    ? require('../../assets/noimage.jpg')
-                                    : { uri: `${AdminUrl}/uploads/UploadedProductsFromVendors/${item.images[0]}` }
+                                item.images
+                                    ? { uri: `${AdminUrl}/uploads/UploadedProductsFromVendors/${item.images[0]}` }
+                                    : require('../../assets/noimage.jpg')
                             }
 
                             defaultSource={require('../../assets/noimage.jpg')}
@@ -463,8 +464,8 @@ const ChatsScreen = ({ navigation }) => {
                             >
                                 <Text className="text-black font-bold text-base  tracking-wider">{` ${t("Total : ")} ${c_symbol} ${cartTotal}`}</Text>
                                 <TouchableOpacity onPress={debounce(() => {
-                                    if (customerData.length === 0) {
-                                        navigation.push("Login")
+                                    if (customerData?.length === 0) {
+                                        navigation.push("Login",{fromcart:true})
                                     }
                                     else {
                                         // navigation.push("Checkout Address")

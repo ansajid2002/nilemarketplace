@@ -29,7 +29,7 @@ const NotificationExpo = () => {
     const [notification, setNotification] = useState(false);
     const notificationListener = useRef();
     const responseListener = useRef();
-    const cartItems = useSelector((state) => state.cart.cartItems);
+    const {cartTotal} = useSelector((state) => state.cart);
     const { customerData } = useSelector((store) => store.userData)
     const navigation = useNavigation();
     const lastBackPressed = useRef(0);
@@ -97,9 +97,9 @@ const NotificationExpo = () => {
 
     useEffect(() => {
         const sendPushNotification = async () => {
-            customerData.length > 0 && cartItems?.length === 0 && await sendNotificationWithNavigation('🛒 EMPTY CART  🙁', 'Your cart is empty. Add something to your cart and enjoy your shopping experience! 🛍️', '');
-            if (cartItems?.length > 0) {
-                await sendNotificationWithNavigation('🛒 Checkout 🛍️', `You have ${cartItems?.length} items in your cart. Ready to complete your purchase? Click "Checkout" now! 💳`, 'Cart');
+            customerData.length > 0 && cartTotal && await sendNotificationWithNavigation('🛒 EMPTY CART  🙁', 'Your cart is empty. Add something to your cart and enjoy your shopping experience! 🛍️', '');
+            if (cartTotal > 0) {
+                await sendNotificationWithNavigation('🛒 Checkout 🛍️', `You have ${cartTotal} items in your cart. Ready to complete your purchase? Click "Checkout" now! 💳`, 'Cart');
             }
         }
         sendPushNotification();
