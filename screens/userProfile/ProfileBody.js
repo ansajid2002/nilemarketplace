@@ -15,13 +15,9 @@ export const ProfileBody = ({
     followers,
     reviews,
 }) => {
-    const navigation = useNavigation()
 
-    console.log(profileImage, "profileimg");
     return (
         <View>
-
-
             <View
                 style={{
                     alignItems: 'center',
@@ -58,7 +54,7 @@ export const ProfileBody = ({
                     <Text>Products</Text>
                 </View>
                 <View style={{ alignItems: 'center' }}>
-                    <Text style={{ fontWeight: 'bold', fontSize: 18 }}>{followers}</Text>
+                    <Text style={{ fontWeight: 'bold', fontSize: 18 }}>{followers || 0}</Text>
                     <Text>Followers</Text>
                 </View>
                 <View style={{ alignItems: 'center' }}>

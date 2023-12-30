@@ -186,14 +186,14 @@ const ProductItem = ({ item }) => {
                     </TouchableOpacity>
                 </View>
                 <View style={{ padding: 1 }} className="py-2">
-                <Text numberOfLines={1} className="font-medium">
+                    <Text numberOfLines={1} className="font-medium">
                         {item?.condition === "Refurbished" && "(Refurbished) "}
                         {item?.condition === "Used" && "(Used) "}
                         {item?.ad_title}
                     </Text>
 
                     <View className="gap-1 flex-wrap" style={{ flexDirection: 'row', alignItems: 'center', paddingTop: 8 }}>
-                    <Text className="text-lg font-medium text-gray-700">Price:</Text>
+                        <Text className="text-lg font-medium text-gray-700">Price:</Text>
                         {discountPercentageSimple && discountPercentageSimple > 0 && (
                             <Text className="text-base" style={{ color: 'green' }}>-{discountPercentageSimple?.toFixed(2)}%</Text>
                         )}

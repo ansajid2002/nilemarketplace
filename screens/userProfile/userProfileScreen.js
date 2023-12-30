@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, ScrollView, Text, FlatList, ActivityIndicator } from 'react-native';
+import { View, ScrollView, Text, FlatList, ActivityIndicator, Image } from 'react-native';
 import { ProfileBody, ProfileButtons } from './ProfileBody';
 import Entypo from 'react-native-vector-icons/Entypo';
 import { AdminUrl, HeaderBar } from '../../constant';
@@ -7,6 +7,7 @@ import { renderItemOrSkeleton } from '../../components/ProductList2';
 import { useSelector } from 'react-redux';
 import { SafeAreaView } from 'react-native';
 import { ProductSkeleton } from '../../components/Skeleton';
+import { t } from 'i18next';
 
 
 
@@ -17,13 +18,11 @@ const UserProfileScreen = ({ navigation, route }) => {
     const vendorInfo = item.vendorInfo
     const { currencyCode } = useSelector((store) => store.selectedCurrency)
 
-
-
     const [page, setPage] = useState(1);
     const [pageloading, setPageloading] = useState(true);
     const [VendorProductList, setVendorProductList] = useState(null);
+    const [vendorTotalProduct, setVendorTotalProduct] = useState(0);
     const [hasMore, setHasMore] = useState(true);
-
 
     let imageUrl // Default to the placeholder image URL
 
@@ -50,12 +49,12 @@ const UserProfileScreen = ({ navigation, route }) => {
 
                 if (response.ok) {
                     const data = await response.json();
-                    if (data.length > 0) {
+                    if (data?.AllProducts.length > 0) {
                         setVendorProductList(prevProducts => {
                             if (prevProducts) {
-                                return [...prevProducts, ...data];
+                                return [...prevProducts, ...data?.AllProducts];
                             } else {
-                                return [...data];
+                                return [...data?.AllProducts];
                             }
                         });
                         setHasMore(true); // If data is fetched and not an empty array, set hasMore to true
@@ -63,6 +62,7 @@ const UserProfileScreen = ({ navigation, route }) => {
                         !VendorProductList && setVendorProductList([])
                         setHasMore(false); // If response is an empty array, set hasMore to false
                     }
+                    setVendorTotalProduct(data?.total?.[0]?.totalvendorproducts || 0)
                 } else {
                     console.error("Error fetching vendor products data:", response.status);
                 }
@@ -79,7 +79,6 @@ const UserProfileScreen = ({ navigation, route }) => {
     const loadMoreProducts = () => {
         setPageloading(true);
         if (hasMore) { // Check if there is more data to fetch
-            console.log("LOADING MORE PRODUCTS=============================================================================");
             setPage(prevPage => prevPage + 1);
         }
         else {
@@ -127,9 +126,6 @@ const UserProfileScreen = ({ navigation, route }) => {
             ) : null}
             {
                 VendorProductList ?
-
-
-
                     <FlatList
                         data={VendorProductList}
                         renderItem={renderItemOrSkeleton}
@@ -147,7 +143,7 @@ const UserProfileScreen = ({ navigation, route }) => {
                                     </View>
                                 }
                                 {
-                                    ( !hasMore && VendorProductList.length!==0)  &&
+                                    (!hasMore && VendorProductList.length !== 0) &&
                                     <View className="flex-row items-center justify-center">
                                         <Text className="text-xl my-10 text-gray-300 font-bold">No More Products!</Text>
                                     </View>
@@ -169,7 +165,7 @@ const UserProfileScreen = ({ navigation, route }) => {
                                     profileImage={imageUrl}
                                     followers={vendorInfo?.followers}
                                     reviews={35131}
-                                    post={VendorProductList && VendorProductList?.length}
+                                    post={vendorTotalProduct}
                                 />
                                 <ProfileButtons
                                     id={`${vendorInfo?.id}`}

@@ -254,13 +254,13 @@ const SearchScreen = ({ navigation }) => {
                                                 return (
                                                     <TouchableOpacity className=" items-center my-3 mx-0.5 " key={subcategory_id}
                                                         // onPress={debounce(() => handlecategorytosent(parent_category_id, subcategory_name))}
-                                                        // navigation.push('CategoriesItems',{ item, subcategory_name: t("All") })
+                                                        // navigation.push('CategoryProductList',{ item, subcategory_name: t("All") })
                                                         // onPress={debounce(() => {
-                                                        //     navigation.push("CategoriesItems", {categoryId:parent_category_id });
+                                                        //     navigation.push("CategoryProductList", {categoryId:parent_category_id });
                                                         // })}
 
                                                         onPress={debounce(() => {
-                                                            navigation.push("CategoriesItems", { categoryId: parent_category_id, categoryName: selectedcategory, subcategory_name: subcategory_name, featureddatatoshow });
+                                                            navigation.push("CategoryProductList", { categoryId: parent_category_id, categoryName: selectedcategory, subcategory_name: subcategory_name, featureddatatoshow });
                                                         }, 500)}
 
                                                     >
@@ -284,10 +284,10 @@ const SearchScreen = ({ navigation }) => {
                                                     <TouchableOpacity className=" items-center mx-0.5 my-3" key={subcategory_id}
                                                         // onPress={debounce(() => handlecategorytosent(parent_category_id, subcategory_name))}>
                                                         onPress={debounce(() => {
-                                                            navigation.push("CategoriesItems", { categoryId: parent_category_id, categoryName: selectedcategory, subcategory_name: subcategory_name });
+                                                            navigation.push("CategoryProductList", { categoryId: parent_category_id, categoryName: selectedcategory, subcategory_name: subcategory_name });
                                                         }, 500)}
 
-                                                    // onPress={debounce(() => navigation.push('CategoriesItems', { categoryId:item.category_id,categoryName:item.category_name, subcategory_name: t("All") }), 500)}
+                                                    // onPress={debounce(() => navigation.push('CategoryProductList', { categoryId:item.category_id,categoryName:item.category_name, subcategory_name: t("All") }), 500)}
 
                                                     >
                                                         <View className="w-[70px] h-[70px] rounded-full border border-gray-300">

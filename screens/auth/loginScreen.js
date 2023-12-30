@@ -6,7 +6,7 @@ import { Ionicons } from "@expo/vector-icons";
 import Button from '../../components/Button'
 import { COLORS } from './registerScreen';
 import { useDispatch, useSelector } from 'react-redux';
-import {  fetchcart, getCartTotal } from '../../store/slices/cartSlice';
+import { fetchcart, getCartTotal } from '../../store/slices/cartSlice';
 import { AdminUrl } from '../../constant';
 import { useFocusEffect } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -19,10 +19,11 @@ import * as Facebook from "expo-auth-session/providers/facebook"
 import { debounce } from 'lodash';
 import { sendNotificationWithNavigation } from '../NotificationExpo';
 import { KeyboardAvoidingView } from 'react-native';
+import { NativeModules } from 'react-native';
 
 
 WebBrowser.maybeCompleteAuthSession()
-const Login = ({ navigation,route }) => {
+const Login = ({ navigation, route }) => {
     const [isPasswordShown, setIsPasswordShown] = useState(true);
 
     const [request, response, promptAsync] = Google.useAuthRequest({
@@ -91,6 +92,8 @@ const Login = ({ navigation,route }) => {
                 dispatch(updateCustomerData(data?.userdata))
 
                 setLoading(false)
+                NativeModules.DevSettings.reload();
+
                 navigation.navigate('Home')
             }
         } catch (error) {
@@ -120,7 +123,7 @@ const Login = ({ navigation,route }) => {
                 updateCartData(data?.userdata?.customer_id)
                 await AsyncStorage.setItem('customerData', JSON.stringify(data.userdata));
                 await sendNotificationWithNavigation(`Great, ${data?.userdata?.given_name}`, 'You have logged in Successfully...✅')
-                
+
                 navigation.navigate('Home')
                 setLoading(false)
             }
@@ -135,7 +138,7 @@ const Login = ({ navigation,route }) => {
     const updateCartData = async (customerId) => {
         try {
 
-            if ( cartItems?.length === 0) {
+            if (cartItems?.length === 0) {
                 const urlWithCustomerId1 = `${AdminUrl}/api/cartTotal?customer_id=${customerId}`;
                 const requestOptions1 = {
                     method: 'GET',
@@ -143,7 +146,7 @@ const Login = ({ navigation,route }) => {
                         'Content-Type': 'application/json',
                     },
                 };
-                
+
                 const response1 = await fetch(urlWithCustomerId1, requestOptions1);
                 if (!response1.ok) {
                     throw new Error(`HTTP error! Status: ${response.status}`);
@@ -157,15 +160,15 @@ const Login = ({ navigation,route }) => {
                         'Content-Type': 'application/json',
                     },
                 };
-    
+
                 const response2 = await fetch(urlWithCustomerId, requestOptions);
-    
+
                 if (!response2.ok) {
                     throw new Error(`HTTP error! Status: ${response.status}`);
                 }
-    
+
                 const data = await response2.json();
-                dispatch(fetchcart(data));             
+                dispatch(fetchcart(data));
             }
 
             for (const singleCartItem of cartItems) {
@@ -206,7 +209,7 @@ const Login = ({ navigation,route }) => {
                     'Content-Type': 'application/json',
                 },
             };
-            
+
             const response1 = await fetch(urlWithCustomerId1, requestOptions1);
             if (!response1.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
@@ -228,11 +231,11 @@ const Login = ({ navigation,route }) => {
             else {
                 const data3 = await response.json();
                 dispatch(fetchcart(data3));
-    
+
             }
         } catch (error) {
             console.log("Error while integrating redux cart with database login", error);
-        } 
+        }
     };
 
     const backAction = () => {
@@ -278,7 +281,7 @@ const Login = ({ navigation,route }) => {
 
             if (!isEmailValid()) {
                 Alert.alert("Error", 'Invalid email address')
-                return; 
+                return;
             }
 
             if (!isPasswordValid()) {
@@ -306,9 +309,9 @@ const Login = ({ navigation,route }) => {
                 dispatch(updateCustomerData(data?.customerData))
                 updateCartData(data?.customerData?.customer_id)
                 await AsyncStorage.setItem('customerData', JSON.stringify(data.customerData));
-            
+
                 if (data.customerData.customer_interest !== null && data.customerData.customer_interest !== undefined && data.customerData.customer_interest.length > 0) {
-                    
+
                     navigation.navigate("Home")
                 } else {
                     // The customer_interest is null, undefined, or empty
@@ -351,249 +354,249 @@ const Login = ({ navigation,route }) => {
 
     return (
         <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height mt-10'}
-        style={{ flex: 1 }}
-      >
-        <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.white }}>
-            <View style={{ flex: 1, marginHorizontal: 22 }}>
-                <View style={{ marginVertical: 22 }}>
-                    <View className="flex-row items-center">
-                        <Text style={{
-                            fontSize: 22,
-                            fontWeight: 'bold',
-                            marginVertical: 12,
-                            color: COLORS.black,
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height mt-10'}
+            style={{ flex: 1 }}
+        >
+            <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.white }}>
+                <View style={{ flex: 1, marginHorizontal: 22 }}>
+                    <View style={{ marginVertical: 22 }}>
+                        <View className="flex-row items-center">
+                            <Text style={{
+                                fontSize: 22,
+                                fontWeight: 'bold',
+                                marginVertical: 12,
+                                color: COLORS.black,
 
-                        }}
-                            className="flex-1">
-                            Hi Welcome Back ! 👋
-                        </Text>
-                        <TouchableOpacity onPress={debounce(() => {
-                            navigation.navigate("Home")
-                        }, 500)}>
-                            <MaterialCommunityIcons name="close" size={25} color={"black"} />
-                        </TouchableOpacity>
-
-
-                    </View>
-
-                    <Text style={{
-                        fontSize: 16,
-                        color: COLORS.black
-                    }}>Hello again you have been missed!</Text>
-                </View>
-
-                <View style={{ marginBottom: 12 }}>
-                    <Text style={{
-                        fontSize: 16,
-                        fontWeight: 400,
-                        marginVertical: 8
-                    }}>Email address</Text>
-
-                    <View style={{
-                        width: "100%",
-                        height: 48,
-                        borderColor: COLORS.black,
-                        borderWidth: 1,
-                        borderRadius: 8,
-                        alignItems: "center",
-                        justifyContent: "center",
-                        paddingLeft: 22
-                    }}>
-                        <TextInput
-                            placeholder='Enter your email address'
-                            placeholderTextColor={COLORS.black}
-                            keyboardType='email-address'
-                            value={email}
-                            onChangeText={(text) => updateState({ email: text })}
-                            style={{
-                                width: "100%"
                             }}
-                        />
-                    </View>
-                </View>
+                                className="flex-1">
+                                Hi Welcome Back ! 👋
+                            </Text>
+                            <TouchableOpacity onPress={debounce(() => {
+                                navigation.navigate("Home")
+                            }, 500)}>
+                                <MaterialCommunityIcons name="close" size={25} color={"black"} />
+                            </TouchableOpacity>
 
-                <View style={{ marginBottom: 12 }}>
-                    <Text style={{
-                        fontSize: 16,
-                        fontWeight: 400,
-                        marginVertical: 8
-                    }}>Password</Text>
 
-                    <View style={{
-                        width: "100%",
-                        height: 48,
-                        borderColor: COLORS.black,
-                        borderWidth: 1,
-                        borderRadius: 8,
-                        alignItems: "center",
-                        justifyContent: "center",
-                        paddingLeft: 22
-                    }}>
-                        <TextInput
-                            placeholder='Enter your password'
-                            placeholderTextColor={COLORS.black}
-                            secureTextEntry={isPasswordShown}
-                            value={password}
-                            onChangeText={(text) => updateState({ password: text })}
-                            style={{
-                                width: "100%"
-                            }}
-                        />
-
-                        <TouchableOpacity
-                            onPress={debounce(() => setIsPasswordShown(!isPasswordShown), 500)}
-                            style={{
-                                position: "absolute",
-                                right: 12
-                            }}
-                        >
-                            {
-                                isPasswordShown == true ? (
-                                    <Ionicons name="eye-off" size={24} color={COLORS.black} />
-                                ) : (
-                                    <Ionicons name="eye" size={24} color={COLORS.black} />
-                                )
-                            }
-
-                        </TouchableOpacity>
-                    </View>
-                </View>
-
-                <View style={{
-                    flexDirection: 'row',
-                    marginVertical: 6,
-                    justifyContent: 'space-between'
-                }}>
-                  
-                    <TouchableOpacity onPress={debounce(() => navigation.navigate('ForgotPassword'), 500)}>
-                        <View>
-                            <Text>Forgot Passowrd ?</Text>
                         </View>
-                    </TouchableOpacity>
-                </View>
 
-                {
-                    loading ?
-                        <>
-                            <ActivityIndicator size="small" color={"blak"} />
-
-                        </> : <Button
-                            title="Login"
-                            filled
-                            style={{
-                                marginTop: 18,
-                                marginBottom: 4,
-                            }}
-                            // className={`${!isEmailValid() || !isPasswordValid() ? 'bg-red-500' : ''}`}
-                            onPress={!loading && handleLogin}
-                            disabled={!isEmailValid() || !isPasswordValid()}
-                        />
-
-
-                }
-
-
-                <View style={{ flexDirection: 'row', alignItems: 'center', marginVertical: 20 }}>
-                    <View
-                        style={{
-                            flex: 1,
-                            height: 1,
-                            backgroundColor: COLORS.grey,
-                            marginHorizontal: 10
-                        }}
-                    />
-                    <Text style={{ fontSize: 14 }}>Or Login with</Text>
-                    <View
-                        style={{
-                            flex: 1,
-                            height: 1,
-                            backgroundColor: COLORS.grey,
-                            marginHorizontal: 10
-                        }}
-                    />
-                </View>
-
-                <View style={{
-                    flexDirection: 'row',
-                    justifyContent: 'center'
-                }}>
-                    <TouchableOpacity
-                        onPress={debounce(() => promptAsyncFacebook(), 500)}
-
-                        style={{
-                            flex: 1,
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            flexDirection: 'row',
-                            height: 52,
-                            borderWidth: 1,
-                            borderColor: COLORS.grey,
-                            marginRight: 4,
-                            borderRadius: 10
-                        }}
-                    >
-                        <Image
-                            source={require("../../assets/facebook.png")}
-                            style={{
-                                height: 36,
-                                width: 36,
-                                marginRight: 8
-                            }}
-                            resizeMode='contain'
-                        />
-
-                        <Text>Facebook</Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity
-                        onPress={debounce(() => promptAsync(), 500)}
-                        style={{
-                            flex: 1,
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            flexDirection: 'row',
-                            height: 52,
-                            borderWidth: 1,
-                            borderColor: COLORS.grey,
-                            marginRight: 4,
-                            borderRadius: 10
-                        }}
-                    >
-                        <Image
-                            source={require("../../assets/google.png")}
-                            style={{
-                                height: 36,
-                                width: 36,
-                                marginRight: 8
-                            }}
-                            resizeMode='contain'
-                        />
-
-                        <Text>Google</Text>
-                    </TouchableOpacity>
-                </View>
-
-                <View style={{
-                    flexDirection: "row",
-                    justifyContent: "center",
-                    marginVertical: 22
-                }}>
-                    <Text style={{ fontSize: 16, color: COLORS.black }}>Don't have an account ? </Text>
-                    <Pressable
-                        onPress={debounce(() => navigation.navigate("Register"), 500)}
-                    >
                         <Text style={{
                             fontSize: 16,
-                            color: COLORS.primary,
-                            fontWeight: "bold",
-                            marginLeft: 6
-                        }}>Register</Text>
-                    </Pressable>
-                </View>
-            </View>
+                            color: COLORS.black
+                        }}>Hello again you have been missed!</Text>
+                    </View>
 
-        </SafeAreaView>
+                    <View style={{ marginBottom: 12 }}>
+                        <Text style={{
+                            fontSize: 16,
+                            fontWeight: 400,
+                            marginVertical: 8
+                        }}>Email address</Text>
+
+                        <View style={{
+                            width: "100%",
+                            height: 48,
+                            borderColor: COLORS.black,
+                            borderWidth: 1,
+                            borderRadius: 8,
+                            alignItems: "center",
+                            justifyContent: "center",
+                            paddingLeft: 22
+                        }}>
+                            <TextInput
+                                placeholder='Enter your email address'
+                                placeholderTextColor={COLORS.black}
+                                keyboardType='email-address'
+                                value={email}
+                                onChangeText={(text) => updateState({ email: text })}
+                                style={{
+                                    width: "100%"
+                                }}
+                            />
+                        </View>
+                    </View>
+
+                    <View style={{ marginBottom: 12 }}>
+                        <Text style={{
+                            fontSize: 16,
+                            fontWeight: 400,
+                            marginVertical: 8
+                        }}>Password</Text>
+
+                        <View style={{
+                            width: "100%",
+                            height: 48,
+                            borderColor: COLORS.black,
+                            borderWidth: 1,
+                            borderRadius: 8,
+                            alignItems: "center",
+                            justifyContent: "center",
+                            paddingLeft: 22
+                        }}>
+                            <TextInput
+                                placeholder='Enter your password'
+                                placeholderTextColor={COLORS.black}
+                                secureTextEntry={isPasswordShown}
+                                value={password}
+                                onChangeText={(text) => updateState({ password: text })}
+                                style={{
+                                    width: "100%"
+                                }}
+                            />
+
+                            <TouchableOpacity
+                                onPress={debounce(() => setIsPasswordShown(!isPasswordShown), 500)}
+                                style={{
+                                    position: "absolute",
+                                    right: 12
+                                }}
+                            >
+                                {
+                                    isPasswordShown == true ? (
+                                        <Ionicons name="eye-off" size={24} color={COLORS.black} />
+                                    ) : (
+                                        <Ionicons name="eye" size={24} color={COLORS.black} />
+                                    )
+                                }
+
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+
+                    <View style={{
+                        flexDirection: 'row',
+                        marginVertical: 6,
+                        justifyContent: 'space-between'
+                    }}>
+
+                        <TouchableOpacity onPress={debounce(() => navigation.navigate('ForgotPassword'), 500)}>
+                            <View>
+                                <Text>Forgot Passowrd ?</Text>
+                            </View>
+                        </TouchableOpacity>
+                    </View>
+
+                    {
+                        loading ?
+                            <>
+                                <ActivityIndicator size="small" color={"blak"} />
+
+                            </> : <Button
+                                title="Login"
+                                filled
+                                style={{
+                                    marginTop: 18,
+                                    marginBottom: 4,
+                                }}
+                                // className={`${!isEmailValid() || !isPasswordValid() ? 'bg-red-500' : ''}`}
+                                onPress={!loading && handleLogin}
+                                disabled={!isEmailValid() || !isPasswordValid()}
+                            />
+
+
+                    }
+
+
+                    <View style={{ flexDirection: 'row', alignItems: 'center', marginVertical: 20 }}>
+                        <View
+                            style={{
+                                flex: 1,
+                                height: 1,
+                                backgroundColor: COLORS.grey,
+                                marginHorizontal: 10
+                            }}
+                        />
+                        <Text style={{ fontSize: 14 }}>Or Login with</Text>
+                        <View
+                            style={{
+                                flex: 1,
+                                height: 1,
+                                backgroundColor: COLORS.grey,
+                                marginHorizontal: 10
+                            }}
+                        />
+                    </View>
+
+                    <View style={{
+                        flexDirection: 'row',
+                        justifyContent: 'center'
+                    }}>
+                        <TouchableOpacity
+                            onPress={debounce(() => promptAsyncFacebook(), 500)}
+
+                            style={{
+                                flex: 1,
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                flexDirection: 'row',
+                                height: 52,
+                                borderWidth: 1,
+                                borderColor: COLORS.grey,
+                                marginRight: 4,
+                                borderRadius: 10
+                            }}
+                        >
+                            <Image
+                                source={require("../../assets/facebook.png")}
+                                style={{
+                                    height: 36,
+                                    width: 36,
+                                    marginRight: 8
+                                }}
+                                resizeMode='contain'
+                            />
+
+                            <Text>Facebook</Text>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity
+                            onPress={debounce(() => promptAsync(), 500)}
+                            style={{
+                                flex: 1,
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                flexDirection: 'row',
+                                height: 52,
+                                borderWidth: 1,
+                                borderColor: COLORS.grey,
+                                marginRight: 4,
+                                borderRadius: 10
+                            }}
+                        >
+                            <Image
+                                source={require("../../assets/google.png")}
+                                style={{
+                                    height: 36,
+                                    width: 36,
+                                    marginRight: 8
+                                }}
+                                resizeMode='contain'
+                            />
+
+                            <Text>Google</Text>
+                        </TouchableOpacity>
+                    </View>
+
+                    <View style={{
+                        flexDirection: "row",
+                        justifyContent: "center",
+                        marginVertical: 22
+                    }}>
+                        <Text style={{ fontSize: 16, color: COLORS.black }}>Don't have an account ? </Text>
+                        <Pressable
+                            onPress={debounce(() => navigation.navigate("Register"), 500)}
+                        >
+                            <Text style={{
+                                fontSize: 16,
+                                color: COLORS.primary,
+                                fontWeight: "bold",
+                                marginLeft: 6
+                            }}>Register</Text>
+                        </Pressable>
+                    </View>
+                </View>
+
+            </SafeAreaView>
         </KeyboardAvoidingView>
     )
 }

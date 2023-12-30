@@ -4,7 +4,7 @@ import { Colors, Sizes, } from "../../constants/styles";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { FlatList } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
-import { removeItem, incrementItem, decrementItem, fetchcart, incrementCartTotal, decrementCartTotal } from '../../store/slices/cartSlice';
+import { removeItem, incrementItem, decrementItem, fetchcart, incrementCartTotal, decrementCartTotal, decrementCartTotalremove } from '../../store/slices/cartSlice';
 import { debounce } from 'lodash';
 import { AdminUrl, HeaderBar } from '../../constant';
 import emptyCart from "../../assets/images/icons/empty-cart.png"
@@ -69,8 +69,7 @@ const ChatsScreen = ({ navigation }) => {
         if (!cartData) {
             fetchCartData()
         }
-    }, [cartData,customerId])
-    console.log(cartItems, "carstData");
+    }, [cartData, customerId])
 
 
     const handleRemove = async (itemId, item, type) => {
@@ -101,15 +100,21 @@ const ChatsScreen = ({ navigation }) => {
                 if (type === 'cart') {
                     setLoading(false)
                     Alert.alert("Product Removed", `${item.ad_title} Removed from Cart`)
+
                 }
                 else if (type === 'wishlist') {
                     setLoading(false)
                     Alert.alert("Added to Wishlist", `${item.ad_title} Added to wishlist✅`)
                 }
+                dispatch(decrementCartTotalremove(item.added_quantity))
                 dispatch(removeItem(item));
             }
-            setLoading(false)
-            dispatch(removeItem(item));
+            else {
+                setLoading(false)
+                dispatch(decrementCartTotalremove(item.added_quantity))
+                dispatch(removeItem(item));
+
+            }
 
             // Handle success, update UI or perform any other action
         } catch (error) {
@@ -292,7 +297,6 @@ const ChatsScreen = ({ navigation }) => {
     }
 
     const renderItem = ({ item }) => {
-        console.log(item,"item");
         const discountPercentageSimple = ((item.mrp - item.sellingprice) / item.mrp) * 100;
 
         const id = item?.uniquepid;
@@ -302,7 +306,7 @@ const ChatsScreen = ({ navigation }) => {
                 <TouchableOpacity className="flex-row my-1 mb-0  rounded-sm p-2  "
                     onPress={debounce(() => navigation.push('ProductDetail', item), 500)}
                 >
-                    <View style={{ width: 110, overflow: 'hidden' }} className="m-auto ">
+                    <View style={{ width: '20%', overflow: 'hidden' }} className="m-auto ">
 
                         <Image
                             resizeMode="contain"
@@ -314,7 +318,7 @@ const ChatsScreen = ({ navigation }) => {
 
                             defaultSource={require('../../assets/noimage.jpg')}
 
-                            style={{ width: '100%', height: undefined, aspectRatio: 4 / 4 }} className="rounded-md"
+                            style={{ aspectRatio: 3 / 2 }} className="rounded-md"
                         />
 
                         <View style={styles.container} className=" mt-1 rounded-md">

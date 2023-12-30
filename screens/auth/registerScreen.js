@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView, Pressable, Image, Alert, Keyboard } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, ScrollView, Pressable, Image, Alert, Keyboard, ActivityIndicator } from 'react-native';
 import { Ionicons } from "@expo/vector-icons";
 import Button from '../../components/Button';
 import { AdminUrl } from '../../constant';
@@ -26,6 +26,7 @@ const RegisterScreen = ({ navigation }) => {
 
     const [isPasswordShown, setIsPasswordShown] = useState(false);
     const [isConfirmPasswordShown, setIsConfirmPasswordShown] = useState(false);
+    const [loader, setLoader] = useState(false);
 
     const togglePasswordVisibility = () => {
         setIsPasswordShown(!isPasswordShown);
@@ -117,6 +118,7 @@ const RegisterScreen = ({ navigation }) => {
             password,
         };
 
+        setLoader(true)
         // Send the user data to the backend API
         fetch(`${AdminUrl}/api/addcustomers`, {
             method: 'POST',
@@ -130,282 +132,292 @@ const RegisterScreen = ({ navigation }) => {
                 // Handle the response from the backend (e.g., success message)
                 if (!data?.success) {
                     Alert.alert('Error', data?.message)
-                }
-                else if (data?.success) {
+                } else if (data?.success) {
                     navigation.navigate('Verification', { customer_id: data?.insertedId })
                 }
             })
             .catch(error => {
                 console.error('Error signing up:', error);
                 // Handle the error (e.g., show an error message)
+            })
+            .finally(() => {
+                // Code to be executed regardless of success or failure
+                console.log('Request completed');
+                setLoader(false)
             });
+
     };
 
     return (
         <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height mt-10'}
-        style={{ flex: 1 }}
-      >
-        <SafeAreaView  style={{ flex: 1, backgroundColor:"white"}}>
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height mt-10'}
+            style={{ flex: 1 }}
+        >
+            <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
 
-        <ScrollView style={{ backgroundColor: COLORS.white }}>
-            <View style={{ flex: 1, marginHorizontal: 22 }}>
-          
-                <View style={{  }}>
-                    <Text style={{
-                        fontSize: 22,
-                        fontWeight: 'bold',
-                        marginVertical: 12,
-                        color: COLORS.black
-                    }}>
-                        Create Account
-                    </Text>
+                <ScrollView style={{ backgroundColor: COLORS.white }}>
+                    <View style={{ flex: 1, marginHorizontal: 22 }}>
 
-                    <Text style={{
-                        fontSize: 16,
-                        color: COLORS.black
-                    }}>Discover great deals and shop with ease!</Text>
-                </View>
+                        <View style={{}}>
+                            <Text style={{
+                                fontSize: 22,
+                                fontWeight: 'bold',
+                                marginVertical: 12,
+                                color: COLORS.black
+                            }}>
+                                Create Account
+                            </Text>
 
-                <View style={{ marginBottom: 12 }} className="flex-row">
-                    <View className="w-[48%] gap-1">
-                        <Text style={{
-                            fontSize: 16,
-                            fontWeight: 400,
-                            marginVertical: 8
-                        }}>First Name</Text>
+                            <Text style={{
+                                fontSize: 16,
+                                color: COLORS.black
+                            }}>Discover great deals and shop with ease!</Text>
+                        </View>
+
+                        <View style={{ marginBottom: 12 }} className="flex-row">
+                            <View className="w-[48%] gap-1">
+                                <Text style={{
+                                    fontSize: 16,
+                                    fontWeight: 400,
+                                    marginVertical: 8
+                                }}>First Name</Text>
+
+                                <View style={{
+                                    width: "100%",
+                                    height: 48,
+                                    borderColor: COLORS.black,
+                                    borderWidth: 1,
+                                    borderRadius: 8,
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    paddingLeft: 22
+                                }}>
+                                    <TextInput
+                                        placeholder='First Name'
+                                        placeholderTextColor={COLORS.black}
+                                        style={{ width: '100%' }}
+                                        value={firstName}
+                                        onChangeText={text => setFirstName(text)}
+                                    />
+                                </View>
+                            </View>
+
+                            <View className="w-[48%] gap-1 ml-3">
+                                <Text style={{
+                                    fontSize: 16,
+                                    fontWeight: 400,
+                                    marginVertical: 8
+                                }}>Last Name</Text>
+
+                                <View style={{
+                                    width: "100%",
+                                    height: 48,
+                                    borderColor: COLORS.black,
+                                    borderWidth: 1,
+                                    borderRadius: 8,
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    paddingLeft: 22
+                                }}>
+
+                                    <TextInput
+                                        placeholder='Last Name'
+                                        placeholderTextColor={COLORS.black}
+                                        style={{ width: '100%' }}
+                                        value={lastName}
+                                        onChangeText={text => setLastName(text)}
+                                    />
+                                </View>
+                            </View>
+                        </View>
+
+                        <View style={{ marginBottom: 12 }}>
+                            <Text style={{
+                                fontSize: 16,
+                                fontWeight: 400,
+                                marginVertical: 8
+                            }}>Email address</Text>
+
+                            <View style={{
+                                width: "100%",
+                                height: 48,
+                                borderColor: COLORS.black,
+                                borderWidth: 1,
+                                borderRadius: 8,
+                                alignItems: "center",
+                                justifyContent: "center",
+                                paddingLeft: 22
+                            }}>
+                                <TextInput
+                                    placeholder='Enter your email address'
+                                    placeholderTextColor={COLORS.black}
+                                    keyboardType='email-address'
+                                    style={{ width: '100%' }}
+                                    value={email}
+                                    onChangeText={text => setEmail(text)}
+                                />
+                            </View>
+                        </View>
+
+                        <View style={{ marginBottom: 12 }}>
+                            <Text style={{
+                                fontSize: 16,
+                                fontWeight: 400,
+                                marginVertical: 8
+                            }}>Mobile Number</Text>
+
+                            <View style={{
+                                width: "100%",
+                                height: 48,
+                                borderColor: COLORS.black,
+                                borderWidth: 1,
+                                borderRadius: 8,
+                                alignItems: "center",
+                                flexDirection: "row",
+                                justifyContent: "space-between",
+                                paddingLeft: 22
+                            }}>
+                                <TextInput
+                                    placeholder='+91'
+                                    placeholderTextColor={COLORS.black}
+                                    keyboardType='numeric'
+                                    style={{
+                                        width: "12%",
+                                        borderRightWidth: 1,
+                                        borderLeftColor: COLORS.grey,
+                                        height: "100%"
+                                    }}
+                                    onChangeText={text => setCountryCode(text)}
+                                    value={countryCode}
+
+                                />
+
+                                <TextInput
+                                    placeholder='Enter your phone number'
+                                    placeholderTextColor={COLORS.black}
+                                    keyboardType='numeric'
+                                    style={{
+                                        width: "80%"
+                                    }}
+                                    value={phoneNumber}
+                                    onChangeText={text => setPhoneNumber(text)}
+                                />
+                            </View>
+                        </View>
+
+                        <View style={{ marginBottom: 12 }}>
+                            <Text style={{
+                                fontSize: 16,
+                                fontWeight: 400,
+                                marginVertical: 8
+                            }}>Password</Text>
+
+                            <View style={{
+                                width: "100%",
+                                height: 48,
+                                borderColor: COLORS.black,
+                                borderWidth: 1,
+                                borderRadius: 8,
+                                alignItems: "center",
+                                justifyContent: "center",
+                                paddingLeft: 22
+                            }}>
+                                <TextInput
+                                    placeholder='Enter your password'
+                                    placeholderTextColor={COLORS.black}
+                                    secureTextEntry={isPasswordShown}
+                                    style={{ width: '100%' }}
+                                    value={password}
+                                    onChangeText={text => setPassword(text)}
+                                />
+
+                                <TouchableOpacity
+                                    onPress={togglePasswordVisibility}
+                                    style={{
+                                        position: "absolute",
+                                        right: 12
+                                    }}
+                                >
+                                    {
+                                        isPasswordShown == true ? (
+                                            <Ionicons name="eye-off" size={24} color={COLORS.black} />
+                                        ) : (
+                                            <Ionicons name="eye" size={24} color={COLORS.black} />
+                                        )
+                                    }
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+
+                        <View style={{ marginBottom: 12 }}>
+                            <Text style={{
+                                fontSize: 16,
+                                fontWeight: 400,
+                                marginVertical: 8
+                            }}>Confirm Password</Text>
+
+                            <View style={{
+                                width: "100%",
+                                height: 48,
+                                borderColor: COLORS.black,
+                                borderWidth: 1,
+                                borderRadius: 8,
+                                alignItems: "center",
+                                justifyContent: "center",
+                                paddingLeft: 22
+                            }}>
+                                <TextInput
+                                    placeholder='Enter your password'
+                                    placeholderTextColor={COLORS.black}
+                                    secureTextEntry={isConfirmPasswordShown}
+                                    style={{ width: '100%' }}
+                                    value={confirmPassword}
+                                    onChangeText={text => setConfirmPassword(text)}
+                                />
+
+                                <TouchableOpacity
+                                    onPress={toggleConfirmPasswordVisibility}
+                                    style={{
+                                        position: "absolute",
+                                        right: 12
+                                    }}
+                                >
+                                    {
+                                        isConfirmPasswordShown == true ? (
+                                            <Ionicons name="eye-off" size={24} color={COLORS.black} />
+                                        ) : (
+                                            <Ionicons name="eye" size={24} color={COLORS.black} />
+                                        )
+                                    }
+                                </TouchableOpacity>
+                            </View>
+                        </View>
 
                         <View style={{
-                            width: "100%",
-                            height: 48,
-                            borderColor: COLORS.black,
-                            borderWidth: 1,
-                            borderRadius: 8,
-                            alignItems: "center",
-                            justifyContent: "center",
-                            paddingLeft: 22
+                            flexDirection: 'row',
+                            marginVertical: 6
                         }}>
-                            <TextInput
-                                placeholder='First Name'
-                                placeholderTextColor={COLORS.black}
-                                style={{ width: '100%' }}
-                                value={firstName}
-                                onChangeText={text => setFirstName(text)}
-                            />
+                            <Text>I agree to the terms and conditions</Text>
                         </View>
+
+                        {
+                            loader ?
+                                <ActivityIndicator />
+                                : <Button
+                                    title="Sign Up"
+                                    filled
+                                    style={{
+                                        marginTop: 18,
+                                        marginBottom: 10,
+                                    }}
+                                    onPress={debounce(handleSignUp, 500)}
+
+                                />
+                        }
+
                     </View>
-
-                    <View className="w-[48%] gap-1 ml-3">
-                        <Text style={{
-                            fontSize: 16,
-                            fontWeight: 400,
-                            marginVertical: 8
-                        }}>Last Name</Text>
-
-                        <View style={{
-                            width: "100%",
-                            height: 48,
-                            borderColor: COLORS.black,
-                            borderWidth: 1,
-                            borderRadius: 8,
-                            alignItems: "center",
-                            justifyContent: "center",
-                            paddingLeft: 22
-                        }}>
-
-                            <TextInput
-                                placeholder='Last Name'
-                                placeholderTextColor={COLORS.black}
-                                style={{ width: '100%' }}
-                                value={lastName}
-                                onChangeText={text => setLastName(text)}
-                            />
-                        </View>
-                    </View>
-                </View>
-
-                <View style={{ marginBottom: 12 }}>
-                    <Text style={{
-                        fontSize: 16,
-                        fontWeight: 400,
-                        marginVertical: 8
-                    }}>Email address</Text>
-
-                    <View style={{
-                        width: "100%",
-                        height: 48,
-                        borderColor: COLORS.black,
-                        borderWidth: 1,
-                        borderRadius: 8,
-                        alignItems: "center",
-                        justifyContent: "center",
-                        paddingLeft: 22
-                    }}>
-                        <TextInput
-                            placeholder='Enter your email address'
-                            placeholderTextColor={COLORS.black}
-                            keyboardType='email-address'
-                            style={{ width: '100%' }}
-                            value={email}
-                            onChangeText={text => setEmail(text)}
-                        />
-                    </View>
-                </View>
-
-                <View style={{ marginBottom: 12 }}>
-                    <Text style={{
-                        fontSize: 16,
-                        fontWeight: 400,
-                        marginVertical: 8
-                    }}>Mobile Number</Text>
-
-                    <View style={{
-                        width: "100%",
-                        height: 48,
-                        borderColor: COLORS.black,
-                        borderWidth: 1,
-                        borderRadius: 8,
-                        alignItems: "center",
-                        flexDirection: "row",
-                        justifyContent: "space-between",
-                        paddingLeft: 22
-                    }}>
-                        <TextInput
-                            placeholder='+91'
-                            placeholderTextColor={COLORS.black}
-                            keyboardType='numeric'
-                            style={{
-                                width: "12%",
-                                borderRightWidth: 1,
-                                borderLeftColor: COLORS.grey,
-                                height: "100%"
-                            }}
-                            onChangeText={text => setCountryCode(text)}
-                            value={countryCode}
-
-                        />
-
-                        <TextInput
-                            placeholder='Enter your phone number'
-                            placeholderTextColor={COLORS.black}
-                            keyboardType='numeric'
-                            style={{
-                                width: "80%"
-                            }}
-                            value={phoneNumber}
-                            onChangeText={text => setPhoneNumber(text)}
-                        />
-                    </View>
-                </View>
-
-                <View style={{ marginBottom: 12 }}>
-                    <Text style={{
-                        fontSize: 16,
-                        fontWeight: 400,
-                        marginVertical: 8
-                    }}>Password</Text>
-
-                    <View style={{
-                        width: "100%",
-                        height: 48,
-                        borderColor: COLORS.black,
-                        borderWidth: 1,
-                        borderRadius: 8,
-                        alignItems: "center",
-                        justifyContent: "center",
-                        paddingLeft: 22
-                    }}>
-                        <TextInput
-                            placeholder='Enter your password'
-                            placeholderTextColor={COLORS.black}
-                            secureTextEntry={isPasswordShown}
-                            style={{ width: '100%' }}
-                            value={password}
-                            onChangeText={text => setPassword(text)}
-                        />
-
-                        <TouchableOpacity
-                            onPress={togglePasswordVisibility}
-                            style={{
-                                position: "absolute",
-                                right: 12
-                            }}
-                        >
-                            {
-                                isPasswordShown == true ? (
-                                    <Ionicons name="eye-off" size={24} color={COLORS.black} />
-                                ) : (
-                                    <Ionicons name="eye" size={24} color={COLORS.black} />
-                                )
-                            }
-                        </TouchableOpacity>
-                    </View>
-                </View>
-
-                <View style={{ marginBottom: 12 }}>
-                    <Text style={{
-                        fontSize: 16,
-                        fontWeight: 400,
-                        marginVertical: 8
-                    }}>Confirm Password</Text>
-
-                    <View style={{
-                        width: "100%",
-                        height: 48,
-                        borderColor: COLORS.black,
-                        borderWidth: 1,
-                        borderRadius: 8,
-                        alignItems: "center",
-                        justifyContent: "center",
-                        paddingLeft: 22
-                    }}>
-                        <TextInput
-                            placeholder='Enter your password'
-                            placeholderTextColor={COLORS.black}
-                            secureTextEntry={isConfirmPasswordShown}
-                            style={{ width: '100%' }}
-                            value={confirmPassword}
-                            onChangeText={text => setConfirmPassword(text)}
-                        />
-
-                        <TouchableOpacity
-                            onPress={toggleConfirmPasswordVisibility}
-                            style={{
-                                position: "absolute",
-                                right: 12
-                            }}
-                        >
-                            {
-                                isConfirmPasswordShown == true ? (
-                                    <Ionicons name="eye-off" size={24} color={COLORS.black} />
-                                ) : (
-                                    <Ionicons name="eye" size={24} color={COLORS.black} />
-                                )
-                            }
-                        </TouchableOpacity>
-                    </View>
-                </View>
-
-                <View style={{
-                    flexDirection: 'row',
-                    marginVertical: 6
-                }}>
-                    <Text>I agree to the terms and conditions</Text>
-                </View>
-
-                <Button
-                    title="Sign Up"
-                    filled
-                    style={{
-                        marginTop: 18,
-                        marginBottom: 10,
-                    }}
-                    onPress={debounce(handleSignUp, 500)}
-                />
-
-            </View>
-        </ScrollView>
-        </SafeAreaView>
+                </ScrollView>
+            </SafeAreaView>
         </KeyboardAvoidingView>
 
     );

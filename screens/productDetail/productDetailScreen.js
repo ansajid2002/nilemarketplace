@@ -6,7 +6,7 @@ import { Snackbar } from "react-native-paper";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
-import { addItem, decrementItem, decrementCartTotal,incrementCartTotal, incrementItem, removeItem } from "../../store/slices/cartSlice";
+import { addItem, decrementItem, decrementCartTotal, incrementCartTotal, incrementItem, removeItem } from "../../store/slices/cartSlice";
 import { addItemToWishlist, removeItemFromWishlist } from "../../store/slices/wishlistSlice";
 import { toggleFavouriteProductslice } from "../../store/slices/productSlice";
 import { debounce } from "lodash";
@@ -86,6 +86,7 @@ const ProductDetailScreen = ({ navigation, route }) => {
     const handleRemove = async (itemId, item) => {
         try {
             dispatch(removeItem(item));
+            dispatch(decrementCartTotal())
 
             if (customerId) {
                 const { category, subcategory, uniquepid, label } = item;
@@ -343,10 +344,10 @@ const ProductDetailScreen = ({ navigation, route }) => {
                 <View className="flex-row items-center">
                     <Text className="  text-gray-600 mb-2 font-bold">Condition : </Text>
                     {singleData?.condition === "New" &&
-                    <Text className="font-medium text-base mb-2">Used</Text>}
-                {singleData?.condition === "Refurbished" &&
-                    <Text className="font-medium text-base mb-2">Refurbished</Text>}
-                    </View>
+                        <Text className="font-medium text-base mb-2">Used</Text>}
+                    {singleData?.condition === "Refurbished" &&
+                        <Text className="font-medium text-base mb-2">Refurbished</Text>}
+                </View>
                 <View className="flex-row items-center">
                     <Text className="  text-gray-600 mb-2 font-bold">Category : </Text>
                     <Text className="font-medium text-base mb-2" >{singleData?.category}</Text>
@@ -465,8 +466,8 @@ const ProductDetailScreen = ({ navigation, route }) => {
 
                         </TouchableOpacity>
                         :
-                        <View className="flex-row ">
-                            <View className=" flex-row  
+                        <View className="flex-row justify-between w-full">
+                            <View className="flex-row  w-1/2 
                          items-center justify-between h-12 bg-[#fb7701] flex-1" >
                                 {IsMatchedCartProduct?.added_quantity === 1 ?
                                     <TouchableOpacity
@@ -488,12 +489,14 @@ const ProductDetailScreen = ({ navigation, route }) => {
                                     <Text className="text-3xl  mr-3 font-bold text-white" >+</Text>
                                 </TouchableOpacity>
                             </View>
-                            <View className="   flex-1 items-center justify-center  border border-gray-200 ">
-                                <TouchableOpacity className=" "
+                            <View className="flex-1 items-center justify-center  border border-gray-200 ">
+                                <TouchableOpacity
+                                    className=""
                                     onPress={debounce(() => {
                                         dispatch(changeSearchFocus(true))
                                         navigation.navigate("Cart")
                                     }, 500)}>
+
                                     <View className=" flex-row items-center ">
                                         <Text className="text-[#00008b] text-base font-bold">{t("Go To Cart")}</Text>
                                         <Text className=""><MaterialCommunityIcons name="chevron-right" size={24} color={"#00008b"} className="" /></Text>

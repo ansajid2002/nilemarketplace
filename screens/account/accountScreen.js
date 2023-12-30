@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { SafeAreaView, View, ScrollView, StatusBar, Image, StyleSheet, Text, TouchableOpacity, Linking } from "react-native";
+import { SafeAreaView, View, ScrollView, StatusBar, Image, StyleSheet, Text, TouchableOpacity, Linking, ActivityIndicator } from "react-native";
 import { Colors, Fonts, Sizes, } from "../../constants/styles";
 import { Overlay } from "@rneui/themed";
 import { useTranslation } from "react-i18next";
@@ -15,11 +15,15 @@ import { emptyOrder } from "../../store/slices/myordersSlice";
 import { emptyWishlist } from "../../store/slices/wishlistSlice";
 import FullPageLoader from "../../components/FullPageLoader";
 import avatarPlaceholder from '../../assets/avatarplaceholder.png'
+import RNRestart from 'react-native-restart';
+import { NativeModules } from "react-native";
+
 
 const AccountScreen = ({ navigation }) => {
     const dispatch = useDispatch()
     const [showLogoutDialog, setShowLogoutDialog] = useState(false);
     const [loading, setLoading] = useState(true);
+    const [LogoutLoader, setLogoutLoader] = useState(false);
     const { selectedLangname } = useSelector((store) => store.selectedLang)
     const { currencyCode } = useSelector((store) => store.selectedCurrency)
     const { customerData } = useSelector((store) => store.userData)
@@ -74,11 +78,11 @@ const AccountScreen = ({ navigation }) => {
                                 : <>
                                     <Text className="font-medium text-xl text-center mt-4 mb-1">Sign In For Better Experience</Text>
 
-                                        <TouchableOpacity style={{borderRadius:20}}  onPress={debounce(() => navigation.push("Login"), 500)} className=" bg-[#fb7701] flex-row items-center my-2 mx-3 ">
-                                            {/* <MaterialCommunityIcons name="login" size={25} color={Colors.whiteColor} /> */}
-                                            <Text className="text-xl px-4 w-full py-2.5 text-white font-bold rounded text-center "
-                                               >Sign in / Register</Text>
-                                        </TouchableOpacity>
+                                    <TouchableOpacity style={{ borderRadius: 20 }} onPress={debounce(() => navigation.push("Login"), 500)} className=" bg-[#fb7701] flex-row items-center my-2 mx-3 ">
+                                        {/* <MaterialCommunityIcons name="login" size={25} color={Colors.whiteColor} /> */}
+                                        <Text className="text-xl px-4 w-full py-2.5 text-white font-bold rounded text-center "
+                                        >Sign in / Register</Text>
+                                    </TouchableOpacity>
 
                                     <ScrollView showsVerticalScrollIndicator={false}
                                         contentContainerStyle={{ paddingBottom: Sizes.fixPadding * 7.0, }}>
@@ -96,6 +100,8 @@ const AccountScreen = ({ navigation }) => {
         return (
             <Overlay
                 isVisible={showLogoutDialog}
+                animationType="slide"
+                transparent={true}
                 onBackdropPress={() => setShowLogoutDialog(false)}
                 overlayStyle={{ width: '80%', padding: 0.0, borderRadius: Sizes.fixPadding - 5.0 }}
             >
@@ -104,10 +110,10 @@ const AccountScreen = ({ navigation }) => {
                         {t("Sure you want to Logout?")}
                     </Text>
                     <View
-                    className="space-x-2"
-                     style={{ marginHorizontal: Sizes.fixPadding, marginTop: Sizes.fixPadding * 2.0, flexDirection: 'row', alignItems: 'center', }}>
+                        className="space-x-2"
+                        style={{ marginHorizontal: Sizes.fixPadding, marginTop: Sizes.fixPadding * 2.0, flexDirection: 'row', alignItems: 'center', }}>
                         <TouchableOpacity
-                        style={{borderRadius:5}}
+                            style={{ borderRadius: 5 }}
                             activeOpacity={0.9}
                             onPress={debounce(() => setShowLogoutDialog(false), 500)}
                             className="flex-1 bg-gray-200 py-3"
@@ -117,29 +123,41 @@ const AccountScreen = ({ navigation }) => {
                             </Text>
                         </TouchableOpacity>
                         <TouchableOpacity
-                         style={{borderRadius:5}}
-                        className="flex-1 bg-[#fb7701] py-3"
+                            style={{ borderRadius: 5 }}
+                            className="flex-1 bg-[#fb7701] py-3 h-12"
                             activeOpacity={0.9}
                             onPress={debounce(async () => {
                                 // Clear both AsyncStorage values
+                                setLogoutLoader(true)
                                 try {
                                     await AsyncStorage.removeItem('loggedid');
                                     await AsyncStorage.removeItem('customerData');
                                     await AsyncStorage.removeItem('cartData');
                                     await AsyncStorage.removeItem('cartTotal');
-                                    dispatch(emptyCustomer())
-                                    dispatch(getCartTotal(0))
-                                    dispatch(emptyCart())
-                                    dispatch(emptyOrder())
-                                    dispatch(emptyAddress())
-                                    dispatch(emptyWishlist())
-                                    setShowLogoutDialog(false);
+                                    // dispatch(emptyCustomer())
+                                    // dispatch(getCartTotal(0))
+                                    // dispatch(emptyCart())
+                                    // dispatch(emptyOrder())
+                                    // dispatch(emptyAddress())
+                                    // dispatch(emptyWishlist())
+                                    // setShowLogoutDialog(false);
+                                    NativeModules.DevSettings.reload();
+
                                 } catch (error) {
                                     console.error('Error clearing AsyncStorage:', error);
+                                } finally {
+                                    setLogoutLoader(false)
                                 }
                             }, 500)}
                         >
-                            <Text className=" text-center  text-base font-semibold">{("LOGOUT")}</Text>
+                            <View>
+                                {
+                                    LogoutLoader ?
+                                        <ActivityIndicator color={'white'} /> :
+                                        <Text className=" text-center  text-base font-semibold">{t("LOGOUT")}</Text>
+                                }
+
+                            </View>
                         </TouchableOpacity>
                     </View>
                 </View>

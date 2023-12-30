@@ -10,7 +10,6 @@ import { useTranslation } from "react-i18next";
 import { debounce } from "lodash";
 import { AdminUrl, HeaderBar } from "../../constant";
 import { Image } from "react-native";
-import { loaderOff, loaderOn } from "../../store/slices/counterslice";
 import { ActivityIndicator } from "react-native";
 import { SubcategoryPlaceholder } from "../../components/Skeleton";
 import { BottomSheetModalProvider, BottomSheetModal, BottomSheetBackdrop } from "@gorhom/bottom-sheet";
@@ -29,7 +28,6 @@ const CategoriesItemsScreen = React.memo(({ navigation, route }) => {
     const [hasMore, setHasMore] = useState(true);
 
     const { categoryId, categoryName, subcategory_name, featureddatatoshow } = route.params
-    console.log(subcategory_name);
     const { t } = useTranslation()
 
     const [filterlabel, setFilterlabel] = useState()
@@ -39,6 +37,7 @@ const CategoriesItemsScreen = React.memo(({ navigation, route }) => {
 
     const bottomSheetModalRef = useRef(null);
     const snapPoints = useMemo(() => ['25%', '50%', '90%'], []);
+    console.log(hasMore, "hasMore");
 
     const handleSheetChanges = useCallback((index) => {
         if (index >= 0) {
@@ -54,6 +53,7 @@ const CategoriesItemsScreen = React.memo(({ navigation, route }) => {
         const max = values[1]
         setSliderValues(values);
     };
+
     const filtersData = [
         { label: "Sort By", data: [{ name: "Relevance", value: "Relevance" }, { name: "Price: Low to High", value: "Price: Low to High" }, { name: "Price: High to Low", value: "Price: High to Low" }, { name: "Most Recent", value: "Most Recent" }] },
         // { label: "Ratings", data: [{ name: "** and more", value: 2 }, { name: "*** and more", value: 3 }, { name: "**** and more", value: 4 }] },
@@ -280,14 +280,11 @@ const CategoriesItemsScreen = React.memo(({ navigation, route }) => {
             console.error('Error:', error);
         }
     };
-
     useEffect(() => {
         if (!subcategoriesToShow && !featureddatatoshow) {
             getSubcatDataByCatId()
         }
     }, [subcategoriesToShow])
-
-
 
     const handleSubcategoryProduct = (subcat_name) => {
         setSelectedsubcategory(subcat_name)
@@ -327,15 +324,15 @@ const CategoriesItemsScreen = React.memo(({ navigation, route }) => {
                 });
                 setHasMore(true); // If data is fetched and not an empty array, set hasMore to true
             }
-            
+
             else {
                 console.log("ENTERED ELSEeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee");
-                console.log(filterProductsBACKEND,productsDataBackend,"timer start");
+                console.log(filterProductsBACKEND, productsDataBackend, "timer start");
                 !filterProductsBACKEND && setFilteredProducts([])
                 !productsDataBackend && setProducts([])
-                filterProductsBACKEND?.length===0 && setFilteredProducts([])
-                productsDataBackend?.length===0 && setProducts([])
-                console.log(filterProductsBACKEND,productsDataBackend,"timer end");
+                filterProductsBACKEND?.length === 0 && setFilteredProducts([])
+                productsDataBackend?.length === 0 && setProducts([])
+                console.log(filterProductsBACKEND, productsDataBackend, "timer end");
                 setHasMore(false); // If response is an empty array, set hasMore to false
 
             }
@@ -347,13 +344,8 @@ const CategoriesItemsScreen = React.memo(({ navigation, route }) => {
         }
     };
 
-console.log("SAJID start");
-console.log(filterProductsBACKEND);
-console.log("SAJID end");
-
-    console.log(featureddatatoshow);
     useEffect(() => {
-        selectedsubcategory  ? getProductsbysubcategory(selectedsubcategory) : getProductsbysubcategory('All')
+        selectedsubcategory ? getProductsbysubcategory(selectedsubcategory) : getProductsbysubcategory('All')
     }, [page])
 
 
@@ -376,6 +368,7 @@ console.log("SAJID end");
         }
         return stars;
     }
+
     // callbacks
     const handlePresentModalPress = useCallback((label) => {
         setFilterlabel(label)
@@ -536,19 +529,18 @@ console.log("SAJID end");
     function availableProductsInfo() {
         return (
             <View>
-                <HeaderBar goback={true} title={t(`${route.params.categoryName ? route.params.categoryName : "sbcategory"}`)} navigation={navigation} />
 
-                {!filterProductsBACKEND && filterProductsBACKEND?.length===0 ? (
+                {!filterProductsBACKEND && filterProductsBACKEND?.length === 0 ? (
                     <View className="flex-row items-center  m-auto mt-24">
                         <ActivityIndicator size="large" color="red" />
                         {/* <Text className="text-gray-400 ml-2 text-[14px]">Fetching Location Data...</Text> */}
                     </View>
-                )  : (
+                ) : (
                     <View>
                         {/* <ProductListing title={selectedsubcategory} productList={filterProductsBACKEND} /> */}
                         <FlatList
                             data={filterProductsBACKEND}
-                            renderItem={ renderItemOrSkeleton
+                            renderItem={renderItemOrSkeleton
                             }
                             keyExtractor={(item, index) => index.toString()}
                             numColumns={2} // Adjust as needed
@@ -565,14 +557,15 @@ console.log("SAJID end");
                                     {
                                         filterProductsBACKEND?.length === 0 &&
                                         <View className="">
-                        <Image resizeMode="contain" className="h-[150px] w-[150px] mx-auto" source={require('../../assets/images/empty-folder.png')} />
-                        <Text className="text-center text-xl ">{t("No Product Found !")}</Text>
-                    </View>
+                                            <Image resizeMode="contain" className="h-[150px] w-[150px] mx-auto" source={require('../../assets/images/empty-folder.png')} />
+                                            <Text className="text-center text-xl ">{t("No Product Found !")}</Text>
+                                        </View>
                                     }
                                 </View>
                             )}
                             ListHeaderComponent={() => (
                                 <View>
+                                    <HeaderBar goback={true} title={t(`${route.params.categoryName ? route.params.categoryName : "sbcategory"}`)} navigation={navigation} />
 
                                     {filtersInfo2()}
                                     {categoryInfo()}

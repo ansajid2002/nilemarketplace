@@ -62,6 +62,8 @@ import { BackHandler, Text, ToastAndroid } from 'react-native';
 import Inbox from './screens/Inbox/inbox';
 import InboxChatScreen from './screens/Inbox/InboxChatScreen';
 import Channels from './screens/channels/Channels';
+// import categoryProductList from './screens/categoriesItems/CategoryProductList';
+import CategoryProductList from './screens/categoriesItems/CategoryProductList';
 
 ///////////////////////////////////////FORM SCREENS///////////////////////////////////////
 
@@ -135,7 +137,7 @@ const App = () => {
             component={ChatsScreen}
             options={({ route }) => ({
               tabBarIcon: ({ color, size }) => (
-                <Carttab color={color}  />
+                <Carttab color={color} />
               ), headerShown: false,
               tabBarLabel: `${t("Cart")}`,
               tabBarLabelStyle: { fontSize: 10, marginBottom: 4, marginTop: 0, fontWeight: '600' },
@@ -176,7 +178,7 @@ const App = () => {
             <Stack.Screen name="Onboarding" component={onboardingScreen} />
             <Stack.Screen name="Login" component={loginScreen} options={{ ...TransitionPresets.DefaultTransition }} />
             <Stack.Screen name="Register" component={registerScreen} />
-            <Stack.Screen name="Channel" component={Channels}/>
+            <Stack.Screen name="Channel" component={Channels} />
             <Stack.Screen name="Verification" component={verificationScreen} />
             <Stack.Screen name="servicesList" component={ServicesList} />
             <Stack.Screen name="CategoriesItems" component={categoriesItemsScreen} />
@@ -211,6 +213,7 @@ const App = () => {
             <Stack.Screen name="Notification" component={NotificationsScreen} />
             <Stack.Screen name="Inbox" component={Inbox} />
             <Stack.Screen name="InboxChatScreen" component={InboxChatScreen} />
+            <Stack.Screen name="CategoryProductList" component={CategoryProductList} />
 
           </Stack.Navigator>
 

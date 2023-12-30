@@ -26,8 +26,9 @@ import { AntDesign } from '@expo/vector-icons';
 import { CategoryPlaceholder, ServicesPlaceholder } from "../../components/Skeleton";
 import NoLogin from "../../components/NoLogin";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import {  getCartTotal } from "../../store/slices/cartSlice";
+import { getCartTotal } from "../../store/slices/cartSlice";
 import { updateCustomerData } from "../../store/slices/customerData";
+import { updateproductsListwishlist } from "../../store/slices/wishlistSlice";
 
 
 const { width } = Dimensions.get('window');
@@ -38,85 +39,85 @@ const HomeScreen = () => {
     const [servicesData, setServicesData] = useState(null)
     const [productCatData, setProductCatData] = useState(null)
 
-
     const navigation = useNavigation();
     const { t } = useTranslation()
     const cartItems = useSelector((state) => state.cart.cartItems);
     const { productsList } = useSelector((store) => store.products)
-    
+
     const { customerData } = useSelector((store) => store.userData)
     const customerId = customerData[0]?.customer_id
-    const [cartTotal,setCartTotal] = useState(false)
+    const [cartTotal, setCartTotal] = useState(false)
+    const [wishlistItems, setWishlistItems] = useState(false)
 
     useEffect(() => {
         // Check if loggedid and customerData are available in AsyncStorage
         async function checkAuthentication() {
-          // const loggedid = await AsyncStorage.getItem('loggedid');
-          const storedCustomerData = await AsyncStorage.getItem('customerData');
-    
-          // If both loggedid and customerData are available, set isAuthenticated to true
-          if (storedCustomerData) {
-            dispatch(updateCustomerData(JSON.parse(storedCustomerData)))
-          }
+            // const loggedid = await AsyncStorage.getItem('loggedid');
+            const storedCustomerData = await AsyncStorage.getItem('customerData');
+
+            // If both loggedid and customerData are available, set isAuthenticated to true
+            if (storedCustomerData) {
+                dispatch(updateCustomerData(JSON.parse(storedCustomerData)))
+            }
         }
-    
+
         checkAuthentication();
-      }, []);
+    }, []);
 
-    const getCartTotaldata = async() => {
+    const getCartTotaldata = async () => {
         try {
-          if (!customerId) {
-            console.log("GUEST MODE");
-            const cartTotal = await AsyncStorage.getItem("cartTotal");
-            if (cartTotal) {
-              setCartTotal(true)
-              dispatch(getCartTotal(cartTotal))
+            if (!customerId) {
+                console.log("GUEST MODE");
+                const cartTotal = await AsyncStorage.getItem("cartTotal");
+                if (cartTotal) {
+                    setCartTotal(true)
+                    dispatch(getCartTotal(cartTotal))
+                }
+                setCartTotal(true)
+                dispatch(getCartTotal(0))
             }
-            setCartTotal(true)
-              dispatch(getCartTotal(0))
-          }
-          else {
-            console.log("WELCOME CUSTOMER ");
-            const urlWithCustomerId = `${AdminUrl}/api/cartTotal?customer_id=${customerId}`;
-            const requestOptions = {
-              method: 'GET',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-            };
-      
-            const response = await fetch(urlWithCustomerId, requestOptions);
-            if (!response.ok) {
-              throw new Error(`HTTP error! Status: ${response.status}`);
+            else {
+                console.log("WELCOME CUSTOMER ");
+                const urlWithCustomerId = `${AdminUrl}/api/cartTotal?customer_id=${customerId}`;
+                const requestOptions = {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                };
+
+                const response = await fetch(urlWithCustomerId, requestOptions);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                const data = await response.json()
+                console.log(data.total, "cartTotal");
+                dispatch(getCartTotal(data.total))
+                setCartTotal(true)
+                console.log(data.total, "Data.totla");
+                await AsyncStorage.setItem('cartTotal', JSON.stringify(data.total));
+
             }
-            const data = await response.json()
-            console.log(data.total,"cartTotal");
-            dispatch(getCartTotal(data.total))
-            setCartTotal(true)
-            console.log(data.total,"Data.totla");
-            await AsyncStorage.setItem('cartTotal', JSON.stringify(data.total));
-      
-          }
-      
+
         } catch (error) {
-          console.log(error,"error while fetching cart total");
+            console.log(error, "error while fetching cart total");
         }
-      }
-      useEffect(() => {
+    }
+    useEffect(() => {
         if (!cartTotal) {
-          getCartTotaldata()
+            getCartTotaldata()
         }
-      },[cartTotal])
+    }, [cartTotal])
 
-//     const scrollViewRef = useRef(null);
+    //     const scrollViewRef = useRef(null);
 
-//   useFocusEffect(
-//     React.useCallback(() => {
-//       if (scrollViewRef.current) {
-//         scrollViewRef.current.scrollTo({ y: 0, animated: true });
-//       }
-//     }, [])
-//   );
+    //   useFocusEffect(
+    //     React.useCallback(() => {
+    //       if (scrollViewRef.current) {
+    //         scrollViewRef.current.scrollTo({ y: 0, animated: true });
+    //       }
+    //     }, [])
+    //   );
 
     const getservicesData = async () => {
         try {
@@ -214,12 +215,12 @@ const HomeScreen = () => {
 
     const fetchRecommendedProducts = async () => {
         try {
-            const recommendedResponse = await fetch(`${AdminUrl}/api/recommendedProducts/${customerId}`);
+            const recommendedResponse = await fetch(`${AdminUrl}/api/recommendedProducts/${customerId || 'null'}`);
             if (!recommendedResponse.ok) {
                 throw new Error(`HTTP error! Status: ${recommendedResponse.status}`);
             }
             const recommendedData = await recommendedResponse.json();
-            console.log(recommendedData,"recommendedData");
+            console.log(recommendedData, "recommendedData");
             setRecommendedProducts(recommendedData);
 
         } catch (error) {
@@ -227,9 +228,9 @@ const HomeScreen = () => {
         }
     }
 
-    const fetchNewArrivals =async () => {
+    const fetchNewArrivals = async () => {
         try {
-            const newArrivalsResponse = await fetch(`${AdminUrl}/api/newArrivals/${customerId}`);
+            const newArrivalsResponse = await fetch(`${AdminUrl}/api/newArrivals/${customerId || 'null'}`);
             if (!newArrivalsResponse.ok) {
                 throw new Error(`HTTP error! Status: ${newArrivalsResponse.status}`);
             }
@@ -237,20 +238,51 @@ const HomeScreen = () => {
             setNewArrivals(newArrivalsData);
 
         } catch (error) {
-            console.log(error,"Error fetching new arrivals data");
+            console.log(error, "Error fetching new arrivals data");
         }
     }
 
     useEffect(() => {
-        if (!newArrivals) {
-            fetchNewArrivals()
-        }
-    },[newArrivals])
-    useEffect(() => {
-        if (!recommendedProdutcs) {
+        if (!recommendedProdutcs && servicesData?.length > 0) {
             fetchRecommendedProducts()
         }
-    },[recommendedProdutcs])
+    }, [recommendedProdutcs, servicesData])
+    // console.log(recommendedProdutcs);
+
+    useEffect(() => {
+        if (!newArrivals && recommendedProdutcs?.length > 0) {
+            fetchNewArrivals()
+        }
+    }, [newArrivals, recommendedProdutcs])
+
+    const getCustomerWishlist = async () => {
+        if (customerId === null || customerId === undefined) {
+            // Handle the case when customerId is null or undefined, such as displaying an error message or taking appropriate action.
+            return;
+        }
+        try {
+            const response = await fetch(`${AdminUrl}/api/wishlistdata?customer_id=${customerId}`);
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            setWishlistItems(true)
+            dispatch(updateproductsListwishlist(data))
+
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    };
+
+    useEffect(() => {
+        if (!wishlistItems) {
+            getCustomerWishlist()
+        }
+    }, [customerId, wishlistItems])
+
+
 
     return (
         <SafeAreaView
@@ -319,35 +351,31 @@ const HomeScreen = () => {
 
                 </LinearGradient>
                 <View className="mt-4 ">
-                    {
+                    {/* {
                         !customerId && <ProductListing title="Recommended Products" productList={productsList.slice(0, 10)} />
-                    }
-                    {
-                        customerData?.length > 0 && <>
-                        <View>
+                    } */}
+                    <View>
                         <View className="m-3 flex-row justify-between items-center">
                             <Text className="font-bold text-lg">Recommended Products</Text>
                             <TouchableOpacity onPress={() => {
-                                navigation.navigate("Channel",{recommended:true})
+                                navigation.navigate("Channel", { recommended: true })
                             }}>
-                            <MaterialIcons name="arrow-forward" size={30} />
+                                <MaterialIcons name="arrow-forward" size={30} />
                             </TouchableOpacity>
                         </View>
-                            <ProductListing title="" productList={recommendedProdutcs} />
-                        </View>
-                        <View>
+                        <ProductListing title="" productList={recommendedProdutcs} />
+                    </View>
+                    <View>
                         <View className="m-3 flex-row justify-between items-center">
                             <Text className="font-bold text-lg">New Arrivals</Text>
                             <TouchableOpacity onPress={() => {
-                                navigation.navigate("Channel",{arrivals:true})
+                                navigation.navigate("Channel", { arrivals: true })
                             }}>
-                            <MaterialIcons name="arrow-forward" size={30} />
+                                <MaterialIcons name="arrow-forward" size={30} />
                             </TouchableOpacity>
                         </View>
-                            <ProductListing title="" productList={newArrivals} />
-                        </View>
-                        </>
-                    }
+                        <ProductListing title="" productList={newArrivals} />
+                    </View>
 
                     {cartItems && cartItems.length > 0 && <InCart cartItems={cartItems} navigation={navigation} />}
                 </View>
@@ -359,9 +387,7 @@ const HomeScreen = () => {
     function browseServicesInfo() {
         return (
             <View style={{ marginBottom: Sizes.fixPadding, marginTop: Sizes.fixPadding * 2.0, marginHorizontal: Sizes.fixPadding * 1.0, }}>
-
                 {
-
                     !servicesData ? <ServicesPlaceholder /> :
                         <>
                             <View className="flex flex-row justify-between items-center mt-2 mb-4 mx-2">
@@ -386,7 +412,7 @@ const HomeScreen = () => {
 
                                                 style={styles.categoryWrapStyle}
                                             >
-                                                <TouchableOpacity onPress={debounce(() => navigation.push('CategoriesItems', { categoryId: item.category_id, categoryName: item.category_name, subcategory_name: t("All") }), 500)} style={styles.categoryImageWrapStyle} className="border border-gray-200">
+                                                <TouchableOpacity onPress={debounce(() => navigation.push('CategoryProductList', { categoryId: item.category_id, categoryName: item.category_name, subcategory_name: t("All") }), 500)} style={styles.categoryImageWrapStyle} className="border border-gray-200">
                                                     <Image
                                                         resizeMode="contain"
                                                         source={{ uri: `${AdminUrl}/uploads/CatgeoryImages/${item.category_image_url}` }}
@@ -457,7 +483,7 @@ const HomeScreen = () => {
                                                     <View style={styles.categoryWrapStyle} className="mb-10">
                                                         <TouchableOpacity
                                                             onPress={debounce(() => {
-                                                                navigation.push('CategoriesItems', { categoryId: item.category_id, categoryName: item.category_name, subcategory_name: t("All") })
+                                                                navigation.push('CategoryProductList', { categoryId: item.category_id, categoryName: item.category_name, subcategory_name: t("All") })
                                                             }, 500)}
                                                             style={styles.categoryImageWrapStyle} className="border border-gray-200 ">
                                                             <Image
@@ -486,7 +512,7 @@ const HomeScreen = () => {
 
 
 const styles = StyleSheet.create({
-   
+
     categoryImageWrapStyle: {
         width: 110.0,
         height: 110.0,
@@ -494,7 +520,7 @@ const styles = StyleSheet.create({
         backgroundColor: Colors.whiteColor,
         alignItems: 'center',
         justifyContent: 'center',
-        
+
     },
     categoryWrapStyle: {
         maxWidth: width / 4.0 - 10.0,

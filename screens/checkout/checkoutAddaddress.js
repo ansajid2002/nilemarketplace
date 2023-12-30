@@ -199,277 +199,277 @@ const CheckoutAddaddress = ({ route, navigation }) => {
 
     return (
         <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height mt-10'}
-        style={{ flex: 1 }}
-      >
-              <SafeAreaView style={{ flex: 1, backgroundColor: Colors.whiteColor }} className="">
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height mt-10'}
+            style={{ flex: 1 }}
+        >
+            <SafeAreaView style={{ flex: 1, backgroundColor: Colors.whiteColor }} className="">
 
-            {loading && <FullPageLoader />}
-            <View className="p-2 bg-white" style={{ flexDirection: 'row', alignItems: 'center' }}>
-        {
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Icon name="arrow-back" size={30} color="black" />
-          </TouchableOpacity>
-        }
-        <Text style={{ marginLeft: 10, fontSize: 20, fontWeight: 600 }}>{t("Select a delivery Address")}</Text>
-      
-      </View>
-      <ScrollView className="pb-4 bg-white" showsVerticalScrollIndicator={false}>
-
-                {/* <Text className="text-xl font-semibold tracking-wide mt-4 mb-6 ml-3">{t("Your Delivery Address")}</Text> */}
-                <View>
+                {loading && <FullPageLoader />}
+                <View className="p-2 bg-white" style={{ flexDirection: 'row', alignItems: 'center' }}>
                     {
-                        locationloader ?
-                            <TouchableOpacity className="flex-row px-4 border-b border-t  border-gray-300 py-2.5 h-14">
-
-                                <View className="bg-white  flex-row items-center">
-                                    <ActivityIndicator size="large" color="#00008b" />
-                                    <Text className="text-gray-400 ml-2 text-[14px]">{t("Fetching Location Data")}...</Text>
-                                </View></TouchableOpacity> :
-
-                            <TouchableOpacity className="flex-row px-4 border-b border-t items-center  border-gray-300 py-4 h-14" onPress={debounce(() => checkLocationPermission(), 500)}>
-                                <MaterialCommunityIcons
-                                    name="crosshairs-gps"
-                                    size={20}
-                                    color="#00008b"
-                                />
-                                <View className="flex-row items-center -mt-0.5 ">
-                                    <Text className="text-base font-bold text-[#3535a3] ml-1.5  ">{t("Use My Current Location")}</Text>
-                                    {/* <Text className="text-sm ml-2 mt-0 text-gray-500">Enable Location</Text> */}
-                                </View>
-                            </TouchableOpacity>
+                        <TouchableOpacity onPress={() => navigation.goBack()}>
+                            <Icon name="arrow-back" size={30} color="black" />
+                        </TouchableOpacity>
                     }
+                    <Text style={{ marginLeft: 10, fontSize: 20, fontWeight: 600 }}>{t("Add delivery Address")}</Text>
+
                 </View>
-                <View>
+                <ScrollView className="pb-4 bg-white" showsVerticalScrollIndicator={false}>
 
-                <View className="flex-row">
+                    {/* <Text className="text-xl font-semibold tracking-wide mt-4 mb-6 ml-3">{t("Your Delivery Address")}</Text> */}
+                    <View>
+                        {
+                            locationloader ?
+                                <TouchableOpacity className="flex-row px-4 border-b border-t  border-gray-300 py-2.5 h-14">
 
-                    <View className=" m-2 flex-1">
-                        <Text className=" text-base mb-1 font-semibold tracking-wide">First Name</Text>
-                        <TextInput className="text-[14px] border  flex-1 px-3 py-2 bg-white rounded-md tracking-wider focus:shadow-md h-10"
-                            value={values.given_name_address}
-                            style={[
-                                touched.given_name_address && errors.given_name_address && { borderColor: 'red', borderWidth: 1 },
-                            ]}
-                            onChangeText={(value) => {
-                                handleChange('given_name_address')(value);
-                                updateState({ given_name_address: value });
-                            }}
-                            onBlur={handleBlur('given_name_address')}
-                        />
-                        {/* {touched.given_name_address && errors.given_name_address && (
+                                    <View className="bg-white  flex-row items-center">
+                                        <ActivityIndicator size="large" color="#00008b" />
+                                        <Text className="text-gray-400 ml-2 text-[14px]">{t("Fetching Location Data")}...</Text>
+                                    </View></TouchableOpacity> :
+
+                                <TouchableOpacity className="flex-row px-4 border-b border-t items-center  border-gray-300 py-4 h-14" onPress={debounce(() => checkLocationPermission(), 500)}>
+                                    <MaterialCommunityIcons
+                                        name="crosshairs-gps"
+                                        size={20}
+                                        color="#00008b"
+                                    />
+                                    <View className="flex-row items-center -mt-0.5 ">
+                                        <Text className="text-base font-bold text-[#3535a3] ml-1.5  ">{t("Use My Current Location")}</Text>
+                                        {/* <Text className="text-sm ml-2 mt-0 text-gray-500">Enable Location</Text> */}
+                                    </View>
+                                </TouchableOpacity>
+                        }
+                    </View>
+                    <View>
+
+                        <View className="flex-row">
+
+                            <View className=" m-2 flex-1">
+                                <Text className=" text-base mb-1 font-semibold tracking-wide">First Name</Text>
+                                <TextInput className="text-[14px] border  flex-1 px-3 py-2 bg-white rounded-md tracking-wider focus:shadow-md h-10"
+                                    value={values.given_name_address}
+                                    style={[
+                                        touched.given_name_address && errors.given_name_address && { borderColor: 'red', borderWidth: 1 },
+                                    ]}
+                                    onChangeText={(value) => {
+                                        handleChange('given_name_address')(value);
+                                        updateState({ given_name_address: value });
+                                    }}
+                                    onBlur={handleBlur('given_name_address')}
+                                />
+                                {/* {touched.given_name_address && errors.given_name_address && (
                             <Text className="mt-1 ml-2" style={{ color: 'red' }}>{errors.given_name_address}</Text>
                         )} */}
-                    </View>
-                    <View className=" m-2 flex-1">
-                        <Text className=" text-base mb-1 font-semibold tracking-wide">Last Name</Text>
-                        <TextInput className="text-[14px] border  flex-1 px-3 py-2 bg-white rounded-md tracking-wider focus:shadow-md h-10"
-                            value={values.family_name_address}
-                            style={[
-                                touched.family_name_address && errors.family_name_address && { borderColor: 'red', borderWidth: 1 },
-                            ]}
-                            onChangeText={(value) => {
-                                handleChange('family_name_address')(value);
-                                updateState({ family_name_address: value });
-                            }}
-                            onBlur={handleBlur('family_name_address')}
-                        />
-                        {/* {touched.family_name_address && errors.family_name_address && (
+                            </View>
+                            <View className=" m-2 flex-1">
+                                <Text className=" text-base mb-1 font-semibold tracking-wide">Last Name</Text>
+                                <TextInput className="text-[14px] border  flex-1 px-3 py-2 bg-white rounded-md tracking-wider focus:shadow-md h-10"
+                                    value={values.family_name_address}
+                                    style={[
+                                        touched.family_name_address && errors.family_name_address && { borderColor: 'red', borderWidth: 1 },
+                                    ]}
+                                    onChangeText={(value) => {
+                                        handleChange('family_name_address')(value);
+                                        updateState({ family_name_address: value });
+                                    }}
+                                    onBlur={handleBlur('family_name_address')}
+                                />
+                                {/* {touched.family_name_address && errors.family_name_address && (
                             <Text className="mt-1 ml-2" style={{ color: 'red' }}>{errors.family_name_address}</Text>
                         )} */}
-                    </View>
-                </View>
+                            </View>
+                        </View>
 
-                <View className="m-3">
-                    <Text className="  text-base mb-1 font-semibold tracking-wide">Email Address</Text>
-                    <TextInput className="text-[14px] h-10   flex-1 px-3 py-2 bg-white rounded-md tracking-wider focus:shadow-md"
-                        value={values.email_address}
-                        style={[
-                            touched.email_address && errors.email_address ? { borderColor: 'red', borderWidth: 1 } : { borderColor: 'black', borderWidth: 1 },
-                        ]}
-                        onChangeText={(value) => {
-                            handleChange('email_address')(value);
-                            updateState({ email_address: value });
-                        }}
-                        onBlur={handleBlur('email_address')}
-                    />
-                    {/* {touched.email_address && errors.email_address && (
+                        <View className="m-3">
+                            <Text className="  text-base mb-1 font-semibold tracking-wide">Email Address</Text>
+                            <TextInput className="text-[14px] h-10   flex-1 px-3 py-2 bg-white rounded-md tracking-wider focus:shadow-md"
+                                value={values.email_address}
+                                style={[
+                                    touched.email_address && errors.email_address ? { borderColor: 'red', borderWidth: 1 } : { borderColor: 'black', borderWidth: 1 },
+                                ]}
+                                onChangeText={(value) => {
+                                    handleChange('email_address')(value);
+                                    updateState({ email_address: value });
+                                }}
+                                onBlur={handleBlur('email_address')}
+                            />
+                            {/* {touched.email_address && errors.email_address && (
                         <Text className="mt-1 ml-2" style={{ color: 'red' }}>{errors.email_address}</Text>
                     )} */}
 
-                </View>
-                <View style={{ marginBottom: 12 }} className="mx-4">
-                    <Text style={{
-                        fontSize: 16,
-                        fontWeight: 400,
-                        marginVertical: 8
-                    }}>Mobile Number</Text>
+                        </View>
+                        <View style={{ marginBottom: 12 }} className="mx-4">
+                            <Text style={{
+                                fontSize: 16,
+                                fontWeight: 400,
+                                marginVertical: 8
+                            }}>Mobile Number</Text>
 
 
-                   
-                    <TextInput
-                        className="text-[14px] border flex-1 h-10 px-3 py-2 bg-white rounded-md tracking-wider focus:shadow-md"
-                        placeholder='Enter your phone number'
-                        placeholderTextColor={COLORS.black}
-                        keyboardType='numeric'
-                        style={[
-                            touched.phone_address && errors.phone_address ? { borderColor: 'red', borderWidth: 1 } : { borderColor: 'black', borderWidth: 1 },
-                        ]}
-                        value={values.phone_address}
-                        onChangeText={(value) => {
-                            handleChange('phone_address')(value);
-                            updateState({ phone_address: value });
-                        }}
-                    />
 
-                    {/* {touched.phone_address && errors.phone_address && (
+                            <TextInput
+                                className="text-[14px] border flex-1 h-10 px-3 py-2 bg-white rounded-md tracking-wider focus:shadow-md"
+                                placeholder='Enter your phone number'
+                                placeholderTextColor={COLORS.black}
+                                keyboardType='numeric'
+                                style={[
+                                    touched.phone_address && errors.phone_address ? { borderColor: 'red', borderWidth: 1 } : { borderColor: 'black', borderWidth: 1 },
+                                ]}
+                                value={values.phone_address}
+                                onChangeText={(value) => {
+                                    handleChange('phone_address')(value);
+                                    updateState({ phone_address: value });
+                                }}
+                            />
+
+                            {/* {touched.phone_address && errors.phone_address && (
                         <Text className="mt-1 ml-2" style={{ color: 'red' }}>{errors.phone_address}</Text>
                     )} */}
 
-                </View>
-                <View className="m-3">
-                    <Text className="  text-base mb-1 font-semibold tracking-wide">Apartment, unit etc.</Text>
-                    <TextInput className="text-[14px] border flex-1 px-3 py-2 bg-white rounded-md tracking-wider focus:shadow-md h-10"
-                        value={values.apt_address}
-                        style={[
-                            touched.apt_address && errors.apt_address ? { borderColor: 'red', borderWidth: 1 } : { borderColor: 'black', borderWidth: 1 },
-                        ]}
-                        onChangeText={(value) => {
-                            handleChange('apt_address')(value);
-                            updateState({ apt_address: value });
-                        }}
-                        onBlur={handleBlur('apt_address')}
-                    />
-                    {/* {touched.apt_address && errors.apt_address && (
+                        </View>
+                        <View className="m-3">
+                            <Text className="  text-base mb-1 font-semibold tracking-wide">Apartment, unit etc.</Text>
+                            <TextInput className="text-[14px] border flex-1 px-3 py-2 bg-white rounded-md tracking-wider focus:shadow-md h-10"
+                                value={values.apt_address}
+                                style={[
+                                    touched.apt_address && errors.apt_address ? { borderColor: 'red', borderWidth: 1 } : { borderColor: 'black', borderWidth: 1 },
+                                ]}
+                                onChangeText={(value) => {
+                                    handleChange('apt_address')(value);
+                                    updateState({ apt_address: value });
+                                }}
+                                onBlur={handleBlur('apt_address')}
+                            />
+                            {/* {touched.apt_address && errors.apt_address && (
                         <Text className="mt-1 ml-2" style={{ color: 'red' }}>{errors.apt_address}</Text>
                     )} */}
 
-                </View>
+                        </View>
 
-                <View className="m-3">
-                    <Text className=" text-base mb-1 font-semibold tracking-wide">Country</Text>
-                    <TextInput className="text-[14px] border  flex-1 px-3 py-2 bg-white rounded-md tracking-wider focus:shadow-md h-10"
-                        value={values.country_address}
-                        style={[
-                            touched.country_address && errors.country_address ? { borderColor: 'red', borderWidth: 1 } : { borderColor: 'black', borderWidth: 1 },
-                        ]}
-                        onChangeText={(value) => {
-                            handleChange('country_address')(value);
-                            updateState({ country_address: value });
-                        }}
-                        onBlur={handleBlur('country_address')}
-                    />
-                    {/* {touched.country_address && errors.country_address && (
+                        <View className="m-3">
+                            <Text className=" text-base mb-1 font-semibold tracking-wide">Country</Text>
+                            <TextInput className="text-[14px] border  flex-1 px-3 py-2 bg-white rounded-md tracking-wider focus:shadow-md h-10"
+                                value={values.country_address}
+                                style={[
+                                    touched.country_address && errors.country_address ? { borderColor: 'red', borderWidth: 1 } : { borderColor: 'black', borderWidth: 1 },
+                                ]}
+                                onChangeText={(value) => {
+                                    handleChange('country_address')(value);
+                                    updateState({ country_address: value });
+                                }}
+                                onBlur={handleBlur('country_address')}
+                            />
+                            {/* {touched.country_address && errors.country_address && (
                         <Text className="mt-1 ml-2" style={{ color: 'red' }}>{errors.country_address}</Text>
                     )} */}
-                </View>
+                        </View>
 
-                <View className="m-3">
-                    <Text className="  text-base mb-1 font-semibold tracking-wide">Postcode / ZIP</Text>
-                    <TextInput className="text-[14px] border h-10  flex-1 px-3 py-2 bg-white rounded-md tracking-wider focus:shadow-md"
-                        value={values.zip_address}
-                        style={[
-                            touched.zip_address && errors.zip_address ? { borderColor: 'red', borderWidth: 1 } : { borderColor: 'black', borderWidth: 1 },
-                        ]}
-                        onChangeText={(value) => {
-                            handleChange('zip_address')(value);
-                            updateState({ zip_address: value });
-                        }}
-                        onBlur={handleBlur('zip_address')}
-                    />
-                    {/* {touched.zip_address && errors.zip_address && (
+                        <View className="m-3">
+                            <Text className="  text-base mb-1 font-semibold tracking-wide">Postcode / ZIP</Text>
+                            <TextInput className="text-[14px] border h-10  flex-1 px-3 py-2 bg-white rounded-md tracking-wider focus:shadow-md"
+                                value={values.zip_address}
+                                style={[
+                                    touched.zip_address && errors.zip_address ? { borderColor: 'red', borderWidth: 1 } : { borderColor: 'black', borderWidth: 1 },
+                                ]}
+                                onChangeText={(value) => {
+                                    handleChange('zip_address')(value);
+                                    updateState({ zip_address: value });
+                                }}
+                                onBlur={handleBlur('zip_address')}
+                            />
+                            {/* {touched.zip_address && errors.zip_address && (
                         <Text className="mt-1 ml-2" style={{ color: 'red' }}>{errors.zip_address}</Text>
                     )} */}
 
-                </View>
-                <View className="m-3">
-                    <Text className="  text-base mb-1 font-semibold tracking-wide">Town/City</Text>
-                    <TextInput className="text-[14px] border h-10  flex-1 px-3 py-2 bg-white rounded-md tracking-wider focus:shadow-md"
-                        value={values.city_address}
-                        style={[
-                            touched.city_address && errors.city_address ? { borderColor: 'red', borderWidth: 1 } : { borderColor: 'black', borderWidth: 1 },
-                        ]}
-                        onChangeText={(value) => {
-                            handleChange('city_address')(value);
-                            updateState({ city_address: value });
-                        }}
-                        onBlur={handleBlur('city_address')}
-                    />
-                    {/* {touched.city_address && errors.city_address && (
+                        </View>
+                        <View className="m-3">
+                            <Text className="  text-base mb-1 font-semibold tracking-wide">Town/City</Text>
+                            <TextInput className="text-[14px] border h-10  flex-1 px-3 py-2 bg-white rounded-md tracking-wider focus:shadow-md"
+                                value={values.city_address}
+                                style={[
+                                    touched.city_address && errors.city_address ? { borderColor: 'red', borderWidth: 1 } : { borderColor: 'black', borderWidth: 1 },
+                                ]}
+                                onChangeText={(value) => {
+                                    handleChange('city_address')(value);
+                                    updateState({ city_address: value });
+                                }}
+                                onBlur={handleBlur('city_address')}
+                            />
+                            {/* {touched.city_address && errors.city_address && (
                         <Text className="mt-1 ml-2" style={{ color: 'red' }}>{errors.city_address}</Text>
                     )} */}
 
-                </View>
-                <View className="m-3">
-                    <Text className="  text-base mb-1 font-semibold tracking-wide" >Subregion</Text>
-                    <TextInput className="text-[14px] border h-10  flex-1 px-3 py-2 bg-white rounded-md tracking-wider focus:shadow-md"
-                        value={values.subregion_address}
-                        style={[
-                            touched.subregion_address && errors.subregion_address ? { borderColor: 'red', borderWidth: 1 } : { borderColor: 'black', borderWidth: 1 },
-                        ]}
-                        onChangeText={(value) => {
-                            handleChange('subregion_address')(value);
-                            updateState({ subregion_address: value });
-                        }}
-                        onBlur={handleBlur('subregion_address')}
-                    />
-                    {/* {touched.subregion_address && errors.subregion_address && (
+                        </View>
+                        <View className="m-3">
+                            <Text className="  text-base mb-1 font-semibold tracking-wide" >Subregion</Text>
+                            <TextInput className="text-[14px] border h-10  flex-1 px-3 py-2 bg-white rounded-md tracking-wider focus:shadow-md"
+                                value={values.subregion_address}
+                                style={[
+                                    touched.subregion_address && errors.subregion_address ? { borderColor: 'red', borderWidth: 1 } : { borderColor: 'black', borderWidth: 1 },
+                                ]}
+                                onChangeText={(value) => {
+                                    handleChange('subregion_address')(value);
+                                    updateState({ subregion_address: value });
+                                }}
+                                onBlur={handleBlur('subregion_address')}
+                            />
+                            {/* {touched.subregion_address && errors.subregion_address && (
                         <Text className="mt-1 ml-2" style={{ color: 'red' }}>{errors.subregion_address}</Text>
                     )} */}
 
-                </View>
-                <View className="m-3">
-                    <Text className="  text-base mb-1 font-semibold tracking-wide" >Region</Text>
-                    <TextInput className="text-[14px] border h-10  flex-1 px-3 py-2 bg-white rounded-md tracking-wider focus:shadow-md"
-                        value={values.region_address}
-                        style={[
-                            touched.region_address && errors.region_address ? { borderColor: 'red', borderWidth: 1 } : { borderColor: 'black', borderWidth: 1 },
-                        ]}
-                        onChangeText={(value) => {
-                            handleChange('region_address')(value);
-                            updateState({ region_address: value });
-                        }}
-                        onBlur={handleBlur('region_address')}
-                    />
-                    {/* {touched.region_address && errors.region_address && (
+                        </View>
+                        <View className="m-3">
+                            <Text className="  text-base mb-1 font-semibold tracking-wide" >Region</Text>
+                            <TextInput className="text-[14px] border h-10  flex-1 px-3 py-2 bg-white rounded-md tracking-wider focus:shadow-md"
+                                value={values.region_address}
+                                style={[
+                                    touched.region_address && errors.region_address ? { borderColor: 'red', borderWidth: 1 } : { borderColor: 'black', borderWidth: 1 },
+                                ]}
+                                onChangeText={(value) => {
+                                    handleChange('region_address')(value);
+                                    updateState({ region_address: value });
+                                }}
+                                onBlur={handleBlur('region_address')}
+                            />
+                            {/* {touched.region_address && errors.region_address && (
                         <Text className="mt-1 ml-2" style={{ color: 'red' }}>{errors.region_address}</Text>
                     )} */}
 
-                </View>
+                        </View>
 
-                <View className="m-3">
-                    <Text className="  text-base mb-1 font-semibold tracking-wide">Note (Optional)</Text>
+                        <View className="m-3">
+                            <Text className="  text-base mb-1 font-semibold tracking-wide">Note (Optional)</Text>
 
-                    <TextInput
-                        placeholder="Write here..."
-                        // style={styles.textFieldWrapStyle}
-                        selectionColor={Colors.primaryColor}
-                        className=" text-[14px] border  flex-1 px-3 py-2 mb-4 bg-white tracking-wider rounded-md focus:shadow-md h-10"
-                        multiline={true}
-                        numberOfLines={5}
-                        textAlignVertical="top"
+                            <TextInput
+                                placeholder="Write here..."
+                                // style={styles.textFieldWrapStyle}
+                                selectionColor={Colors.primaryColor}
+                                className=" text-[14px] border  flex-1 px-3 py-2 mb-4 bg-white tracking-wider rounded-md focus:shadow-md h-10"
+                                multiline={true}
+                                numberOfLines={5}
+                                textAlignVertical="top"
 
-                        value={values.note_address}
-                        style={
-                            { borderColor: 'black', borderWidth: 1 }
-                        }
-                        onChangeText={(value) => {
-                            handleChange('note_address')(value);
-                            updateState({ note_address: value });
-                        }}
-                        onBlur={handleBlur('note_address')}
-                    />
+                                value={values.note_address}
+                                style={
+                                    { borderColor: 'black', borderWidth: 1 }
+                                }
+                                onChangeText={(value) => {
+                                    handleChange('note_address')(value);
+                                    updateState({ note_address: value });
+                                }}
+                                onBlur={handleBlur('note_address')}
+                            />
 
 
 
-                </View>
-                </View>
+                        </View>
+                    </View>
 
-            </ScrollView>
+                </ScrollView>
                 <TouchableOpacity onPress={debounce(handleSubmit, 500)} className="bg-[#00008b] py-1 ">
                     <Text className=" text-2xl m-2 mt-1 text-white text-center font-bold tracking-widest">{t("Save")}</Text>
                 </TouchableOpacity>
-        </SafeAreaView>
+            </SafeAreaView>
         </KeyboardAvoidingView>
 
     )

@@ -7,8 +7,6 @@ import { Link } from '@react-navigation/native';
 import { debounce } from 'lodash';
 
 const InCart = ({ cartItems, navigation }) => {
-
-
     const { t } = useTranslation()
     return (
         <View style={styles.container}>
