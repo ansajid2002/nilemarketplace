@@ -283,7 +283,8 @@ const HomeScreen = () => {
     }, [customerId, wishlistItems])
 
 
-
+console.log(recommendedProdutcs);
+console.log(newArrivals);
     return (
         <SafeAreaView
             className=""

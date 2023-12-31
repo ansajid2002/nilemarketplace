@@ -14,6 +14,7 @@ import { addItemToWishlist } from '../../store/slices/wishlistSlice';
 import { Alert } from 'react-native';
 import FullPageLoader from "../../components/FullPageLoader";
 import { Modal } from 'react-native';
+import { Dimensions } from 'react-native';
 
 const ChatsScreen = ({ navigation }) => {
     const [loading, setLoading] = useState(false)
@@ -29,6 +30,7 @@ const ChatsScreen = ({ navigation }) => {
     const dispatch = useDispatch()
     const cartItems = useSelector((state) => state.cart.cartItems);
 
+    const screenWidth = Dimensions.get('window').width;
 
     const fetchCartData = async () => {
         setLoading(true)
@@ -72,7 +74,7 @@ const ChatsScreen = ({ navigation }) => {
     }, [cartData, customerId])
 
 
-    const handleRemove = async (itemId, item, type) => {
+    const handleRemove = async (_, item, type) => {
         try {
             setLoading(true)
             if (customerId) {
@@ -124,7 +126,7 @@ const ChatsScreen = ({ navigation }) => {
         }
     };
 
-    const handleIncrement = async (itemId, item) => {
+    const handleIncrement = async (_, item) => {
         try {
             dispatch(incrementItem(item));
             dispatch(incrementCartTotal())
@@ -171,7 +173,7 @@ const ChatsScreen = ({ navigation }) => {
         }
     };
 
-    const handleDecrement = async (itemId, item) => {
+    const handleDecrement = async (_, item) => {
         try {
             dispatch(decrementItem(item));
             dispatch(decrementCartTotal())
@@ -300,13 +302,14 @@ const ChatsScreen = ({ navigation }) => {
         const discountPercentageSimple = ((item.mrp - item.sellingprice) / item.mrp) * 100;
 
         const id = item?.uniquepid;
-
+        const firstViewWidth = screenWidth * 0.3;
+        const secondViewWidth = screenWidth - firstViewWidth
         return (
             <View className=" mt-2 mb-4">
                 <TouchableOpacity className="flex-row my-1 mb-0  rounded-sm p-2  "
                     onPress={debounce(() => navigation.push('ProductDetail', item), 500)}
                 >
-                    <View style={{ width: '20%', overflow: 'hidden' }} className="m-auto ">
+                    <View style={{ overflow: 'hidden', width: firstViewWidth }} className="m-auto">
 
                         <Image
                             resizeMode="contain"
@@ -339,7 +342,7 @@ const ChatsScreen = ({ navigation }) => {
                         </View>
                     </View>
 
-                    <View className=" flex-1 ml-4 " >
+                    <View className="ml-4 " style={{ width: secondViewWidth }}>
 
                         <Text numberOfLines={2} className="text-lg font-medium">
                             {item?.ad_title}

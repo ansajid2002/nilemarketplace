@@ -134,20 +134,18 @@ const AccountScreen = ({ navigation }) => {
                                     await AsyncStorage.removeItem('customerData');
                                     await AsyncStorage.removeItem('cartData');
                                     await AsyncStorage.removeItem('cartTotal');
-                                    // dispatch(emptyCustomer())
-                                    // dispatch(getCartTotal(0))
-                                    // dispatch(emptyCart())
-                                    // dispatch(emptyOrder())
-                                    // dispatch(emptyAddress())
-                                    // dispatch(emptyWishlist())
-                                    // setShowLogoutDialog(false);
-                                    NativeModules.DevSettings.reload();
+                                    dispatch(emptyCustomer())
+                                    dispatch(getCartTotal(0))
+                                    dispatch(emptyCart())
+                                    dispatch(emptyOrder())
+                                    dispatch(emptyAddress())
+                                    dispatch(emptyWishlist())
+                                    // NativeModules.DevSettings.reload();
+                                    setShowLogoutDialog(false);
 
                                 } catch (error) {
                                     console.error('Error clearing AsyncStorage:', error);
-                                } finally {
-                                    setLogoutLoader(false)
-                                }
+                                } 
                             }, 500)}
                         >
                             <View>
