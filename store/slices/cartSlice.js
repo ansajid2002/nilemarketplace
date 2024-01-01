@@ -4,8 +4,6 @@ const initialState = {
   cartItems: [],
   cartTotal: 0
 };
-console.log(initialState.cartTotal, "FROM REDUX");
-
 
 export const cartSlice = createSlice({
   name: 'cart',

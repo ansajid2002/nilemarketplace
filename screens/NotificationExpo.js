@@ -95,15 +95,15 @@ const NotificationExpo = () => {
         };
     }, [navigation]);
 
-    useEffect(() => {
-        const sendPushNotification = async () => {
-            customerData.length > 0 && cartTotal && await sendNotificationWithNavigation('🛒 EMPTY CART  🙁', 'Your cart is empty. Add something to your cart and enjoy your shopping experience! 🛍️', '');
-            if (cartTotal > 0) {
-                await sendNotificationWithNavigation('🛒 Checkout 🛍️', `You have ${cartTotal} items in your cart. Ready to complete your purchase? Click "Checkout" now! 💳`, 'Cart');
-            }
-        }
-        sendPushNotification();
-    }, []);
+    // useEffect(() => {
+    //     const sendPushNotification = async () => {
+    //         customerData.length > 0 && cartTotal && await sendNotificationWithNavigation('🛒 EMPTY CART  🙁', 'Your cart is empty. Add something to your cart and enjoy your shopping experience! 🛍️', '');
+    //         if (cartTotal > 0) {
+    //             await sendNotificationWithNavigation('🛒 Checkout 🛍️', `You have ${cartTotal} items in your cart. Ready to complete your purchase? Click "Checkout" now! 💳`, 'Cart');
+    //         }
+    //     }
+    //     sendPushNotification();
+    // }, []);
 
     useEffect(() => {
         registerForPushNotificationsAsync().then(token => setExpoPushToken(token));

@@ -39,7 +39,7 @@ export async function getVariantsOfCatSubcat(category, subcategory, uniquepid) {
 
 export function HeaderBar({ navigation, title, goback, searchEnable = true, cartEnable = true }) {
     const dispatch = useDispatch()
-    const cartItems = useSelector((state) => state.cart.cartItems);
+    const {cartTotal} = useSelector((state) => state.cart);
     const { t } = useTranslation()
     const handleGoBack = () => {
         navigation.pop();
@@ -82,9 +82,9 @@ export function HeaderBar({ navigation, title, goback, searchEnable = true, cart
                     }
                     }>
                         <Icon name="cart-outline" size={28} color="black" />
-                        {cartItems?.length > 0 && (
+                        {cartTotal > 0 && (
                             <View style={{ position: 'absolute', top: -5, right: -8, backgroundColor: 'red', borderRadius: 10, width: 20, height: 20, alignItems: 'center', justifyContent: 'center' }}>
-                                <Text style={{ color: 'white' }}>{cartItems?.length}</Text>
+                                <Text style={{ color: 'white' }}>{cartTotal}</Text>
                             </View>
                         )}
                     </TouchableOpacity>

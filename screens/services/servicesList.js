@@ -42,7 +42,10 @@ const ServicesList = ({ navigation }) => {
 
 
       <TouchableOpacity
-       onPress={debounce(() => navigation.push('CategoriesItems', { categoryId:item.category_id,categoryName:item.category_name, subcategory_name: t("All") }), 500)}
+      //  onPress={debounce(() => navigation.push('CategoriesItems', { categoryId:item.category_id,categoryName:item.category_name, subcategory_name: t("All") }), 500)}
+      onPress={debounce(() => {
+        navigation.push('CategoryProductList', { categoryId: item.category_id, categoryName: item.category_name, subcategory_name: t("All") })
+    }, 500)}
         className="bg-white"
       >
         <View className="flex flex-row items-center border border-gray-200 py-1"  >

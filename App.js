@@ -21,8 +21,6 @@ import ServicesList from './screens/services/servicesList';
 import Language from './screens/Language/Language';
 import { I18nextProvider, useTranslation } from 'react-i18next';
 import i18n from './services/i18next';
-// import CurrencyScreen from './screens/Currency/currencyScreen';
-import Currencyconvertedfile from './screens/Currencyconvertedfile';
 
 ///////////////////////////////////////FORM SCREENS///////////////////////////////////////
 
@@ -64,6 +62,7 @@ import InboxChatScreen from './screens/Inbox/InboxChatScreen';
 import Channels from './screens/channels/Channels';
 // import categoryProductList from './screens/categoriesItems/CategoryProductList';
 import CategoryProductList from './screens/categoriesItems/CategoryProductList';
+import ProductsList from './screens/services/productsList';
 
 ///////////////////////////////////////FORM SCREENS///////////////////////////////////////
 
@@ -214,6 +213,7 @@ const App = () => {
             <Stack.Screen name="Inbox" component={Inbox} />
             <Stack.Screen name="InboxChatScreen" component={InboxChatScreen} />
             <Stack.Screen name="CategoryProductList" component={CategoryProductList} />
+            <Stack.Screen name="productsList" component={ProductsList} />
 
           </Stack.Navigator>
 

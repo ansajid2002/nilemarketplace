@@ -24,7 +24,7 @@ const {t} = useTranslation()
  const fetchRecommendedProducts = useCallback(async () => {
     setPageloading(true);
     try {
-        const response = await fetch(`${AdminUrl}/api/recommendedProducts/${customerId}`);
+        const response = await fetch(`${AdminUrl}/api/recommendedProducts/${'null'}`);
         if (response.ok) {
             const data = await response.json();
             console.log(data,"data reccome");
@@ -54,7 +54,9 @@ const {t} = useTranslation()
 const fetchNewArrivals = useCallback(async () => {
     setPageloading(true);
     try {
-        const response = await fetch(`${AdminUrl}/api/newArrivals/${customerId}`);
+        // const response = await fetch(`${AdminUrl}/api/newArrivals/${customerId}`);
+        const response = await fetch(`${AdminUrl}/api/newArrivals/${'null'}`);
+
         // const response = await fetch(`${AdminUrl}/api/recommendedProducts/${customerId}`);
         if (response.ok) {
             const data = await response.json();
@@ -137,8 +139,9 @@ console.log('VendorProductList');
             renderItem={renderItemOrSkeleton}
             showsVerticalScrollIndicator={false}
             numColumns={2}
-            onEndReached={VendorProductList?.length > 9 && loadMoreProducts}
-            onEndReachedThreshold={0.1}
+            // onEndReached={VendorProductList?.length > 9 && loadMoreProducts}
+            // onEndReached={VendorProductList?.length > 9 }
+            // onEndReachedThreshold={0.1}
             ListFooterComponent={() => (
                 <View className="">
                     {

@@ -48,12 +48,12 @@
     ],
     "ios": {
       "bundleIdentifier": "com.ngmp.ios",
-      "buildNumber": "16",
+      "buildNumber": "18",
       "supportsTablet": true
     },
     "android": {
       "package": "com.ngmp.ios",
-      "versionCode": 4,
+      "versionCode": 5,
       "useNextNotificationsApi": true,
       "config": {
         "googleSignIn": {

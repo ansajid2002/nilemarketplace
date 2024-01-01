@@ -23,12 +23,14 @@ const ChatsScreen = ({ navigation }) => {
     const [inFavorite, setinFavorite] = useState(false);
     const [cartData, setCartData] = useState(false)
     const { t } = useTranslation()
-
+console.log("IN CART PAGE");
     const customerId = customerData[0]?.customer_id
     const { c_symbol } = useSelector((store) => store.selectedCurrency)
     ////////////////////////////////////////////////////////////////////////////////////////
     const dispatch = useDispatch()
     const cartItems = useSelector((state) => state.cart.cartItems);
+    const [twosecloader,setTwosecloader] = useState(true)
+
 
     const screenWidth = Dimensions.get('window').width;
 
@@ -217,6 +219,11 @@ const ChatsScreen = ({ navigation }) => {
             console.error('Error updating cart:', error);
         }
     };
+    useEffect(() => {
+        setTimeout(() => {
+            setTwosecloader(false)
+        },2000)
+    },[])
 
     const Total = cartItems?.map(item => item?.sellingprice * item?.added_quantity).reduce((prevValue, currValue) => prevValue + currValue, 0);
     const cartTotal = parseFloat(Total?.toFixed(2))
@@ -429,7 +436,8 @@ const ChatsScreen = ({ navigation }) => {
         <SafeAreaView style={{ flex: 1, backgroundColor: Colors.whiteColor }} className="">
             <StatusBar translucent={false} backgroundColor={Colors.primaryColor} />
             {header()}
-            {loading && <FullPageLoader />}
+            {twosecloader && <FullPageLoader />}
+
             {
                 <View style={{ flex: 1 }}>
                     {

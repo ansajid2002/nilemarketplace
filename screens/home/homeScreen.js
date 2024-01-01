@@ -215,7 +215,8 @@ const HomeScreen = () => {
 
     const fetchRecommendedProducts = async () => {
         try {
-            const recommendedResponse = await fetch(`${AdminUrl}/api/recommendedProducts/${customerId || 'null'}`);
+            // const recommendedResponse = await fetch(`${AdminUrl}/api/recommendedProducts/${customerId || 'null'}`);
+            const recommendedResponse = await fetch(`${AdminUrl}/api/recommendedProducts/${'null'}`);
             if (!recommendedResponse.ok) {
                 throw new Error(`HTTP error! Status: ${recommendedResponse.status}`);
             }
@@ -230,7 +231,8 @@ const HomeScreen = () => {
 
     const fetchNewArrivals = async () => {
         try {
-            const newArrivalsResponse = await fetch(`${AdminUrl}/api/newArrivals/${customerId || 'null'}`);
+            // const newArrivalsResponse = await fetch(`${AdminUrl}/api/newArrivals/${customerId || 'null'}`);
+            const newArrivalsResponse = await fetch(`${AdminUrl}/api/newArrivals/${'null'}`);
             if (!newArrivalsResponse.ok) {
                 throw new Error(`HTTP error! Status: ${newArrivalsResponse.status}`);
             }
@@ -283,8 +285,6 @@ const HomeScreen = () => {
     }, [customerId, wishlistItems])
 
 
-console.log(recommendedProdutcs);
-console.log(newArrivals);
     return (
         <SafeAreaView
             className=""
@@ -396,8 +396,8 @@ console.log(newArrivals);
                                     {t('Browse Services')}
                                 </Text>
                                 <TouchableOpacity
-                                    // onPress={debounce(() => navigation.navigate('servicesList'), 500)
-                                    onPress={debounce(() => navigation.navigate('bottomtabbar'), 500)
+                                    onPress={debounce(() => navigation.navigate('servicesList'), 500)
+                                    // onPress={debounce(() => navigation.navigate('bottomtabbar'), 500)
                                     }
                                 >
                                     <AntDesign name="arrowright" size={24} color="black" />
@@ -408,7 +408,7 @@ console.log(newArrivals);
                                 {
                                     servicesData?.map((item, index) => {
                                         return (
-                                            <TouchableOpacity key={index} className=" mx-3 my-4"
+                                            <TouchableOpacity key={index} className=" mx-4 my-4"
                                                 activeOpacity={0.9}
 
                                                 style={styles.categoryWrapStyle}
