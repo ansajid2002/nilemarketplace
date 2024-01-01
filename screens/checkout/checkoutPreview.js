@@ -258,7 +258,7 @@ const CheckoutPreview = ({ route, navigation }) => {
           </View>
           <View className=" flex-1 ml-4 " >
 
-            <Text numberOfLines={2} className="text-lg font-medium">
+            <Text numberOfLines={2} className="text-base font-medium">
               {item?.ad_title}
             </Text>
             {
@@ -266,13 +266,13 @@ const CheckoutPreview = ({ route, navigation }) => {
             }
 
             <View className="gap-1" style={{ flexDirection: 'row', alignItems: 'center', paddingTop: 4 }}>
-              <Text className="text-lg font-medium text-gray-700">Price:</Text>
+              <Text className="text-base font-medium text-gray-700">Price:</Text>
               {discountPercentageSimple && discountPercentageSimple > 0 && (
-                <Text className="text-lg" style={{ color: 'green' }}>-{discountPercentageSimple?.toFixed(2)}%</Text>
+                <Text className="text-base" style={{ color: 'green' }}>-{discountPercentageSimple?.toFixed(2)}%</Text>
               )}
               <View className="flex-row items-center ">
                 <Text className="text-base ml-1.5 mr-0.5 font-medium">{`${c_symbol}`}</Text>
-                <Text className="text-gray-900 text-lg" style={{ fontWeight: 'bold' }}>
+                <Text className="text-gray-900 text-base" style={{ fontWeight: 'bold' }}>
                   {`${item.sellingprice % 1 === 0 ? Math.trunc(item.sellingprice) : item.sellingprice}`}
                 </Text>
               </View>
@@ -335,7 +335,7 @@ const CheckoutPreview = ({ route, navigation }) => {
             onPress={debounce(() => handlePaymentModeChange('Stripe'), 500)}
           >
             <RadioButton selected={selectedPaymentMode === 'Stripe'} />
-            <Text className={`text-lg ${selectedPaymentMode === "Stripe" && 'font-bold'}`}>Stripe</Text>
+            <Text className={`text-base ${selectedPaymentMode === "Stripe" && 'font-bold'}`}>Stripe</Text>
           </TouchableOpacity>
 
         </View>

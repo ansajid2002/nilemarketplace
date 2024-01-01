@@ -302,14 +302,14 @@ const ChatsScreen = ({ navigation }) => {
         const discountPercentageSimple = ((item.mrp - item.sellingprice) / item.mrp) * 100;
 
         const id = item?.uniquepid;
-        const firstViewWidth = screenWidth * 0.3;
+        const firstViewWidth = screenWidth * 0.4;
         const secondViewWidth = screenWidth - firstViewWidth
         return (
             <View className=" mt-2 mb-4">
                 <TouchableOpacity className="flex-row my-1 mb-0  rounded-sm p-2  "
                     onPress={debounce(() => navigation.push('ProductDetail', item), 500)}
                 >
-                    <View style={{ overflow: 'hidden', width: firstViewWidth }} className="m-auto">
+                    <View style={{ overflow: 'hidden', width: firstViewWidth }} className="m-auto p-2">
 
                         <Image
                             resizeMode="contain"
@@ -344,7 +344,7 @@ const ChatsScreen = ({ navigation }) => {
 
                     <View className="ml-4 " style={{ width: secondViewWidth }}>
 
-                        <Text numberOfLines={2} className="text-lg font-medium">
+                        <Text numberOfLines={2} className="text-base font-medium">
                             {item?.ad_title}
                         </Text>
                         {
@@ -355,9 +355,9 @@ const ChatsScreen = ({ navigation }) => {
 
 
                         <View className="gap-1" style={{ flexDirection: 'row', alignItems: 'center', paddingTop: 4 }}>
-                            <Text className="text-lg font-medium text-gray-700">Price:</Text>
+                            <Text className="text-base font-medium text-gray-700">Price:</Text>
                             {discountPercentageSimple && discountPercentageSimple > 0 && (
-                                <Text className="text-lg" style={{ color: 'green' }}>-{discountPercentageSimple?.toFixed(2)}%</Text>
+                                <Text className="text-base" style={{ color: 'green' }}>-{discountPercentageSimple?.toFixed(2)}%</Text>
                             )}
                             <View className="flex-row items-center ">
                                 <Text className="text-base ml-1.5 mr-0.5 font-medium">{`${c_symbol}`}</Text>
@@ -495,7 +495,7 @@ const ChatsScreen = ({ navigation }) => {
                                 >
                                     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
                                         <View style={{ backgroundColor: 'white', padding: 20, borderRadius: 10, alignItems: 'center' }}>
-                                            <Text className="text-lg font-bold text-gray-500 ">Select A Deliver Mode</Text>
+                                            <Text className="text-base font-bold text-gray-500 ">Select A Deliver Mode</Text>
                                             <View className="mt-6 space-y-4" >
 
                                                 <TouchableOpacity className="bg-gray-200" onPress={() => handlepickup()} style={{ padding: 10, borderRadius: 5 }}>
