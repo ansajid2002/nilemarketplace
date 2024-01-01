@@ -63,10 +63,8 @@ const Bottomsearch = ({ navigation }) => {
                         onChangeText={(text) => handleSearchInput(text)}
                         onFocus={handleFocus}
                         onBlur={handleBlur}
-                        onSubmitEditing={() => { handleKeywordPress(searchInput) }}
-
+                        onSubmitEditing={debounce(() => { handleKeywordPress(searchInput) }, 700)}
                     />
-
 
                     <MaterialIcons
                         className=""
@@ -95,7 +93,7 @@ const Bottomsearch = ({ navigation }) => {
             {header()}
             <ScrollView className="bg-white">
                 {MatchingKeyword.length > 0 && MatchingKeyword.map((keyword, index) => (
-                    <TouchableOpacity key={index} onPress={debounce(() => handleKeywordPress(keyword), 500)}>
+                    <TouchableOpacity key={index} onPress={debounce(() => handleKeywordPress(keyword), 1000)}>
                         <View style={styles.keywordContainer}>
                             <Feather name="arrow-up-right" size={24} color="black" />
                             <Text style={styles.keywordText}>{keyword}</Text>

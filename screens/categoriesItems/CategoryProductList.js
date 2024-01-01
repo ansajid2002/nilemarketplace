@@ -1,95 +1,106 @@
-import { View, Text, SafeAreaView, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
-import { useEffect, useRef, useState } from 'react';
-import { MaterialIcons } from '@expo/vector-icons';
+import React, { useEffect, useState } from 'react';
+import { Text, Dimensions, FlatList, SafeAreaView, Image, View, ActivityIndicator } from 'react-native';
+import { TabView, TabBar } from 'react-native-tab-view';
 import { AdminUrl, HeaderBar } from '../../constant';
 import { t } from 'i18next';
-import { Image } from 'react-native';
-import { SubcategoryPlaceholder } from '../../components/Skeleton';
 import renderItemOrSkeleton from '../../components/ProductList2';
-import { FlatList } from 'react-native';
-import { ActivityIndicator } from 'react-native';
+import { ProductSkeleton } from '../../components/Skeleton';
 
 const CategoryProductList = ({ route, navigation }) => {
-    const scrollRef = useRef(null);
-    const itemsRef = useRef([]);
-    const [subcategoriesToShow, setSubcategoriesToShow] = useState(null)
-    const [activeIndex, setActiveIndex] = useState(0);
-    const [page, setPage] = useState(1);
-    const [productsDataBackend, setProducts] = useState(null)
-    const [filterProductsBACKEND, setFilteredProducts] = useState(null)
-    const [hasMore, setHasMore] = useState(false)
-    const { categoryId, categoryName, subcategory_name, featureddatatoshow } = route.params
-    const [pageloading, setPageloading] = useState(true);
+    const [index, setIndex] = useState(0);
+    const [page, setPage] = useState(1); // Add state for tracking page number
+    const { categoryId, categoryName, subcategory_name, featureddatatoshow } = route.params;
+    const [subcategoriesToShow, setSubcategoriesToShow] = useState(featureddatatoshow);
+    const [loading, setLoading] = useState(true);
+    const [Products, setProducts] = useState(null);
+    const [loadingMore, setLoadingMore] = useState(false);
+    // const [hasmore, sethasmore] = useState(true);
 
+    const [routes, setRoutes] = useState([]);
 
+    const renderScene = ({ route }) => {
+        const sceneIndex = parseInt(route.key);
 
-    const selectCategory = (index, subcat_name) => {
-        const selected = itemsRef.current[index];
-        setActiveIndex(index);
-        selected?.measure((x) => {
-            scrollRef.current?.scrollTo({ x: x - 16, y: 0, animated: true });
-        });
-        // Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-        // onCategoryChanged(categories[index].name);
-        getProductBySubcatName(subcat_name)
+        if (sceneIndex !== index) {
+            // Return an empty view for inactive scenes
+            return <FlatList
+                data={[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]}
+                keyExtractor={(item, index) => index.toString()}
+                renderItem={() => <ProductSkeleton />}
+                numColumns={2}
+            />;
+        }
+
+        if (Products?.length === 0) {
+            return (
+                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                    <Image source={require('../../assets/no-results.png')} className="w-48 h-48" />
+                    <Text style={{ fontSize: 18, color: 'gray', fontStyle: 'italic' }}>
+                        No Product Found...
+                    </Text>
+                </View>
+            );
+        } else {
+            return (
+                <FlatList
+                    data={Products}
+                    keyExtractor={(item, index) => index.toString()}
+                    renderItem={renderItemOrSkeleton}
+                    numColumns={2}
+                    onEndReached={Products?.length > 9 && handleLoadMore}
+                    onEndReachedThreshold={0.6}
+                    ListFooterComponent={Products?.length > 9 && loadingMore && (
+                        <View style={{ alignItems: 'center', paddingVertical: 10 }}>
+                            <ActivityIndicator size="small" color="blue" />
+                        </View>
+                    )}
+                />
+            );
+        }
     };
 
-    const getProductBySubcatName = async (subcat_name) => {
-        // setHasMore(true);
-        if (subcat_name !== subcategory_name) {
-            setFilteredProducts(null)
-            setProducts(null)
-        }
+    const renderTabBar = (props) => (
+        <>
+            <HeaderBar goback={true} title={t(`${categoryName ? categoryName : "sbcategory"}`)} navigation={navigation} />
 
-        try {
-            const response = await fetch(`${AdminUrl}/api/getProductBySubcategories?subcat=${subcat_name?.replace(/[^\w\s]/g, "")
-                .replace(/\s/g, "")}&pageNumber=${page}&pageSize=10&currency=USD&category=${categoryName?.replace(/[^\w\s]/g, "")
-                    .replace(/\s/g, "")}`);
+            <TabBar
+                {...props}
+                scrollEnabled
+                indicatorStyle={{ backgroundColor: 'blue' }}
+                style={{ backgroundColor: 'white' }}
+                tabStyle={{ width: 120 }}
+                renderLabel={({ route, focused }) => (
+                    <View style={{ alignItems: 'center', justifyContent: 'center', height: 100 }}>
+                        {loading ? (
+                            <ActivityIndicator size="small" color="blue" />
+                        ) : (
+                            <>
+                                {subcategoriesToShow && subcategoriesToShow[parseInt(route.key)] && subcategoriesToShow[parseInt(route.key)].subcategory_name === 'All' ? (
+                                    <Image
+                                        source={require('../../assets/images/allproducts.png')}
+                                        style={{ resizeMode: 'cover', width: 60, height: 60 }}
+                                    />
+                                ) : (
+                                    subcategoriesToShow && subcategoriesToShow[parseInt(route.key)] && (
+                                        <Image
+                                            source={{ uri: `${AdminUrl}/uploads/SubcategoryImages/${subcategoriesToShow[parseInt(route.key)].subcategory_image_url}` }}
+                                            style={{ resizeMode: 'contain', width: 60, height: 60 }}
+                                        />
+                                    )
+                                )}
 
-            if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
-            }
-
-            const data = await response.json();
-            console.log(data?.AllProducts);
-            if (data?.AllProducts.length > 0) {
-                setProducts(prevProducts => {
-                    if (prevProducts) {
-                        return [...prevProducts, ...data?.AllProducts];
-                    } else {
-                        return [...data?.AllProducts];
-                    }
-                });
-                setFilteredProducts(prevProducts => {
-                    if (prevProducts) {
-                        return [...prevProducts, ...data?.AllProducts];
-                    } else {
-                        return [...data?.AllProducts];
-                    }
-                });
-                setHasMore(true);
-            } else {
-                console.log("ENTERED ELSEeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee");
-                console.log(filterProductsBACKEND, productsDataBackend, "timer start");
-                !filterProductsBACKEND && setFilteredProducts([])
-                !productsDataBackend && setProducts([])
-                filterProductsBACKEND?.length === 0 && setFilteredProducts([])
-                productsDataBackend?.length === 0 && setProducts([])
-                console.log(filterProductsBACKEND, productsDataBackend, "timer end");
-                setHasMore(false); // If response is an empty array, set hasMore to false
-            }
-
-
-        } catch (error) {
-            console.error('Error:', error);
-        } finally {
-            setPageloading(false);
-        }
-    }
-
-    useEffect(() => {
-        getProductBySubcatName(subcategory_name)
-    }, [page])
+                                {subcategoriesToShow && subcategoriesToShow[parseInt(route.key)] && (
+                                    <Text style={{ color: focused ? 'blue' : 'black', textAlign: 'center', marginTop: 5 }} numberOfLines={2} ellipsizeMode="tail">
+                                        {subcategoriesToShow[parseInt(route.key)].subcategory_name}
+                                    </Text>
+                                )}
+                            </>
+                        )}
+                    </View>
+                )}
+            />
+        </>
+    );
 
     const getSubcatDataByCatId = async () => {
         try {
@@ -100,14 +111,13 @@ const CategoryProductList = ({ route, navigation }) => {
             const data = await response.json();
 
             if (data && data.subcategories) {
-                // Add the "All" item to the beginning of the subcategories array
                 const allItem = {
-                    subcategory_id: -0,  // You can use a unique ID for the "All" item
+                    subcategory_id: -0,
                     subcategory_name: 'All',
                     subcategory_description: 'All products',
-                    subcategory_image_url: require('../../assets/images/allproducts.png'), // Replace with the actual path to your image
-                    parent_category_id: categoryId, // Set it to the appropriate category ID
-                    created_at: '', // Set these values as needed
+                    subcategory_image_url: require('../../assets/images/allproducts.png'),
+                    parent_category_id: categoryId,
+                    created_at: '',
                     updated_at: '',
                     isfeatured: null,
                 };
@@ -115,219 +125,98 @@ const CategoryProductList = ({ route, navigation }) => {
                 const subcategoriesWithAll = [allItem, ...data.subcategories];
                 setSubcategoriesToShow(subcategoriesWithAll);
 
-                const indexToSetActive = subcategoriesWithAll.findIndex(item => item.subcategory_name?.trim() === subcategory_name?.trim());
+                // Update the routes with keys from subcategories
+                // setRoutes(subcategoriesWithAll.map((_, i) => ({ key: i.toString() })));
+                // const index = subcategoriesWithAll.findIndex(subcategory => subcategory.subcategory_name === subcategory_name);
 
-                if (indexToSetActive !== -1) {
-                    // Set the active index
-                    setActiveIndex(indexToSetActive);
-                }
             }
         } catch (error) {
             console.error('Error:', error);
+        } finally {
+            setLoading(false); // Set loading to false once data is loaded or an error occurs
         }
     };
 
     useEffect(() => {
-        if (!subcategoriesToShow && !featureddatatoshow) {
-            getSubcatDataByCatId()
-        }
-    }, [subcategoriesToShow])
+        if (!subcategoriesToShow) {
+            getSubcatDataByCatId();
+        } else if (subcategoriesToShow) {
 
-    const loadMoreProducts = () => {
-        setPageloading(true);
-        if (hasMore) { // Check if there is more data to fetch
-            console.log("LOADING MORE PRODUCTS=============================================================================");
-            setPage(prevPage => prevPage + 1);
+            const indexData = subcategoriesToShow.findIndex(subcategory => subcategory.subcategory_name === subcategory_name);
+            console.log(indexData, 'subcategoriesToShow');
+            setIndex(indexData)
+            // If featureddatatoshow is not available, use subcategoriesToShow data for routes
+            setRoutes(subcategoriesToShow.map((_, i) => ({ key: i.toString() })));
+            setLoading(false); // Set loading to false once data is loaded
+
         }
-        else {
-            console.log("##################### NO MORE PRODUCTS TO BE FETCHED ####################################################");
+    }, [subcategoriesToShow, featureddatatoshow]);
+
+    const getProductBySubcatName = async (subcat_name, pageNumber) => {
+        try {
+            if (!subcat_name) return
+            const response = await fetch(`${AdminUrl}/api/getProductBySubcategories?subcat=${subcat_name?.replace(/[^\w\s]/g, "")
+                .replace(/\s/g, "")}&pageNumber=${pageNumber}&pageSize=10&currency=USD&category=${categoryName?.replace(/[^\w\s]/g, "")
+                    .replace(/\s/g, "")}`);
+
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            // console.log(data?.AllProducts);
+            if (pageNumber === 1) {
+                // If it's the first page, set the products directly
+                setProducts(data?.AllProducts || []);
+            } else if (data?.AllProducts.length > 0) {
+                // If it's not the first page and there are products, append them to the existing list
+                setProducts(prevProducts => [...prevProducts, ...data?.AllProducts]);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        } finally {
+            setLoadingMore(false); // Set loadingMore to false once data is loaded or an error occurs
         }
     };
 
+    const handleLoadMore = () => {
+        // If not already loading more and there are more products to load
+        if (!loadingMore && Products?.length > 0) {
+            setLoadingMore(true);
+            setPage(prevPage => prevPage + 1); // Increment the page number
+            getProductBySubcatName(subcategory_name, page + 1); // Load more products
+        }
+    };
+
+    useEffect(() => {
+        // Find subcategory_name from featureddatatoshow or subcategoriesToShow based on the current index
+        const currentSubcategoryData = subcategoriesToShow
+            ? subcategoriesToShow[index]?.subcategory_name
+            : null;
+
+        // Reset Products and Page when the index changes
+        setProducts(null);
+        setPage(1);
+
+        // Set the found subcategory_name in the state
+        getProductBySubcatName(currentSubcategoryData, 1);
+    }, [index, subcategoriesToShow]);
+
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
-
-
-
-            <View>
-                {/* <ProductListing title={selectedsubcategory} productList={filterProductsBACKEND} /> */}
-                <FlatList
-                    data={filterProductsBACKEND}
-                    renderItem={filterProductsBACKEND ? renderItemOrSkeleton : console.log('hello')}
-                    keyExtractor={(item, index) => index.toString()}
-                    numColumns={2} // Adjust as needed
-                    onEndReached={filterProductsBACKEND?.length > 9 && loadMoreProducts}
-                    onEndReachedThreshold={0.1}
-                    ListFooterComponent={() => (
-                        <View className="">
-                            {
-                                (pageloading && hasMore) &&
-                                <View className="my-8">
-                                    <ActivityIndicator size="large" color={"#00008b"} />
-                                </View>
-                            }
-                            {
-                                filterProductsBACKEND?.length === 0 &&
-                                <View className="">
-                                    <Image resizeMode="contain" className="h-[150px] w-[150px] mx-auto" source={require('../../assets/images/empty-folder.png')} />
-                                    <Text className="text-center text-xl ">{t("No Product Found !")}</Text>
-                                </View>
-                            }
-                        </View>
-                    )}
-                    ListHeaderComponent={() => (
-                        <View>
-                            <HeaderBar goback={true} title={t(`${categoryName ? categoryName : "sbcategory"}`)} navigation={navigation} />
-
-                            <View style={styles.container}>
-                                <ScrollView
-                                    horizontal
-                                    ref={scrollRef}
-                                    showsHorizontalScrollIndicator={false}
-                                    contentContainerStyle={{
-                                        alignItems: 'center',
-                                        gap: 20,
-                                        paddingHorizontal: 16,
-                                    }}>
-
-                                    {
-                                        featureddatatoshow && featureddatatoshow.map((item, index) => (
-                                            <TouchableOpacity
-                                                ref={(el) => (itemsRef.current[index] = el)}
-                                                key={index}
-                                                style={activeIndex === index ? styles.categoriesBtnActive : styles.categoriesBtn}
-                                                onPress={() => {
-
-                                                    selectCategory(index, item.subcategory_name)
-                                                }}>
-
-                                                <View style={{ height: 110 }}>
-                                                    <View className={`w-24 h-24 shadow-sm rounded-full mx-auto duration-300 overflow-hidden`}>
-                                                        {item.subcategory_image_url ? (
-                                                            <Image
-                                                                source={{ uri: `${AdminUrl}/uploads/SubcategoryImages/${item.subcategory_image_url}` }}
-                                                                style={{ resizeMode: 'contain', width: '100%', height: '100%' }}
-                                                            />
-                                                        ) : (
-                                                            <Image
-                                                                source={require('../../assets/noimage.jpg')}
-                                                                style={{ resizeMode: 'contain', width: '100%', height: '100%' }}
-                                                            />
-                                                        )}
-                                                    </View>
-                                                    <Text className="text-center" style={activeIndex === index ? styles.categoryTextActive : styles.categoryText}>
-                                                        {item.subcategory_name}
-                                                    </Text>
-                                                </View>
-                                            </TouchableOpacity>
-                                        ))
-                                    }
-
-                                    {
-                                        subcategoriesToShow && subcategoriesToShow.map((item, index) => (
-                                            <TouchableOpacity
-                                                ref={(el) => (itemsRef.current[index] = el)}
-                                                key={index}
-                                                style={activeIndex === index ? styles.categoriesBtnActive : styles.categoriesBtn}
-                                                onPress={() => selectCategory(index, item.subcategory_name)}
-                                            >
-                                                <View className={`w-20 h-20 shadow-sm rounded-full mx-auto duration-300 overflow-hidden`}>
-                                                    {item.subcategory_name === 'All' ? (
-                                                        <Image
-                                                            source={require('../../assets/images/allproducts.png')} // Replace with the actual path to your "All" image
-                                                            style={{ resizeMode: 'contain', width: '100%', height: '100%' }}
-                                                        />
-                                                    ) : (
-                                                        <Image
-                                                            source={{ uri: `${AdminUrl}/uploads/SubcategoryImages/${item.subcategory_image_url}` }}
-                                                            style={{ resizeMode: 'contain', width: '100%', height: '100%' }}
-                                                        />
-                                                    )}
-                                                </View>
-                                                <Text className="text-center" style={activeIndex === index ? styles.categoryTextActive : styles.categoryText}>
-                                                    {item.subcategory_name}
-                                                </Text>
-
-                                            </TouchableOpacity>
-                                        ))
-                                    }
-
-                                </ScrollView>
-                            </View>
-                        </View>
-                    )}
-                />
-            </View>
+            <TabView
+                lazy
+                navigationState={{ index, routes }}
+                renderScene={renderScene}
+                renderTabBar={renderTabBar}
+                onIndexChange={setIndex}
+                shouldRasterizeIOS={true}
+                initialLayout={{ width: Dimensions.get('window').width }}
+                style={{ flex: 1 }}
+            />
         </SafeAreaView>
     );
 };
-
-const styles = StyleSheet.create({
-    container: {
-        backgroundColor: '#fff',
-        elevation: 2,
-        // shadowColor: '#000',
-        // shadowOpacity: 0.1,
-        // shadowRadius: 6,
-        // shadowOffset: {
-        //     width: 1,
-        //     height: 10,
-        // },
-    },
-    actionRow: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        paddingHorizontal: 24,
-        paddingBottom: 16,
-    },
-    searchBtn: {
-        backgroundColor: '#fff',
-        flexDirection: 'row',
-        gap: 10,
-        padding: 14,
-        alignItems: 'center',
-        width: 280,
-        borderWidth: StyleSheet.hairlineWidth,
-        borderColor: '#c2c2c2',
-        borderRadius: 30,
-        elevation: 2,
-        shadowColor: '#000',
-        shadowOpacity: 0.12,
-        shadowRadius: 8,
-        shadowOffset: {
-            width: 1,
-            height: 1,
-        },
-    },
-    filterBtn: {
-        padding: 10,
-        borderWidth: 1,
-        borderColor: '#A2A0A2',
-        borderRadius: 24,
-    },
-    categoryText: {
-        fontSize: 14,
-        color: "#323232",
-    },
-    categoryTextActive: {
-        fontSize: 14,
-        color: '#323232',
-    },
-    categoriesBtn: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-        paddingBottom: 8,
-    },
-    categoriesBtnActive: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-        borderBottomColor: '#000',
-        borderBottomWidth: 2,
-        paddingBottom: 8,
-    },
-});
 
 export default CategoryProductList;

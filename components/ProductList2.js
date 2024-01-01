@@ -150,7 +150,6 @@ const ProductItem = ({ item }) => {
     const [imageError, setImageError] = useState(false);
 
     return (
-
         <TouchableComponent onPress={handlePress}>
             <View style={{ padding: 5 }} className="border w-full border-gray-200">
                 <View>
@@ -237,11 +236,10 @@ const ProductItem = ({ item }) => {
 
 export const renderItemOrSkeleton = ({ item }) => {
     return (
-        <View style={{ width: '50%' }}>
+        <View className="w-1/2">
             <ProductItem item={item} />
         </View>
     );
-
 };
 
 
