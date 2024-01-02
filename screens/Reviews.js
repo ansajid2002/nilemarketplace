@@ -1,4 +1,4 @@
-import { View, Text, Image } from 'react-native';
+import { View, Text, Image, KeyboardAvoidingView } from 'react-native';
 import React, { useEffect } from 'react';
 import { AdminUrl, HeaderBar } from '../constant';
 import StarRating from '../components/FiveStarRating';
@@ -88,7 +88,7 @@ const Reviews = ({ navigation, route }) => {
                         name: 'image.jpg', // Adjust the name as needed
                     });
                     formData.append('customer_id', customer_id);
-                    formData.append('rate_id', reviewData.id);
+                    formData.append('rate_id', rate?.id);
                     return formData;
                 });
                 console.log(formDataArray, 'form data');
@@ -115,11 +115,10 @@ const Reviews = ({ navigation, route }) => {
             // Prepare the data to send to the server
             const data = {
                 reviewText: reviewText,
-                id: reviewData?.id,
+                id: rate?.id,
                 customer_id: customer_id || '',
                 // Add any other data you want to send to the server
             };
-
 
             // Step 1: Send the review data
             const reviewResponse = await fetch(`${AdminUrl}/api/addReview`, {
@@ -149,7 +148,7 @@ const Reviews = ({ navigation, route }) => {
                     'Content-Type': 'application/json',
                     // You may need to include authentication headers if required
                 },
-                body: JSON.stringify({ id: reviewData?.id }),
+                body: JSON.stringify({ id: rate?.id }),
             });
 
             if (emptyMediasResponse.ok) {
@@ -233,8 +232,10 @@ const Reviews = ({ navigation, route }) => {
                     type: 'image/jpeg', // Adjust the type based on the image type
                     name: 'image.jpg', // Adjust the name as needed
                 });
+
+                console.log(rate?.id, 'rate?.id');
                 formData.append('customer_id', customer_id);
-                formData.append('rate_id', reviewData.id);
+                formData.append('rate_id', 0);
                 formData.append('vendor_id', reviewData?.vendor_id || null)
                 formDataArrays.push(formData);
                 selectedImagesData.push(image);
@@ -250,6 +251,7 @@ const Reviews = ({ navigation, route }) => {
         }
     };
 
+    console.log(rate?.id, 'reviewData');
     const removeImage = (index) => {
         const updatedImages = [...selectedImages];
         updatedImages.splice(index, 1);
@@ -281,7 +283,7 @@ const Reviews = ({ navigation, route }) => {
                             </View>
                         }
                         {
-                            showSellerReview ?
+                            showSellerReview && vendorSelleId ?
                                 <SellerRating vendor_id={vendorSelleId} />
                                 :
                                 <>
@@ -384,15 +386,22 @@ const Reviews = ({ navigation, route }) => {
                                         </View>
 
                                     </View>
-                                    <View className="" style={{ justifyContent: 'flex-end', alignItems: 'flex-end', marginRight: 16, marginBottom: 16 }}>
-                                        {isReviewEmpty ? (
-                                            <TouchableOpacity onPress={debounce(handleSkip, 500)}>
-                                                <Text style={{ color: 'blue', marginTop: 8 }}>Skip</Text>
-                                            </TouchableOpacity>
-                                        ) : (
-                                            <Button title="Submit" onPress={debounce(handleSubmit, 500)} />
-                                        )}
-                                    </View>
+                                    <KeyboardAvoidingView
+                                        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                                        style={{ flex: 1 }}
+                                    >
+                                        {/* Your other UI components */}
+
+                                        <View style={{ justifyContent: 'flex-end', alignItems: 'flex-end', marginRight: 16, marginBottom: 16 }}>
+                                            {isReviewEmpty ? (
+                                                <TouchableOpacity onPress={debounce(handleSkip, 500)}>
+                                                    <Text style={{ color: 'blue', marginTop: 8 }}>Skip</Text>
+                                                </TouchableOpacity>
+                                            ) : (
+                                                <Button title="Submit" onPress={debounce(handleSubmit, 500)} />
+                                            )}
+                                        </View>
+                                    </KeyboardAvoidingView>
                                 </>
                         }
 

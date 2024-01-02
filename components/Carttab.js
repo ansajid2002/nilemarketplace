@@ -6,19 +6,24 @@ import { useSelector } from 'react-redux';
 const Carttab = ({ color }) => {
   const { cartTotal } = useSelector((state) => state.cart);
 
+  console.log(typeof cartTotal, 'cart');
+
   // Function to format cartTotal for display
   const formatCartTotal = (total) => {
-    if (total >= 1000) {
-      return `${Math.floor(total / 1000)}k+`;
-    } else if (total >= 100) {
+    const numericTotal = parseInt(total, 10); // Convert to number
+    console.log(typeof numericTotal, 'num');
+    if (numericTotal >= 1000) {
+      return `${Math.floor(numericTotal / 1000)}k+`;
+    } else if (numericTotal >= 100) {
       return '100+';
     } else {
-      return total.toString();
+      return numericTotal.toString();
     }
   };
 
   // Calculate the width based on the formatted cartTotal
-  const badgeWidth = Math.max(15, 10 + (formatCartTotal(cartTotal).length - 1) * 6);
+  const badgeWidth = Math.max(15, 10 + (formatCartTotal(parseInt(cartTotal)).length - 1) * 6);
+
 
   return (
     <View>
@@ -36,7 +41,7 @@ const Carttab = ({ color }) => {
             alignItems: 'center',
           }}
         >
-          <Text style={{ color: 'white', fontSize: 12 }}>{formatCartTotal(cartTotal)}</Text>
+          <Text style={{ color: 'white', fontSize: 12 }}>{formatCartTotal(parseInt(cartTotal))}</Text>
         </View>
       )}
     </View>

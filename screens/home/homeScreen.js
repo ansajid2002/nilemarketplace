@@ -46,7 +46,6 @@ const HomeScreen = () => {
 
     const { customerData } = useSelector((store) => store.userData)
     const customerId = customerData[0]?.customer_id
-    const [cartTotal, setCartTotal] = useState(false)
     const [wishlistItems, setWishlistItems] = useState(false)
 
     useEffect(() => {
@@ -64,50 +63,7 @@ const HomeScreen = () => {
         checkAuthentication();
     }, []);
 
-    const getCartTotaldata = async () => {
-        try {
-            if (!customerId) {
-                console.log("GUEST MODE");
-                const cartTotal = await AsyncStorage.getItem("cartTotal");
-                if (cartTotal) {
-                    setCartTotal(true)
-                    dispatch(getCartTotal(cartTotal))
-                }
-                setCartTotal(true)
-                dispatch(getCartTotal(0))
-            }
-            else {
-                console.log("WELCOME CUSTOMER ");
-                const urlWithCustomerId = `${AdminUrl}/api/cartTotal?customer_id=${customerId}`;
-                const requestOptions = {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                };
 
-                const response = await fetch(urlWithCustomerId, requestOptions);
-                if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}`);
-                }
-                const data = await response.json()
-                console.log(data.total, "cartTotal");
-                dispatch(getCartTotal(data.total))
-                setCartTotal(true)
-                console.log(data.total, "Data.totla");
-                await AsyncStorage.setItem('cartTotal', JSON.stringify(data.total));
-
-            }
-
-        } catch (error) {
-            console.log(error, "error while fetching cart total");
-        }
-    }
-    useEffect(() => {
-        if (!cartTotal) {
-            getCartTotaldata()
-        }
-    }, [cartTotal])
 
     //     const scrollViewRef = useRef(null);
 
@@ -215,13 +171,12 @@ const HomeScreen = () => {
 
     const fetchRecommendedProducts = async () => {
         try {
-            // const recommendedResponse = await fetch(`${AdminUrl}/api/recommendedProducts/${customerId || 'null'}`);
-            const recommendedResponse = await fetch(`${AdminUrl}/api/recommendedProducts/${'null'}`);
+            const recommendedResponse = await fetch(`${AdminUrl}/api/recommendedProducts/${customerId || 'null'}`);
+            // const recommendedResponse = await fetch(`${AdminUrl}/api/recommendedProducts/${'null'}`);
             if (!recommendedResponse.ok) {
                 throw new Error(`HTTP error! Status: ${recommendedResponse.status}`);
             }
             const recommendedData = await recommendedResponse.json();
-            console.log(recommendedData, "recommendedData");
             setRecommendedProducts(recommendedData);
 
         } catch (error) {
@@ -231,8 +186,8 @@ const HomeScreen = () => {
 
     const fetchNewArrivals = async () => {
         try {
-            // const newArrivalsResponse = await fetch(`${AdminUrl}/api/newArrivals/${customerId || 'null'}`);
-            const newArrivalsResponse = await fetch(`${AdminUrl}/api/newArrivals/${'null'}`);
+            const newArrivalsResponse = await fetch(`${AdminUrl}/api/newArrivals/${customerId || 'null'}`);
+            // const newArrivalsResponse = await fetch(`${AdminUrl}/api/newArrivals/${'null'}`);
             if (!newArrivalsResponse.ok) {
                 throw new Error(`HTTP error! Status: ${newArrivalsResponse.status}`);
             }
@@ -249,7 +204,6 @@ const HomeScreen = () => {
             fetchRecommendedProducts()
         }
     }, [recommendedProdutcs, servicesData])
-    // console.log(recommendedProdutcs);
 
     useEffect(() => {
         if (!newArrivals && recommendedProdutcs?.length > 0) {
@@ -397,7 +351,7 @@ const HomeScreen = () => {
                                 </Text>
                                 <TouchableOpacity
                                     onPress={debounce(() => navigation.navigate('servicesList'), 500)
-                                    // onPress={debounce(() => navigation.navigate('bottomtabbar'), 500)
+                                        // onPress={debounce(() => navigation.navigate('bottomtabbar'), 500)
                                     }
                                 >
                                     <AntDesign name="arrowright" size={24} color="black" />

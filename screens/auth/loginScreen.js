@@ -134,7 +134,7 @@ const Login = ({ navigation, route }) => {
 
     const dispatch = useDispatch()
     const cartItems = useSelector((state) => state.cart.cartItems);
-
+    console.log(cartItems, "CARTITMES FROM LOGIN PAGE");
     const updateCartData = async (customerId) => {
         try {
 

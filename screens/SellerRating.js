@@ -14,6 +14,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { TextInput } from 'react-native';
 import { Button } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
+import { KeyboardAvoidingView } from 'react-native'
 
 const SellerRating = ({ vendor_id }) => {
     const navigation = useNavigation()
@@ -29,7 +30,7 @@ const SellerRating = ({ vendor_id }) => {
     const { customerData } = useSelector((store) => store.userData)
     const customer_id = customerData?.[0]?.customer_id || null
 
-    console.log(vendor_id, 'ratin');
+    // console.log(vendor_id, 'ratin');
     useEffect(() => {
         const fetchVendordata = async () => {
             if (!vendor_id) return
@@ -71,7 +72,6 @@ const SellerRating = ({ vendor_id }) => {
                 const response = await fetch(`${AdminUrl}/api/fetchRatings?customer_id=${customer_id}&vendorid=${vendor_id}`);
                 if (response.ok) {
                     const data = await response.json();
-                    console.log(data, "data new api called*****************************************************************************");
                     setSellerRating(data?.ratingsData?.[0] || null)
                     setReviewText(data?.ratingsData?.[0]?.review_text || '')
                 } else {
@@ -131,7 +131,7 @@ const SellerRating = ({ vendor_id }) => {
 
         loadImagesToSelectedImages()
     }, [sellerRatingInfo])
-
+    console.log(sellerRatingInfo, 'sellerRatingInfo');
 
     const removeImage = (index) => {
         const updatedImages = [...selectedImages];
@@ -400,16 +400,22 @@ const SellerRating = ({ vendor_id }) => {
                             ))}
                         </View>
                     </View>
-                    <View className="" style={{ justifyContent: 'flex-end', alignItems: 'flex-end', marginRight: 16, marginBottom: 16 }}>
-                        {isReviewEmpty ? (
-                            <TouchableOpacity onPress={debounce(handleSkip, 500)}>
-                                <Text style={{ color: 'blue', marginTop: 8 }}>Skip</Text>
-                            </TouchableOpacity>
-                        ) : (
-                            !ButtonLoading ? <Button title="Submit" onPress={debounce(handleSubmit, 500)} /> : <ActivityIndicator />
-                        )}
-                    </View>
+                    <KeyboardAvoidingView
+                        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                        style={{ flex: 1 }}
+                    >
+                        {/* Your other UI components */}
 
+                        <View style={{ justifyContent: 'flex-end', alignItems: 'flex-end', marginRight: 16, marginBottom: 16 }}>
+                            {isReviewEmpty ? (
+                                <TouchableOpacity onPress={debounce(handleSkip, 500)}>
+                                    <Text style={{ color: 'blue', marginTop: 8 }}>Skip</Text>
+                                </TouchableOpacity>
+                            ) : (
+                                <Button title="Submit" onPress={debounce(handleSubmit, 500)} />
+                            )}
+                        </View>
+                    </KeyboardAvoidingView>
 
                 </View>
             </>

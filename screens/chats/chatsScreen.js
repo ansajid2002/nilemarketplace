@@ -21,59 +21,15 @@ const ChatsScreen = ({ navigation }) => {
     const { customerData } = useSelector((store) => store.userData)
     const [modalVisible, setModalVisible] = useState(false);
     const [inFavorite, setinFavorite] = useState(false);
-    const [cartData, setCartData] = useState(false)
     const { t } = useTranslation()
-console.log("IN CART PAGE");
+    console.log("IN CART PAGE");
     const customerId = customerData[0]?.customer_id
     const { c_symbol } = useSelector((store) => store.selectedCurrency)
     ////////////////////////////////////////////////////////////////////////////////////////
     const dispatch = useDispatch()
-    const cartItems = useSelector((state) => state.cart.cartItems);
-    const [twosecloader,setTwosecloader] = useState(true)
-
-
+    const { cartItems } = useSelector((state) => state.cart);
+    const ct = useSelector((state) => state.cart.cartTotal);
     const screenWidth = Dimensions.get('window').width;
-
-    const fetchCartData = async () => {
-        setLoading(true)
-        try {
-            if (!customerId) {
-
-            }
-            else {
-                const urlWithCustomerId = `${AdminUrl}/api/cart?customer_id=${customerId}`;
-                const requestOptions = {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                };
-                // Send the GET request and await the response
-                const response = await fetch(urlWithCustomerId, requestOptions);
-
-                if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}`);
-                }
-                const data = await response.json()
-                dispatch(fetchcart(data))
-                setCartData(true)
-                console.log(data, "CARTDATa--------------------");
-            }
-
-        } catch (error) {
-            // Handle any errors here
-            console.error('Error fetching cart sdata:', error);
-        }
-        finally {
-            setLoading(false)
-        }
-    }
-
-    useEffect(() => {
-        if (!cartData) {
-            fetchCartData()
-        }
-    }, [cartData, customerId])
 
 
     const handleRemove = async (_, item, type) => {
@@ -219,11 +175,7 @@ console.log("IN CART PAGE");
             console.error('Error updating cart:', error);
         }
     };
-    useEffect(() => {
-        setTimeout(() => {
-            setTwosecloader(false)
-        },2000)
-    },[])
+
 
     const Total = cartItems?.map(item => item?.sellingprice * item?.added_quantity).reduce((prevValue, currValue) => prevValue + currValue, 0);
     const cartTotal = parseFloat(Total?.toFixed(2))
@@ -316,7 +268,7 @@ console.log("IN CART PAGE");
                 <TouchableOpacity className="flex-row my-1 mb-0  rounded-sm p-2  "
                     onPress={debounce(() => navigation.push('ProductDetail', item), 500)}
                 >
-                    <View style={{ overflow: 'hidden', width: firstViewWidth }} className="m-auto p-2">
+                    <View style={{ overflow: 'hidden', width: firstViewWidth }} className="m-auto p-2 h-auto">
 
                         <Image
                             resizeMode="contain"
@@ -327,7 +279,6 @@ console.log("IN CART PAGE");
                             }
 
                             defaultSource={require('../../assets/noimage.jpg')}
-
                             style={{ aspectRatio: 3 / 2 }} className="rounded-md"
                         />
 
@@ -335,7 +286,6 @@ console.log("IN CART PAGE");
                             <View style={styles.buttonContainer} className="mx-auto">
                                 {item?.added_quantity == 1 ?
                                     <TouchableOpacity onPress={debounce(item?.added_quantity == 1 ? () => handleRemove(id, item, 'cart') : () => handleDecrement(id, item), 300)} className=" px-[2px]">
-
                                         <MaterialCommunityIcons name="delete" size={24} color="black" />
                                     </TouchableOpacity> :
                                     <TouchableOpacity style={styles.button} onPress={debounce(() => handleDecrement(id, item), 500)} className=" rounded-md">
@@ -436,7 +386,7 @@ console.log("IN CART PAGE");
         <SafeAreaView style={{ flex: 1, backgroundColor: Colors.whiteColor }} className="">
             <StatusBar translucent={false} backgroundColor={Colors.primaryColor} />
             {header()}
-            {twosecloader && <FullPageLoader />}
+            {loading && <FullPageLoader />}
 
             {
                 <View style={{ flex: 1 }}>

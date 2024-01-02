@@ -85,7 +85,7 @@ export const ProfileButtons = ({ phone, data, id }) => {
                     justifyContent: 'space-evenly',
                     alignItems: 'center',
                 }}>
-                <TouchableOpacity
+                {/* <TouchableOpacity
                     onPress={debounce(() => setFollow(!follow), 500)}
                     style={{ width: '42%' }}>
                     <View
@@ -103,7 +103,7 @@ export const ProfileButtons = ({ phone, data, id }) => {
                             {follow ? 'Following' : 'Follow'}
                         </Text>
                     </View>
-                </TouchableOpacity>
+                </TouchableOpacity> */}
                 <TouchableOpacity
                     style={{ width: '42%' }}
                     // onPress={debounce(() => {
@@ -125,7 +125,7 @@ export const ProfileButtons = ({ phone, data, id }) => {
                         <Text>Write a Review</Text>
                     </View>
                 </TouchableOpacity>
-                <View
+                {/* <View
                     style={{
                         width: '10%',
                         height: 35,
@@ -142,7 +142,7 @@ export const ProfileButtons = ({ phone, data, id }) => {
                             style={{ fontSize: 20, color: 'black' }}
                         />
                     </TouchableOpacity>
-                </View>
+                </View> */}
             </View>
         </>
     );

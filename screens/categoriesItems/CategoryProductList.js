@@ -7,7 +7,7 @@ import renderItemOrSkeleton from '../../components/ProductList2';
 import { ProductSkeleton } from '../../components/Skeleton';
 
 const CategoryProductList = ({ route, navigation }) => {
-    const [index, setIndex] = useState(0);
+    const [index, setIndex] = useState(-1);
     const [page, setPage] = useState(1); // Add state for tracking page number
     const { categoryId, categoryName, subcategory_name, featureddatatoshow } = route.params;
     const [subcategoriesToShow, setSubcategoriesToShow] = useState(featureddatatoshow);
@@ -20,6 +20,7 @@ const CategoryProductList = ({ route, navigation }) => {
 
     const renderScene = ({ route }) => {
         const sceneIndex = parseInt(route.key);
+
 
         if (sceneIndex !== index) {
             // Return an empty view for inactive scenes
@@ -42,7 +43,7 @@ const CategoryProductList = ({ route, navigation }) => {
             );
         } else {
             return (
-                <FlatList
+                subcategoriesToShow && <FlatList
                     data={Products}
                     keyExtractor={(item, index) => index.toString()}
                     renderItem={renderItemOrSkeleton}
@@ -59,48 +60,69 @@ const CategoryProductList = ({ route, navigation }) => {
         }
     };
 
-    const renderTabBar = (props) => (
-        <>
-            <HeaderBar goback={true} title={t(`${categoryName ? categoryName : "sbcategory"}`)} navigation={navigation} />
+    const renderTabBar = (props) => {
+        const { navigationState } = props;
+        const isInitialTabFocused = navigationState.index === index;
 
-            <TabBar
-                {...props}
-                scrollEnabled
-                indicatorStyle={{ backgroundColor: 'blue' }}
-                style={{ backgroundColor: 'white' }}
-                tabStyle={{ width: 120 }}
-                renderLabel={({ route, focused }) => (
-                    <View style={{ alignItems: 'center', justifyContent: 'center', height: 100 }}>
-                        {loading ? (
-                            <ActivityIndicator size="small" color="blue" />
-                        ) : (
-                            <>
-                                {subcategoriesToShow && subcategoriesToShow[parseInt(route.key)] && subcategoriesToShow[parseInt(route.key)].subcategory_name === 'All' ? (
-                                    <Image
-                                        source={require('../../assets/images/allproducts.png')}
-                                        style={{ resizeMode: 'cover', width: 60, height: 60 }}
-                                    />
-                                ) : (
-                                    subcategoriesToShow && subcategoriesToShow[parseInt(route.key)] && (
+        if (!subcategoriesToShow && !featureddatatoshow) return
+        return (
+            <>
+                <HeaderBar goback={true} title={t(`${categoryName ? categoryName : "sbcategory"}`)} navigation={navigation} />
+
+                <TabBar
+                    {...props}
+                    scrollEnabled
+                    indicatorStyle={{ backgroundColor: 'transparent' }}
+                    style={{ backgroundColor: 'white' }}
+                    tabStyle={{ width: 120 }}
+                    renderLabel={({ route }) => (
+                        <View style={{ alignItems: 'center', justifyContent: 'center', height: 100 }}>
+                            {loading ? (
+                                <ActivityIndicator size="small" color="blue" />
+                            ) : (
+                                <>
+                                    {subcategoriesToShow && subcategoriesToShow[parseInt(route.key)] && subcategoriesToShow[parseInt(route.key)].subcategory_name === 'All' ? (
                                         <Image
-                                            source={{ uri: `${AdminUrl}/uploads/SubcategoryImages/${subcategoriesToShow[parseInt(route.key)].subcategory_image_url}` }}
-                                            style={{ resizeMode: 'contain', width: 60, height: 60 }}
+                                            source={require('../../assets/images/allproducts.png')}
+                                            style={{ resizeMode: 'cover', width: 60, height: 60 }}
+                                            className={`border ${(isInitialTabFocused && route.key === index.toString()) ? 'border-2 border-black' : 'border-1 border-gray-300'}  rounded-full p-2`}
                                         />
-                                    )
-                                )}
+                                    ) : (
+                                        subcategoriesToShow && subcategoriesToShow[parseInt(route.key)] && (
+                                            <Image
+                                                source={{ uri: `${AdminUrl}/uploads/SubcategoryImages/${subcategoriesToShow[parseInt(route.key)].subcategory_image_url}` }}
+                                                style={{ resizeMode: 'contain', width: 60, height: 60 }}
+                                                className={`border ${(isInitialTabFocused && route.key === index.toString()) ? 'border-2 border-black' : 'border-1 border-gray-300'}  rounded-full p-2`}
+                                            />
+                                        )
+                                    )}
 
-                                {subcategoriesToShow && subcategoriesToShow[parseInt(route.key)] && (
-                                    <Text style={{ color: focused ? 'blue' : 'black', textAlign: 'center', marginTop: 5 }} numberOfLines={2} ellipsizeMode="tail">
-                                        {subcategoriesToShow[parseInt(route.key)].subcategory_name}
-                                    </Text>
-                                )}
-                            </>
-                        )}
-                    </View>
-                )}
-            />
-        </>
-    );
+                                    {subcategoriesToShow && subcategoriesToShow[parseInt(route.key)] && (
+                                        <Text
+                                            style={{
+                                                color: ((isInitialTabFocused && route.key === index.toString())) ? 'black' : 'black',
+                                                textAlign: 'center',
+                                                marginTop: 5,
+                                            }}
+                                            className={`${isInitialTabFocused && route.key === index.toString() ? 'font-bold' : ''}`}
+                                            numberOfLines={2}
+                                            ellipsizeMode="tail"
+                                            onPress={() => {
+                                                setIndex(parseInt(route.key));
+                                            }}
+                                        >
+                                            {subcategoriesToShow[parseInt(route.key)].subcategory_name}
+                                        </Text>
+                                    )}
+                                </>
+                            )}
+                        </View>
+                    )}
+                />
+            </>
+        );
+    };
+
 
     const getSubcatDataByCatId = async () => {
         try {
@@ -124,11 +146,6 @@ const CategoryProductList = ({ route, navigation }) => {
 
                 const subcategoriesWithAll = [allItem, ...data.subcategories];
                 setSubcategoriesToShow(subcategoriesWithAll);
-
-                // Update the routes with keys from subcategories
-                // setRoutes(subcategoriesWithAll.map((_, i) => ({ key: i.toString() })));
-                // const index = subcategoriesWithAll.findIndex(subcategory => subcategory.subcategory_name === subcategory_name);
-
             }
         } catch (error) {
             console.error('Error:', error);
@@ -140,17 +157,23 @@ const CategoryProductList = ({ route, navigation }) => {
     useEffect(() => {
         if (!subcategoriesToShow) {
             getSubcatDataByCatId();
-        } else if (subcategoriesToShow) {
-
-            const indexData = subcategoriesToShow.findIndex(subcategory => subcategory.subcategory_name === subcategory_name);
-            console.log(indexData, 'subcategoriesToShow');
-            setIndex(indexData)
-            // If featureddatatoshow is not available, use subcategoriesToShow data for routes
-            setRoutes(subcategoriesToShow.map((_, i) => ({ key: i.toString() })));
+        } else if (featureddatatoshow) {
+            const indexData = featureddatatoshow.findIndex(subcategory => subcategory.subcategory_name === subcategory_name);
+            setIndex(indexData);
+            // If featureddatatoshow is not available, use featureddatatoshow data for routes
+            setRoutes(featureddatatoshow.map((_, i) => ({ key: i.toString() })));
             setLoading(false); // Set loading to false once data is loaded
+        } else if (subcategoriesToShow) {
+            const indexData = subcategoriesToShow.findIndex(subcategory => subcategory.subcategory_name === subcategory_name);
+            console.log(indexData, 'index');
+            setIndex(indexData);
+            // If subcategoriesToShow is not available, use subcategoriesToShow data for routes
+            setRoutes(subcategoriesToShow.map((_, i) => ({ key: i.toString() })));
 
+            setLoading(false); // Set loading to false once data is loaded
         }
-    }, [subcategoriesToShow, featureddatatoshow]);
+    }, [subcategoriesToShow, featureddatatoshow, subcategory_name]);
+
 
     const getProductBySubcatName = async (subcat_name, pageNumber) => {
         try {

@@ -9,8 +9,8 @@ import { debounce } from 'lodash';
 // import {ADMINURL} from "@env"
 
 // import Config from "react-native-config";
-export const AdminUrl = "https://admin.nilegmp.com";
-// export const AdminUrl = "http://192.168.1.4:3001";
+// export const AdminUrl = "https://admin.nilegmp.com";
+export const AdminUrl = "http://192.168.1.4:3001";
 
 // export const AdminUrl = ADMINURL
 // api.js
@@ -39,7 +39,7 @@ export async function getVariantsOfCatSubcat(category, subcategory, uniquepid) {
 
 export function HeaderBar({ navigation, title, goback, searchEnable = true, cartEnable = true }) {
     const dispatch = useDispatch()
-    const {cartTotal} = useSelector((state) => state.cart);
+    const { cartTotal } = useSelector((state) => state.cart);
     const { t } = useTranslation()
     const handleGoBack = () => {
         navigation.pop();

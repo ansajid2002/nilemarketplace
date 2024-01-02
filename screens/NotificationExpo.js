@@ -3,10 +3,13 @@ import { Platform, Text } from 'react-native';
 import * as TaskManager from 'expo-task-manager';
 import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigation } from '@react-navigation/core';
 import Toast from 'react-native-toast-message';
 import { BackHandler } from 'react-native';
+import { fetchcart, getCartTotal } from '../store/slices/cartSlice';
+import { AdminUrl } from '../constant';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const BACKGROUND_NOTIFICATION_TASK = 'BACKGROUND-NOTIFICATION-TASK';
 
@@ -25,14 +28,20 @@ Notifications.setNotificationHandler({
 });
 
 const NotificationExpo = () => {
+    const dispatch = useDispatch()
     const [expoPushToken, setExpoPushToken] = useState('');
     const [notification, setNotification] = useState(false);
     const notificationListener = useRef();
     const responseListener = useRef();
-    const {cartTotal} = useSelector((state) => state.cart);
-    const { customerData } = useSelector((store) => store.userData)
     const navigation = useNavigation();
     const lastBackPressed = useRef(0);
+    const [cartTotal, setCartTotal] = useState(null)
+    const [cartData, setCartData] = useState(false)
+    const [loading, setLoading] = useState(false)
+
+    const { customerData } = useSelector((store) => store.userData)
+    const customerId = customerData[0]?.customer_id
+
 
     const handleBackPress = () => {
         const currentRoute = navigation.getCurrentRoute();
@@ -54,6 +63,94 @@ const NotificationExpo = () => {
         return false
 
     };
+
+    const getCartTotaldata = async () => {
+        try {
+            console.log(customerId, "customerId from login screen");
+            if (!customerId) {
+                console.log("GUEST MODE");
+                const cartTotal = await AsyncStorage.getItem("cartTotal");
+                if (cartTotal) {
+                    setCartTotal(cartTotal)
+                    dispatch(getCartTotal(cartTotal))
+                }
+                else {
+                    setCartTotal(cartTotal)
+                    dispatch(getCartTotal(0))
+                }
+            }
+            else {
+                console.log("WELCOME CUSTOMER ");
+                const urlWithCustomerId = `${AdminUrl}/api/cartTotal?customer_id=${customerId}`;
+                const requestOptions = {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                };
+
+                const response = await fetch(urlWithCustomerId, requestOptions);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                const data = await response.json()
+                console.log(data.total, "cartTotal");
+                dispatch(getCartTotal(data.total))
+                setCartTotal(data.total)
+                console.log(data.total, "Data.totla");
+                await AsyncStorage.setItem('cartTotal', JSON.stringify(data.total));
+
+            }
+
+        } catch (error) {
+            console.log(error, "error while fetching cart total");
+        }
+    }
+    useEffect(() => {
+        if (!cartTotal) {
+            getCartTotaldata()
+        }
+    }, [cartTotal, customerId])
+
+    const fetchCartData = async () => {
+        setLoading(true)
+        try {
+            if (!customerId) {
+
+            }
+            else {
+                const urlWithCustomerId = `${AdminUrl}/api/cart?customer_id=${customerId}`;
+                const requestOptions = {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                };
+                // Send the GET request and await the response
+                const response = await fetch(urlWithCustomerId, requestOptions);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                const data = await response.json()
+                dispatch(fetchcart(data))
+                setCartData(true)
+            }
+
+        } catch (error) {
+            // Handle any errors here
+            console.error('Error fetching cart sdata:', error);
+        }
+        finally {
+            setLoading(false)
+        }
+    }
+
+    useEffect(() => {
+        if (!cartData) {
+            fetchCartData()
+        }
+    }, [cartData, customerId])
 
     useEffect(() => {
         const unsubscribe = navigation.addListener('state', () => {
@@ -95,15 +192,15 @@ const NotificationExpo = () => {
         };
     }, [navigation]);
 
-    // useEffect(() => {
-    //     const sendPushNotification = async () => {
-    //         customerData.length > 0 && cartTotal && await sendNotificationWithNavigation('🛒 EMPTY CART  🙁', 'Your cart is empty. Add something to your cart and enjoy your shopping experience! 🛍️', '');
-    //         if (cartTotal > 0) {
-    //             await sendNotificationWithNavigation('🛒 Checkout 🛍️', `You have ${cartTotal} items in your cart. Ready to complete your purchase? Click "Checkout" now! 💳`, 'Cart');
-    //         }
-    //     }
-    //     sendPushNotification();
-    // }, []);
+    useEffect(() => {
+        const sendPushNotification = async () => {
+            customerData.length > 0 && cartTotal && await sendNotificationWithNavigation('🛒 EMPTY CART  🙁', 'Your cart is empty. Add something to your cart and enjoy your shopping experience! 🛍️', '');
+            if (cartTotal > 0) {
+                await sendNotificationWithNavigation('🛒 Checkout 🛍️', `You have ${cartTotal} items in your cart. Ready to complete your purchase? Click "Checkout" now! 💳`, 'Cart');
+            }
+        }
+        sendPushNotification();
+    }, []);
 
     useEffect(() => {
         registerForPushNotificationsAsync().then(token => setExpoPushToken(token));

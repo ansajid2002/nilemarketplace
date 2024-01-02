@@ -44,15 +44,15 @@ export const cartSlice = createSlice({
           item.added_quantity++;
         }
         return item;
-        // if (item.uniquepid === action.payload?.uniquepid || (item.label === null || item.label === undefined || item.label === action.payload?.label)) {
-        if (
-          item.uniquepid === action.payload?.uniquepid &&
-          (item.label === action.payload?.label || action.payload?.label === null)
-        ) {
-          item.added_quantity++;
-        }
+        // // if (item.uniquepid === action.payload?.uniquepid || (item.label === null || item.label === undefined || item.label === action.payload?.label)) {
+        // if (
+        //   item.uniquepid === action.payload?.uniquepid &&
+        //   (item.label === action.payload?.label || action.payload?.label === null)
+        // ) {
+        //   item.added_quantity++;
+        // }
 
-        return item;
+        // return item;
 
       }).filter(item => item.added_quantity !== 0);
     },
@@ -68,11 +68,11 @@ export const cartSlice = createSlice({
     },
 
     emptyCart: (state) => {
-      state.cartItems = initialState.cartItems; // Clears the cartItems array
+      state.cartTotal = 0
+      state.cartItems = []; // Clears the cartItems array
     },
 
     fetchcart(state, action) {
-      console.log(action.payload, "action.payload");
       state.cartItems = action.payload
     },
 
