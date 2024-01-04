@@ -134,10 +134,10 @@ const Login = ({ navigation, route }) => {
 
     const dispatch = useDispatch()
     const cartItems = useSelector((state) => state.cart.cartItems);
-    console.log(cartItems, "CARTITMES FROM LOGIN PAGE");
+    console.log(cartItems, "CARTITMES FROM LOGIN PAGE 1");
     const updateCartData = async (customerId) => {
         try {
-
+            console.log("CALLED the mixture function");
             if (cartItems?.length === 0) {
                 const urlWithCustomerId1 = `${AdminUrl}/api/cartTotal?customer_id=${customerId}`;
                 const requestOptions1 = {
@@ -172,7 +172,7 @@ const Login = ({ navigation, route }) => {
             }
 
             for (const singleCartItem of cartItems) {
-                const { category, subcategory, uniquepid, vendorid, label } = singleCartItem;
+                const { category, subcategory, uniquepid, vendorid, label,added_quantity } = singleCartItem;
 
                 const replaceCategory = category.replace(/[^\w\s]/g, "").replace(/\s/g, "");
                 const replaceSubcategory = subcategory.replace(/[^\w\s]/g, "").replace(/\s/g, "");
@@ -184,7 +184,8 @@ const Login = ({ navigation, route }) => {
                     category: replaceCategory,
                     subcategory: replaceSubcategory,
                     quantity: 1,
-                    variantlabel: label
+                    variantlabel: label,
+                    added_quantity:added_quantity
                 };
 
                 const response = await fetch(`${AdminUrl}/api/addProductcart`, {

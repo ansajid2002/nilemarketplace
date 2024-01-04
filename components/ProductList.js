@@ -250,8 +250,8 @@ const ProductListing = ({ title, productList }) => {
                             <ProductItem item={item} />
                         </View>
 
-                    )) : [1, 2, 3, 4].map(item =>
-                        <View key={item} className="w-1/2 relative right-[1px]">
+                    )) : [1, 2, 3, 4,5,6].map(item =>
+                        <View key={item} className="w-1/2   relative">
                             <ProductSkeleton />
                         </View>
                     )

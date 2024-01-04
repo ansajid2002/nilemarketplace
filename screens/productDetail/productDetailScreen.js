@@ -176,7 +176,7 @@ const ProductDetailScreen = ({ navigation, route }) => {
                     product_uniqueid: uniquepid,
                     category: replacecategory,
                     subcategory: replacesubcategory,
-                    quantity: 1, // Decrement the quantity by 1
+                    added_quantity: 1, // Decrement the quantity by 1
                     variantlabel: label
                 };
 
@@ -221,7 +221,7 @@ const ProductDetailScreen = ({ navigation, route }) => {
                     product_uniqueid: uniquepid,
                     category: replacecategory,
                     subcategory: replacesubcategory,
-                    quantity: -1, // Decrement the quantity by 1
+                    added_quantity: -1, // Decrement the quantity by 1
                     variantlabel: label
                 };
 
@@ -426,7 +426,7 @@ const ProductDetailScreen = ({ navigation, route }) => {
                                         variantlabel: selectLabel,
                                         mrp: mrpData,
                                         sellingprice: sellingPriceData,
-                                        quantity: 1, // Decrement the quantity by 1
+                                        added_quantity: 1, // Decrement the quantity by 1
                                     };
 
                                     // Make a POST request to your API endpoint for updating the cart

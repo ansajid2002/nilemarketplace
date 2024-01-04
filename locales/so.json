@@ -159,7 +159,7 @@
   "Entertainment & Performers": "Madadaalada iyo Fanaaniinta",
   "Mobile Phone Repairs": "Dayactirka Telefoonada Gacanta",
   "Laptop & Computer Repairs": "Dayactirka Laptop-ka iyo Kombuyuutarada",
-  "TV & Appliance Repairs": "Dayactirka TV-yada iyo Qalabka Sawir Qaadista",
+  "TV & Appliance Repairs": "Dayactirka TV-yada iyo Qalabka",
   "Camera & Photography Equipment Repairs": "Dayactirka Kaamirooyinka iyo Qalabka Sawir Qaadista",
   "Job Offers": "Dalabyada Shaqada",
   "Job Seekers": "Raadinta Shaqada",
@@ -210,6 +210,7 @@
   "Added To Favorite": "Lagu daray Liiska aad Jeceshahay",
   "Search Results": "Natiijooyinka Raadinta",
   "Filter": "Shaandho",
+  "Sort By": "Kala saar",
   "Condition": "Xaalad",
   "Price": "Qiimo",
   "Distance": "Masaafad",
@@ -238,6 +239,7 @@
   "Fragrances": "Cadar",
   "Massage Tools & Equipments": "Qalabka & Agabka Duugista",
   "Outdoor Play": "Ciyaarta Dibadda",
+  "Games & Accessories": "Ciyaaraha & Agabka",
   "Fitness & Exercise Equipments": "Qalabka Jirdhiska & Jimicsiga",
   "Ratings": "Qiimeynta",
   "Discount": "Dhimis",
@@ -319,4 +321,5 @@
   "Categories": "Qaybaha",
   "Cart": "Gaarigeyga",
   "fetching location data": "soo qaadayaa xogta goobta"
+  
 }

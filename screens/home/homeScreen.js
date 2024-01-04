@@ -206,7 +206,7 @@ const HomeScreen = () => {
     }, [recommendedProdutcs, servicesData])
 
     useEffect(() => {
-        if (!newArrivals && recommendedProdutcs?.length > 0) {
+        if (!newArrivals && recommendedProdutcs) {
             fetchNewArrivals()
         }
     }, [newArrivals, recommendedProdutcs])
@@ -237,7 +237,6 @@ const HomeScreen = () => {
             getCustomerWishlist()
         }
     }, [customerId, wishlistItems])
-
 
     return (
         <SafeAreaView
@@ -313,7 +312,7 @@ const HomeScreen = () => {
                         <View className="m-3 flex-row justify-between items-center">
                             <Text className="font-bold text-lg">Recommended Products</Text>
                             <TouchableOpacity onPress={() => {
-                                navigation.navigate("Channel", { recommended: true })
+                                navigation.navigate("Channel", { channelName: "Recommended Products" })
                             }}>
                                 <MaterialIcons name="arrow-forward" size={30} />
                             </TouchableOpacity>
@@ -324,7 +323,7 @@ const HomeScreen = () => {
                         <View className="m-3 flex-row justify-between items-center">
                             <Text className="font-bold text-lg">New Arrivals</Text>
                             <TouchableOpacity onPress={() => {
-                                navigation.navigate("Channel", { arrivals: true })
+                                navigation.navigate("Channel", { channelName:"New Arrivals"})
                             }}>
                                 <MaterialIcons name="arrow-forward" size={30} />
                             </TouchableOpacity>

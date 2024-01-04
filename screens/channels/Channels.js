@@ -8,11 +8,7 @@ import { ActivityIndicator } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
 const Channels = ({ navigation, route }) => {
-    const [recommendedProdutcs, setRecommendedProducts] = useState(null)
-    const [newArrivals, setNewArrivals] = useState(null)
-    //  const [recommendedProductsFetched, setRecommendedProductsFetched] = useState(false);
-    //  const [newArrivalsFetched, setNewArrivalsFetched] = useState(false);
-    const [error, setError] = useState(null);
+    console.log(route.params.channelName, "channelname");
     const { t } = useTranslation()
     const { customerData } = useSelector((store) => store.userData)
     const customerId = customerData[0]?.customer_id
@@ -21,17 +17,14 @@ const Channels = ({ navigation, route }) => {
     const [VendorProductList, setVendorProductList] = useState(null);
     const [hasMore, setHasMore] = useState(true);
 
-    const fetchRecommendedProducts = useCallback(async () => {
+    const fetchRecommendedProducts = async () => {
         setPageloading(true);
         try {
             // const response = await fetch(`${AdminUrl}/api/recommendedProducts/${'null'}`);
-            const recommendedResponse = await fetch(`${AdminUrl}/api/recommendedProducts/${customerId || 'null'}`);
+            const recommendedResponse = await fetch(`${AdminUrl}/api/recommendedProducts/${customerId || 'null'}?pageNumber=${page}&pageSize=10`);
 
             if (recommendedResponse.ok) {
                 const data = await recommendedResponse.json();
-                console.log(data, "data reccome");
-
-                console.log(data, "search result data");
                 if (data?.length > 0) {
                     setVendorProductList(prevProducts => {
                         if (prevProducts) {
@@ -51,20 +44,17 @@ const Channels = ({ navigation, route }) => {
         } finally {
             setPageloading(false);
         }
-    }, [customerId, setVendorProductList]);
+    };
 
-    const fetchNewArrivals = useCallback(async () => {
+    const fetchNewArrivals = async () => {
         setPageloading(true);
         try {
-            const response = await fetch(`${AdminUrl}/api/newArrivals/${customerId}`);
+            const response = await fetch(`${AdminUrl}/api/newArrivals/${customerId || 'null'}?pageNumber=${page}&pageSize=10`);
             // const response = await fetch(`${AdminUrl}/api/newArrivals/${'null'}`);
 
             // const response = await fetch(`${AdminUrl}/api/recommendedProducts/${customerId}`);
             if (response.ok) {
                 const data = await response.json();
-                console.log(data, "data reccome");
-
-                console.log(data, "search result data");
                 if (data?.length > 0) {
                     setVendorProductList(prevProducts => {
                         if (prevProducts) {
@@ -75,6 +65,7 @@ const Channels = ({ navigation, route }) => {
                     });
                     setHasMore(true); // If data is fetched and not an empty array, set hasMore to true
                 } else {
+                    console.log("No product found");
                     !VendorProductList && setVendorProductList([])
                     setHasMore(false); // If response is an empty array, set hasMore to false
                 }
@@ -85,28 +76,56 @@ const Channels = ({ navigation, route }) => {
             setPageloading(false);
         }
 
-        // try {
-        //     if (!newArrivalsResponse.ok) {
-        //         throw new Error(`HTTP error! Status: ${newArrivalsResponse.status}`);
-        //     }
-        //     const newArrivalsData = await newArrivalsResponse.json();
-        //     console.log(newArrivalsData, "newarrivalsdata");
-        //     setVendorProductList(newArrivalsData);
-        // } catch (error) {
-        //     setError(error.message || 'An error occurred while fetching new arrivals.');
-        // }
-    }, [customerId, setVendorProductList, setError]);
+       
+    };
+
+    const fetchExplore = async () => {
+        setPageloading(true);
+        try {
+            const response = await fetch(`${AdminUrl}/api/getexploreproducts?pageNumber=${page}&pageSize=10`);
+            // const response = await fetch(`${AdminUrl}/api/newArrivals/${'null'}`);
+
+            // const response = await fetch(`${AdminUrl}/api/recommendedProducts/${customerId}`);
+            if (response.ok) {
+                const data = await response.json();
+
+                if (data?.length > 0) {
+                    setVendorProductList(prevProducts => {
+                        if (prevProducts) {
+                            return [...prevProducts, ...data];
+                        } else {
+                            return [...data];
+                        }
+                    });
+                    setHasMore(true); // If data is fetched and not an empty array, set hasMore to true
+                } else {
+                    console.log("No product found");
+                    !VendorProductList && setVendorProductList([])
+                    setHasMore(false); // If response is an empty array, set hasMore to false
+                }
+            }
+        } catch (error) {
+            console.log(error);
+        } finally {
+            setPageloading(false);
+        }
+    };
 
     useEffect(() => {
-        if (!newArrivals && route.params.arrivals) {
+        if (route.params.channelName === "New Arrivals") {
             console.log("ARRIVALS DATA COMING");
             fetchNewArrivals()
         }
-        if (!recommendedProdutcs && route.params.recommended) {
+        if (route.params.channelName === "Recommended Products") {
             console.log("RECOMMENDED DATA COMING");
             fetchRecommendedProducts()
         }
-    }, [newArrivals, recommendedProdutcs])
+        if (route.params.channelName === "Explore More") {
+            console.log("Explore More DATA COMING");
+            fetchExplore()
+        }
+        
+    }, [page])
 
     const loadMoreProducts = () => {
         setPageloading(true);
@@ -119,9 +138,6 @@ const Channels = ({ navigation, route }) => {
         }
     };
 
-    console.log('VendorProductList');
-    console.log(VendorProductList, hasMore);
-    console.log('VendorProductList');
 
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
@@ -129,12 +145,8 @@ const Channels = ({ navigation, route }) => {
             {
                 VendorProductList ?
                     <>
-                        {
-                            route.params.recommended ?
-                                <HeaderBar title={'Recommended Products'} goback={true} navigation={navigation} />
-                                :
-                                <HeaderBar title={'New Arrivals'} goback={true} navigation={navigation} />
-                        }
+
+                        <HeaderBar title={`${route.params.channelName}`} goback={true} navigation={navigation} />
                         <FlatList
                             data={VendorProductList}
                             keyExtractor={(item) => `${item.uniquepid}`}

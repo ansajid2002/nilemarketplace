@@ -1,10 +1,68 @@
 import { View, Text } from 'react-native';
-import React from 'react';
+import React, { useState,useEffect } from 'react';
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { AdminUrl } from '../constant';
+import { getCartTotal } from '../store/slices/cartSlice';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Carttab = ({ color }) => {
-  const { cartTotal } = useSelector((state) => state.cart);
+
+  // const [cartTotal, setCartTotal] = useState(null)
+  const {cartTotal} = useSelector((store) => store.cart)
+  const { customerData } = useSelector((store) => store.userData)
+  const customerId = customerData[0]?.customer_id
+  const dispatch = useDispatch()
+
+
+  const getCartTotaldata = async () => {
+    try {
+        console.log(customerId, "customerId from cartTab");
+        if (!customerId) {
+            console.log("GUEST MODE");
+            const cartTotal = await AsyncStorage.getItem("cartTotal");
+            console.log(cartTotal,"from async storage cartTab");
+            if (cartTotal) {
+                dispatch(getCartTotal(Number(cartTotal)))
+            }
+            else {
+                dispatch(getCartTotal(0))
+            }
+        }
+        else {
+            console.log("WELCOME CUSTOMER ");
+            const urlWithCustomerId = `${AdminUrl}/api/cartTotal?customer_id=${customerId}`;
+            const requestOptions = {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            };
+
+            const response = await fetch(urlWithCustomerId, requestOptions);
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            const data = await response.json()
+            console.log(data.total, "cartTotal");
+            dispatch(getCartTotal(data.total))
+            console.log(data.total, "Data.totla");
+            await AsyncStorage.setItem('cartTotal', JSON.stringify(data.total));
+
+        }
+
+    } catch (error) {
+        console.log(error, "error while fetching cart total");
+    }
+}
+useEffect(() => {
+    if (!cartTotal) {
+        getCartTotaldata()
+    }
+}, [cartTotal, customerId])
+
+
+
 
   console.log(typeof cartTotal, 'cart');
 

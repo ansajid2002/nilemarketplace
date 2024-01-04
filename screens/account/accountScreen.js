@@ -146,6 +146,9 @@ const AccountScreen = ({ navigation }) => {
                                 } catch (error) {
                                     console.error('Error clearing AsyncStorage:', error);
                                 } 
+                                finally {
+                                    setLogoutLoader(false)
+                                }
                             }, 500)}
                         >
                             <View>

@@ -70,13 +70,14 @@ const NotificationExpo = () => {
             if (!customerId) {
                 console.log("GUEST MODE");
                 const cartTotal = await AsyncStorage.getItem("cartTotal");
+                console.log(cartTotal,"from async storage");
                 if (cartTotal) {
                     setCartTotal(cartTotal)
-                    dispatch(getCartTotal(cartTotal))
+                    // dispatch(getCartTotal(Number(cartTotal)))
                 }
                 else {
                     setCartTotal(cartTotal)
-                    dispatch(getCartTotal(0))
+                    // dispatch(getCartTotal(0))
                 }
             }
             else {
@@ -95,7 +96,7 @@ const NotificationExpo = () => {
                 }
                 const data = await response.json()
                 console.log(data.total, "cartTotal");
-                dispatch(getCartTotal(data.total))
+                // dispatch(getCartTotal(data.total))
                 setCartTotal(data.total)
                 console.log(data.total, "Data.totla");
                 await AsyncStorage.setItem('cartTotal', JSON.stringify(data.total));

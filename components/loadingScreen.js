@@ -1,14 +1,42 @@
-import React, { useEffect } from "react";
-import { View ,Text} from "react-native";
+import React, { useEffect, useState } from "react";
+import { View, Text, SafeAreaView, Dimensions } from "react-native";
 import * as Font from "expo-font";
 import { Colors } from "../constants/styles";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useDispatch, useSelector } from "react-redux";
 import { updateCustomerData } from "../store/slices/customerData";
+import { AdminUrl } from "../constant";
+import { Image } from "react-native";
+
 
 const LoadingScreen = ({ navigation }) => {
+
     const dispatch = useDispatch()
-    const { customerData } = useSelector((store) => store.userData)
+    const [lscreen, setLscreen] = useState(null)
+    const windowWidth = Dimensions.get('window').width;
+    const imageWidth = windowWidth * 0.8; // 80% of the window's width
+
+
+    const fetchLoadingscreen = async () => {
+        try {
+            console.log("CALLING lfunc");
+            const response = await fetch(`${AdminUrl}/api/getApploadingscreen`);
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            const data = await response.json();
+            console.log(data, 'data');
+            setLscreen(data)
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
+
+    useEffect(() => {
+        if (!lscreen) {
+            fetchLoadingscreen()
+        }
+    }, [lscreen])
 
     useEffect(() => {
         async function loadFont() {
@@ -28,24 +56,40 @@ const LoadingScreen = ({ navigation }) => {
             const a = JSON.parse(customerDataAsync)
 
             // Navigate to the appropriate screen based on AsyncStorage data
-            if (customerDataAsync) {
-                dispatch(updateCustomerData(a))
-                navigation.replace("Home")
-            } else {
-                if (onboarding === 1) {
-                    navigation.replace('Login');
+            setTimeout(() => {
+                if (customerDataAsync) {
+                    dispatch(updateCustomerData(a))
+                    navigation.replace("Home")
                 } else {
-                    navigation.replace('Onboarding');
+                    if (onboarding === 1) {
+                        navigation.replace('Login');
+                    } else {
+                        navigation.replace('Onboarding');
+                    }
                 }
-            }
+            }, 2000)
+
         }
 
         loadFont();
     }, []);
-
     return (
-        <View className="bg-blue-600" style={{ flex: 1, backgroundColor: Colors.whiteColor }} >
-        </View>
+        <SafeAreaView className=" flex-row items-center justify-center bg-white " style={{ flex: 1 }} >
+
+            {
+                lscreen ?
+                <Image
+                    source={{ uri: `${AdminUrl}/uploads/Apploadingscreen/${lscreen[0]?.apploading_url}` }}
+                    style={{ height: 600, width: 350}}
+                /> : 
+           
+                <Image source={require('../assets/images/mainlogovertical.png')}   style={{ height: 600, width: 350}} />
+
+            
+            }
+
+
+        </SafeAreaView>
     )
 }
 

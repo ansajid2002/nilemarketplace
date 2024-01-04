@@ -2,7 +2,8 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   cartItems: [],
-  cartTotal: 0
+  cartTotal: 0,
+  callcartTotal:false
 };
 
 export const cartSlice = createSlice({
@@ -36,6 +37,9 @@ export const cartSlice = createSlice({
       state.cartItems = state.cartItems.filter(item => (
         item.label !== label || item.uniquepid !== uniquepid
       ));
+    },
+    calloncartTotal() {
+      state.callcartTotal= true
     },
 
     incrementItem(state, action) {
@@ -111,7 +115,7 @@ export const cartSlice = createSlice({
   },
 });
 
+console.log(initialState.callcartTotal,"initialState");
 
-
-export const { addItem, removeItem, fetchcart, incrementItem, decrementCartTotalremove, decrementItem, updateproductsListcart, emptyCart, addCarts, getCartTotal, incrementCartTotal, decrementCartTotal } = cartSlice.actions;
+export const { addItem, removeItem, calloncartTotal,fetchcart, incrementItem, decrementCartTotalremove, decrementItem, updateproductsListcart, emptyCart, addCarts, getCartTotal, incrementCartTotal, decrementCartTotal } = cartSlice.actions;
 export default cartSlice.reducer;

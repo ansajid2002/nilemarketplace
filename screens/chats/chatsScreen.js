@@ -1,5 +1,5 @@
-import { View, Text, StyleSheet, StatusBar, SafeAreaView, TouchableOpacity, Image, Button, Touchable } from 'react-native'
-import React, { useCallback, useEffect, useState } from 'react'
+import { View, Text, StyleSheet, StatusBar, SafeAreaView, TouchableOpacity, Image, Button, Touchable, ScrollView } from 'react-native'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { Colors, Sizes, } from "../../constants/styles";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { FlatList } from 'react-native';
@@ -15,6 +15,8 @@ import { Alert } from 'react-native';
 import FullPageLoader from "../../components/FullPageLoader";
 import { Modal } from 'react-native';
 import { Dimensions } from 'react-native';
+import ProductListing from '../../components/ProductList';
+import { useFocusEffect } from '@react-navigation/native';
 
 const ChatsScreen = ({ navigation }) => {
     const [loading, setLoading] = useState(false)
@@ -30,8 +32,11 @@ const ChatsScreen = ({ navigation }) => {
     const { cartItems } = useSelector((state) => state.cart);
     const ct = useSelector((state) => state.cart.cartTotal);
     const screenWidth = Dimensions.get('window').width;
+    const [exploreProducts, setExploreProducts] = useState(null)
+    const scrollViewRef = useRef(null);
 
 
+console.log(typeof(ct),ct,"ct");
     const handleRemove = async (_, item, type) => {
         try {
             setLoading(true)
@@ -110,7 +115,7 @@ const ChatsScreen = ({ navigation }) => {
                             product_uniqueid: uniquepid,
                             category: replacecategory,
                             subcategory: replacesubcategory,
-                            quantity: 1,
+                            added_quantity: 1,
                             variantlabel: label,
                         }),
                     })
@@ -151,7 +156,7 @@ const ChatsScreen = ({ navigation }) => {
                     product_uniqueid: uniquepid,
                     category: replacecategory,
                     subcategory: replacesubcategory,
-                    quantity: -1, // Decrement the quantity by 1
+                    added_quantity: -1, // Decrement the quantity by 1
                     variantlabel: label
                 };
 
@@ -257,6 +262,38 @@ const ChatsScreen = ({ navigation }) => {
         )
     }
 
+    //////////////////////////explore more ////////////////////////////
+    const fetchExploreProducts = async () => {
+        try {
+            const newArrivalsResponse = await fetch(`${AdminUrl}/api/getexploreproducts?pageNumber=1&pageSize=10`);
+            // const newArrivalsResponse = await fetch(`${AdminUrl}/api/newArrivals/${'null'}`);
+            if (!newArrivalsResponse.ok) {
+                throw new Error(`HTTP error! Status: ${newArrivalsResponse.status}`);
+            }
+            const newArrivalsData = await newArrivalsResponse.json();
+            console.log(newArrivalsData, "newArrivalsData");
+            setExploreProducts(newArrivalsData);
+
+        } catch (error) {
+            console.log(error, "Error fetching new arrivals data");
+        }
+    }
+
+    useEffect(() => {
+        if (!exploreProducts) {
+            fetchExploreProducts()
+        }
+    })
+    useFocusEffect(
+        React.useCallback(() => {
+            // Check if scrollViewRef and its current property exist
+            if (scrollViewRef.current) {
+                scrollViewRef.current.scrollToOffset({ offset: 0, animated: true });
+            }
+        }, [scrollViewRef]) // Include scrollViewRef in dependencies array
+    );
+    //////////////////////////explore more ////////////////////////////
+
     const renderItem = ({ item }) => {
         const discountPercentageSimple = ((item.mrp - item.sellingprice) / item.mrp) * 100;
 
@@ -357,7 +394,7 @@ const ChatsScreen = ({ navigation }) => {
     }
 
     const Cartdetails = () => {
-        return (
+        return (<>
             <View className="m-1 p-2 mt-2 ">
                 <Text className="text-[18px] font-medium mb-2">{t("Price Details")}</Text>
                 <View className="flex-row justify-between items-center  my-1 py-0.5">
@@ -377,10 +414,33 @@ const ChatsScreen = ({ navigation }) => {
                     <Text className="text-[16px] font-medium">{`${c_symbol} ${cartTotalSellingPrice - cartDiscount}`}</Text>
                 </View>
                 <Text className="text-[16px] text-green-600 font-medium tracking-wider ">{` ${t("You will save")} ${c_symbol} ${(cartTotalMRP - cartTotalSellingPrice).toFixed(2)} ${t("on this order")}`}</Text>
+            </View>
+            <View>
 
+                {/* /////More Products section///////////////////////////////// */}
+                <Exploremore />
+                {/* /////More Products section///////////////////////////////// */}
+            </View>
+        </>
+        )
+    }
+
+    const Exploremore = () => {
+        return (
+            <View className="mt-10 border-t border-gray-300">
+                <Text className="text-xl mt-4 mb-2 font-medium italic tracking-wide px-4">Continue Shopping</Text>
+
+                <ProductListing title="" productList={exploreProducts} />
+
+                <TouchableOpacity className="bg-green-700 space-x-1  mb-4 p-2 mx-2 px-4 flex-row items-center" style={{ borderRadius: 5 }} onPress={() => navigation.navigate("Channel", { channelName: "Explore More" })}>
+                    <Text className="text-lg italic tracking-wider  text-white font-medium " >Explore More</Text>
+                    <MaterialCommunityIcons name="arrow-right" size={20} color="white" />
+                </TouchableOpacity>
             </View>
         )
     }
+
+
 
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: Colors.whiteColor }} className="">
@@ -389,94 +449,99 @@ const ChatsScreen = ({ navigation }) => {
             {loading && <FullPageLoader />}
 
             {
-                <View style={{ flex: 1 }}>
-                    {
-                        cartItems?.length > 0 ?
-                            <FlatList
-                                data={cartItems}
-                                keyExtractor={(item) => `${item?.uniquepid}${item?.label}`}
-                                renderItem={renderItem}
-                                // contentContainerStyle={{ paddingHorizontal: Sizes.fixPadding + 1.0 }}
-                                showsVerticalScrollIndicator={false}
-                                ListFooterComponent={Cartdetails()}
-                            />
-
-                            :
-                            <View className="mx-auto mt-4 ">
-                                <Image resizeMode='contain' source={emptyCart} className="w-[300px] h-[300px]" />
-                                <Text className="text-2xl tracking-wider text-center font-semibold mb-4 ">{t("Your cart is empty!")}</Text>
-
-                                <TouchableOpacity
-                                    onPress={debounce(() => {
-                                        navigation.navigate("Home")
-                                    }, 500)}
-                                    className="bg-[#00008b]  px-2 py-1.5 pb-2.5 flex-row items-center justify-center rounded-lg"><Text className="text-xl  text-white">{t("Shop Now")}</Text></TouchableOpacity>
-                            </View>
-                    }
+                <View style={{ flex: 1 }} >
                     {
                         cartItems?.length > 0 &&
-                        <View className="mb-[10px] border border-t-1 border-b-0 border-l-0 border-r-0 border-gray-300">
-                            {/* Your "Move to Checkout" section content goes here */}
-                            <View
-                                className=" mb-1 flex-row items-center justify-between "
-                                style={{
-                                    padding: Sizes.fixPadding,
-                                    backgroundColor: "white", // Customize the background color
-                                    alignItems: 'center',
-                                    borderRadius: 5, // Customize the border radius
-                                }}
+                        <FlatList ref={scrollViewRef}
+                            data={cartItems}
+                            keyExtractor={(item) => `${item?.uniquepid}${item?.label}`}
+                            renderItem={renderItem}
+                            // contentContainerStyle={{ paddingHorizontal: Sizes.fixPadding + 1.0 }}
+                            showsVerticalScrollIndicator={false}
+                            ListFooterComponent={Cartdetails()}
+                        />
 
-                            >
-                                <Text className="text-black font-bold text-base  tracking-wider">{` ${t("Total : ")} ${c_symbol} ${cartTotal}`}</Text>
-                                <TouchableOpacity onPress={debounce(() => {
-                                    if (customerData?.length === 0) {
-                                        navigation.navigate("Login")
-                                    }
-                                    else {
-                                        // navigation.push("Checkout Address")
-                                        setModalVisible(true);
-                                    }
-                                }, 500)}>
-                                    <Text
-                                        style={{
-                                            fontSize: 16, // Customize the font size
-                                        }}
-                                        className=" tracking-wider bg-[#fb9b01] px-6 py-2 rounded-md font-bold"
-                                    >{t("Place Order")}</Text>
-                                </TouchableOpacity>
-                                <Modal
 
-                                    visible={modalVisible}
-                                    transparent={true}
-                                    animationType="fade"
-                                    onRequestClose={() => setModalVisible(false)}
+
+                    }
+                    {
+                        cartItems?.length > 0 ?
+                            <View className="mb-[10px] border border-t-1 border-b-0 border-l-0 border-r-0 border-gray-300">
+                                {/* Your "Move to Checkout" section content goes here */}
+                                <View
+                                    className=" mb-1 flex-row items-center justify-between "
+                                    style={{
+                                        padding: Sizes.fixPadding,
+                                        backgroundColor: "white", // Customize the background color
+                                        alignItems: 'center',
+                                        borderRadius: 5, // Customize the border radius
+                                    }}
+
                                 >
-                                    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
-                                        <View style={{ backgroundColor: 'white', padding: 20, borderRadius: 10, alignItems: 'center' }}>
-                                            <Text className="text-base font-bold text-gray-500 ">Select A Deliver Mode</Text>
-                                            <View className="mt-6 space-y-4" >
+                                    <Text className="text-black font-bold text-base  tracking-wider">{` ${t("Total : ")} ${c_symbol} ${cartTotal}`}</Text>
+                                    <TouchableOpacity onPress={debounce(() => {
+                                        if (customerData?.length === 0) {
+                                            navigation.navigate("Login")
+                                        }
+                                        else {
+                                            // navigation.push("Checkout Address")
+                                            setModalVisible(true);
+                                        }
+                                    }, 500)}>
+                                        <Text
+                                            style={{
+                                                fontSize: 16, // Customize the font size
+                                            }}
+                                            className=" tracking-wider bg-[#fb9b01] px-6 py-2 rounded-md font-bold"
+                                        >{t("Place Order")}</Text>
+                                    </TouchableOpacity>
+                                    <Modal
 
-                                                <TouchableOpacity className="bg-gray-200" onPress={() => handlepickup()} style={{ padding: 10, borderRadius: 5 }}>
-                                                    <Text className="text-center" style={{ fontWeight: 'bold' }}>Pickup From Store</Text>
-                                                </TouchableOpacity>
-                                                <TouchableOpacity className="bg-gray-200"
-                                                    onPress={() => {
-                                                        navigation.push('Checkout Address')
-                                                        setModalVisible(false)
-                                                    }} style={{ padding: 10, borderRadius: 5 }}>
-                                                    <Text className="text-center" style={{ fontWeight: 'bold' }}>Delivery Address</Text>
-                                                </TouchableOpacity>
+                                        visible={modalVisible}
+                                        transparent={true}
+                                        animationType="fade"
+                                        onRequestClose={() => setModalVisible(false)}
+                                    >
+                                        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
+                                            <View style={{ backgroundColor: 'white', padding: 20, borderRadius: 10, alignItems: 'center' }}>
+                                                <Text className="text-base font-bold text-gray-500 ">Select A Deliver Mode</Text>
+                                                <View className="mt-6 space-y-4" >
+
+                                                    <TouchableOpacity className="bg-gray-200" onPress={() => handlepickup()} style={{ padding: 10, borderRadius: 5 }}>
+                                                        <Text className="text-center" style={{ fontWeight: 'bold' }}>Pickup From Store</Text>
+                                                    </TouchableOpacity>
+                                                    <TouchableOpacity className="bg-gray-200"
+                                                        onPress={() => {
+                                                            navigation.push('Checkout Address')
+                                                            setModalVisible(false)
+                                                        }} style={{ padding: 10, borderRadius: 5 }}>
+                                                        <Text className="text-center" style={{ fontWeight: 'bold' }}>Delivery Address</Text>
+                                                    </TouchableOpacity>
+                                                </View>
                                             </View>
                                         </View>
-                                    </View>
-                                </Modal>
-                            </View>
-                        </View>
+                                    </Modal>
+                                </View>
+                            </View> :
+
+
+                            <ScrollView className="" showsVerticalScrollIndicator={false}>
+                                <View className="mx-auto my-2 ">
+                                    <Image resizeMode='contain' source={emptyCart} className="w-[300px] h-[300px]" />
+                                    <Text className="text-xl tracking-wider text-center font-semibold mb-6 ">{t("Your cart is empty!")}</Text>
+                                </View>
+                                <Exploremore />
+
+
+
+                            </ScrollView>
                     }
                 </View>}
         </SafeAreaView>
     )
 }
+
+
 const styles = StyleSheet.create({
     headerWrapStyle: {
         padding: Sizes.fixPadding * 1.0,
