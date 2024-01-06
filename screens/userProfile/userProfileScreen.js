@@ -16,6 +16,8 @@ const UserProfileScreen = ({ navigation, route }) => {
     let numberofcircels = 10;
     const item = route.params.item;
     const vendorInfo = item.vendorInfo
+    // console.log(vendorInfo,"VENDORINFO");
+
     const { currencyCode } = useSelector((store) => store.selectedCurrency)
 
     const [page, setPage] = useState(1);
@@ -23,6 +25,9 @@ const UserProfileScreen = ({ navigation, route }) => {
     const [VendorProductList, setVendorProductList] = useState(null);
     const [vendorTotalProduct, setVendorTotalProduct] = useState(0);
     const [hasMore, setHasMore] = useState(true);
+    const [businesspolicies,setBusinesspolicies] = useState(null)
+
+    console.log(businesspolicies,"businesspolicies");
 
     let imageUrl // Default to the placeholder image URL
 
@@ -75,6 +80,20 @@ const UserProfileScreen = ({ navigation, route }) => {
 
         fetchVendorProducts();
     }, [page]);
+
+    useEffect(() => {
+        const fetchvendorpolicies = async() => {
+            const response = await fetch(`${AdminUrl}/api/getpoliciesofAppbyVendorid?vendor_id=${vendorInfo?.id}`)
+            if (response.ok) {
+             const data = await response.json()
+            //  console.log(data,"DATA COMING FROM USEEFFECT");
+             setBusinesspolicies(data[0].business_policy)
+            }
+        }
+        if (!businesspolicies) {
+            fetchvendorpolicies()
+        }
+    },[businesspolicies])
 
     const loadMoreProducts = () => {
         setPageloading(true);
@@ -166,6 +185,7 @@ const UserProfileScreen = ({ navigation, route }) => {
                                     followers={vendorInfo?.followers}
                                     reviews={35131}
                                     post={vendorTotalProduct}
+                                    
                                 />
                                 <ProfileButtons
                                     id={`${vendorInfo?.id}`}
@@ -174,6 +194,7 @@ const UserProfileScreen = ({ navigation, route }) => {
                                     profileImage={imageUrl || null}
                                     data={vendorInfo || {}}
                                     phone={`${vendorInfo?.country_code} ${vendorInfo?.mobile_number}`}
+                                    policyContent={businesspolicies}
                                 />
                                 <Text className="text-2xl font-medium m-4" >All Products</Text>
                             </View>

@@ -63,6 +63,7 @@ import Channels from './screens/channels/Channels';
 // import categoryProductList from './screens/categoriesItems/CategoryProductList';
 import CategoryProductList from './screens/categoriesItems/CategoryProductList';
 import ProductsList from './screens/services/productsList';
+import Webviewcomponent from './components/Webviewcomponent';
 
 ///////////////////////////////////////FORM SCREENS///////////////////////////////////////
 
@@ -190,6 +191,8 @@ const App = () => {
             <Stack.Screen name="ContactUs" component={contactUsScreen} />
             <Stack.Screen name="SelectLanguage" component={Language} />
             <Stack.Screen name="SelectCountry" component={CountryScreen} />
+            <Stack.Screen name="WebviewComponent" component={Webviewcomponent} />
+
 
             {/* //////////////////////////////////////CHECKOUT////////////////////////////////////////// */}
             <Stack.Screen name="My Orders" component={MyOrdersScreen} />

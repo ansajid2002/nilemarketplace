@@ -352,9 +352,13 @@ const ProductDetailScreen = ({ navigation, route }) => {
                     <Text className="  text-gray-600 mb-2 font-bold">Category : </Text>
                     <Text className="font-medium text-base mb-2" >{singleData?.category}</Text>
                 </View>
-                <View className="flex-row items-center  mb-3">
+                <View className="flex-row items-center">
                     <Text className=" text-gray-600 mb-2 font-bold">Subcategory : </Text>
                     <Text className="font-medium text-base mb-2" >{singleData?.subcategory}</Text>
+                </View>
+                <View className="flex-row items-center  mb-3 italic">
+                    <Text className=" text-gray-600 mb-2 font-bold">Product location : </Text>
+                    <Text className="font-medium text-base mb-2" >{singleData?.product_ship_from}</Text>
                 </View>
                 {/* <Text className="text-base">Category : </Text></Text> */}
 
@@ -578,6 +582,8 @@ const ProductDetailScreen = ({ navigation, route }) => {
             isvariant,
             category,
             subcategory,
+            product_ship_from,
+            estimate_delivery_by
         } = singleData;
 
         const discountPercentageSimple = ((mrp - sellingprice) / mrp) * 100;
@@ -776,7 +782,7 @@ const ProductDetailScreen = ({ navigation, route }) => {
                         </View>
                     ) : isvariant === 'Simple' ? (
                         // Display non-variant details
-                        priceSection(discountPercentageSimple, mrp, sellingprice, c_symbol)
+                        priceSection(discountPercentageSimple, mrp, sellingprice, c_symbol,estimate_delivery_by,product_ship_from)
                     ) : (
                         // Display skeleton for Simple variant structure
                         // You can add your skeleton loading UI here
@@ -789,14 +795,14 @@ const ProductDetailScreen = ({ navigation, route }) => {
     }
 }
 
-const priceSection = (discountPercentageSimple, mrp, sellingprice, c_symbol) => {
+const priceSection = (discountPercentageSimple, mrp, sellingprice, c_symbol,estimate_delivery_by,product_ship_from) => {
     return <>
         <View>
 
             <View className={`flex-row ${discountPercentageSimple > 50 && 'bg-green-100/60  py-2 mx-2 mb-2'}    rounded-md items-end justify-between`}>
                 <View>
                     {
-                        discountPercentageSimple > 50 && <Text className="font-bold ml-3 text-green-700 tracking-wide">
+                        discountPercentageSimple > 50 && <Text className="font-bold ml-3 mr-1 text-green-700 tracking-wide">
                             Special Offer
                             <MaterialCommunityIcons name="offer" className="ml-2" size={14} color={'green'} />
                         </Text>
@@ -824,14 +830,17 @@ const priceSection = (discountPercentageSimple, mrp, sellingprice, c_symbol) => 
                 </View>
                 {
                     discountPercentageSimple !== 0 &&
-                    <View className="flex-row items-center mb-2">
+                    <View className="flex-row items-center mb-1">
                         <Text className="text-gray-500 font-medium text-[14px] line-through">List Price: </Text>
                         <Text style={styles.mrpPrice} className="font-medium text-base line-through text-gray-500">
                             {`$${mrp % 1 === 0 ? Math.trunc(mrp) : mrp}`}
                         </Text>
                     </View>
                 }
-
+                {
+                    !estimate_delivery_by &&
+                <Text className="text-gray-700 font-medium text-[14px] mb-2 italic underline ">{`Expected By : ${estimate_delivery_by} `}</Text>
+                }
             </View>
         </View>
     </>

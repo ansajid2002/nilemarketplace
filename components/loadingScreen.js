@@ -29,6 +29,21 @@ const LoadingScreen = ({ navigation }) => {
             setLscreen(data)
         } catch (error) {
             console.error('Error:', error);
+        } finally {
+            const onboarding = await AsyncStorage.getItem('onboarding');
+            const customerDataAsync = await AsyncStorage.getItem('customerData');
+            setTimeout(() => {
+                if (customerDataAsync) {
+                    navigation.replace("Home")
+                } else {
+                    if (onboarding === 1) {
+                        navigation.replace('Login');
+                    } else {
+                        navigation.replace('Onboarding');
+                    }
+                }
+            }, 2000)
+
         }
     }
 
@@ -51,23 +66,11 @@ const LoadingScreen = ({ navigation }) => {
 
             // Check if 'loggedid' and 'customerData' exist in AsyncStorage
             const customerDataAsync = await AsyncStorage.getItem('customerData');
-            const onboarding = await AsyncStorage.getItem('onboarding');
-
+            
             const a = JSON.parse(customerDataAsync)
-
+            
             // Navigate to the appropriate screen based on AsyncStorage data
-            setTimeout(() => {
-                if (customerDataAsync) {
-                    dispatch(updateCustomerData(a))
-                    navigation.replace("Home")
-                } else {
-                    if (onboarding === 1) {
-                        navigation.replace('Login');
-                    } else {
-                        navigation.replace('Onboarding');
-                    }
-                }
-            }, 2000)
+            dispatch(updateCustomerData(a))
 
         }
 
@@ -83,8 +86,7 @@ const LoadingScreen = ({ navigation }) => {
                     style={{ height: 600, width: 350}}
                 /> : 
            
-                <Image source={require('../assets/images/mainlogovertical.png')}   style={{ height: 600, width: 350}} />
-
+                <></>
             
             }
 

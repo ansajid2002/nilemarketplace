@@ -15,8 +15,8 @@ import { emptyOrder } from "../../store/slices/myordersSlice";
 import { emptyWishlist } from "../../store/slices/wishlistSlice";
 import FullPageLoader from "../../components/FullPageLoader";
 import avatarPlaceholder from '../../assets/avatarplaceholder.png'
-import RNRestart from 'react-native-restart';
-import { NativeModules } from "react-native";
+import Webviewcomponent from "../../components/Webviewcomponent";
+
 
 
 const AccountScreen = ({ navigation }) => {
@@ -145,7 +145,7 @@ const AccountScreen = ({ navigation }) => {
 
                                 } catch (error) {
                                     console.error('Error clearing AsyncStorage:', error);
-                                } 
+                                }
                                 finally {
                                     setLogoutLoader(false)
                                 }
@@ -269,6 +269,7 @@ const AccountScreen = ({ navigation }) => {
                     option: 'Contact us',
                 })}
                 {divider()}
+                
             </>
         )
     }
@@ -276,96 +277,45 @@ const AccountScreen = ({ navigation }) => {
     function accountOptionsSort({ icon, option, navigateTo }) {
         if (option === "Become a Seller") {
             return (
-                <TouchableOpacity className=""
-                    activeOpacity={0.9}
-                    onPress={debounce(async () => {
-                        setLoading(true);
-                        try {
-                            const externalURL = 'https://admin.nilegmp.com/seller'; // Replace with your URL
-                            const supported = await Linking.canOpenURL(externalURL);
-                            if (supported) {
-                                await Linking.openURL(externalURL);
-                            } else {
-                                console.log("Can't handle URL: " + externalURL);
-                            }
-                        } catch (error) {
-                            console.error('Error opening URL:', error);
-                        }
-                        setLoading(false);
-                    }, 500)}
-                    style={{ flexDirection: 'row', alignItems: 'center', padding: Sizes.fixPadding * 2.0 }}
-                >
+               
+                <TouchableOpacity 
+                 style={{ flexDirection: 'row', alignItems: 'center', padding: Sizes.fixPadding * 2.0 }}
+                  onPress={() =>navigation.navigate("WebviewComponent",{externalUri:'https://admin.nilegmp.com/seller'})}>
                     {icon}
                     <View className="flex-row ">
                         <Text className="" style={{ marginLeft: Sizes.fixPadding, ...Fonts.blackColor14SemiBold }}>
                             {t(`${option}`)}
                         </Text>
                     </View>
-
                 </TouchableOpacity>
             )
         }
         else if (option === "About us") {
             return (
-                <TouchableOpacity
-                    activeOpacity={0.9}
-                    className=""
-                    onPress={debounce(async () => {
-                        setLoading(true);
-                        try {
-                            const externalURL = 'https://stg.nilegmp.com/company/about-us'; // Replace with your URL
-                            const supported = await Linking.canOpenURL(externalURL);
-                            if (supported) {
-                                await Linking.openURL(externalURL);
-                            } else {
-                                console.log("Can't handle URL: " + externalURL);
-                            }
-                        } catch (error) {
-                            console.error('Error opening URL:', error);
-                        }
-                        setLoading(false);
-                    }, 500)}
-                    style={{ flexDirection: 'row', alignItems: 'center', padding: Sizes.fixPadding * 2.0 }}
-                >
+                
+                <TouchableOpacity 
+                 style={{ flexDirection: 'row', alignItems: 'center', padding: Sizes.fixPadding * 2.0 }}
+                  onPress={() =>navigation.navigate("WebviewComponent",{externalUri:'https://stg.nilegmp.com/company/about-us'})}>
                     {icon}
                     <View className="flex-row ">
                         <Text className="" style={{ marginLeft: Sizes.fixPadding, ...Fonts.blackColor14SemiBold }}>
                             {t(`${option}`)}
                         </Text>
                     </View>
-
                 </TouchableOpacity>
             )
         }
         else if (option === "Contact us") {
             return (
-                <TouchableOpacity
-                    className=""
-                    activeOpacity={0.9}
-                    onPress={debounce(async () => {
-                        setLoading(true);
-                        try {
-                            const externalURL = 'https://stg.nilegmp.com/company/contact-us'; // Replace with your URL
-                            const supported = await Linking.canOpenURL(externalURL);
-                            if (supported) {
-                                await Linking.openURL(externalURL);
-                            } else {
-                                console.log("Can't handle URL: " + externalURL);
-                            }
-                        } catch (error) {
-                            console.error('Error opening URL:', error);
-                        }
-                        setLoading(false);
-                    }, 500)}
-                    style={{ flexDirection: 'row', alignItems: 'center', padding: Sizes.fixPadding * 2.0 }}
-                >
+                <TouchableOpacity 
+                 style={{ flexDirection: 'row', alignItems: 'center', padding: Sizes.fixPadding * 2.0 }}
+                  onPress={() =>navigation.navigate("WebviewComponent",{externalUri:'https://stg.nilegmp.com/company/contact-us'})}>
                     {icon}
                     <View className="flex-row ">
                         <Text className="" style={{ marginLeft: Sizes.fixPadding, ...Fonts.blackColor14SemiBold }}>
                             {t(`${option}`)}
                         </Text>
                     </View>
-
                 </TouchableOpacity>
             )
         }

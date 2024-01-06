@@ -10,18 +10,14 @@ const ImageCarousel = () => {
     const [activeSlide, setActiveSlide] = useState(0);
     const [banners, setBanners] = useState([]);
     const scrollX = useRef(new Animated.Value(0)).current;
-
-    // const blurhash = 'L6PZfSi_.AyE_3t7t7R**0o#DgR4';
-
-    // Create an Animated.Value to control the dot scaling animation
     const dotScale = new Animated.Value(1);
 
     useEffect(() => {
         const fetchBanners = () => {
             // Replace 'backendBannersUrl' with the actual endpoint to fetch banners
-            const backendBannersUrl = `${AdminUrl}/api/getBannersMobile`;
-
-            axios.get(backendBannersUrl)
+            if (width < 600 ) {
+                const backendBannersUrl = `${AdminUrl}/api/getBannersMobile`;
+                axios.get(backendBannersUrl)
                 .then((response) => {
                     // Filter banners with non-empty 'banner_url' before updating the state
                     const filteredBanners = response.data.filter(item => item.mobilebanner_url);
@@ -30,6 +26,22 @@ const ImageCarousel = () => {
                 .catch((error) => {
                     console.error('Failed to fetch banners:', error);
                 });
+            }
+            else {
+                const backendBannersUrl = `${AdminUrl}/api/getBanners`;
+                axios.get(backendBannersUrl)
+                .then((response) => {
+                    // Filter banners with non-empty 'banner_url' before updating the state
+                    const filteredBanners = response.data.filter(item => item.banner_url);
+                    setBanners(filteredBanners);
+                })
+                .catch((error) => {
+                    console.error('Failed to fetch banners:', error);
+                });
+
+            }
+
+            
         };
 
         // Fetch banners from the backend when the component mounts
@@ -83,6 +95,21 @@ const ImageCarousel = () => {
         )(event);
     };
 
+    const renderImage = (item, windowWidth) => {
+        const imageUrl = windowWidth < 600
+            ? `${AdminUrl}/uploads/MobileBanners/${item.mobilebanner_url}`
+            : `${AdminUrl}/uploads/Banners/${item.banner_url}`;
+        return (
+            <Image
+                source={{ uri: imageUrl }}
+                style={{ width: windowWidth, height: width < 600 ? 200 : 250 }}
+                // placeholder={blurhash}
+                transition={1000}
+                contentFit='cover'
+            />
+        );
+    };
+
     return (
         <View>
             <FlatList
@@ -92,15 +119,7 @@ const ImageCarousel = () => {
                 onScroll={handleOnScroll}
                 showsHorizontalScrollIndicator={false}
                 keyExtractor={(item) => item.id.toString()} // Make sure to use a string for key
-                renderItem={({ item, index }) => (
-                    <Image
-                        source={{ uri: `${AdminUrl}/uploads/MobileBanners/${item.mobilebanner_url}` }}
-                        style={{ width, height: 200 }}
-                        // placeholder={blurhash}
-                        transition={1000}
-                        contentFit='cover'
-                    />
-                )}
+                renderItem={({ item, index }) => renderImage(item,width)}
                 onMomentumScrollEnd={(event) => {
                     const slideWidth = event.nativeEvent.layoutMeasurement.width;
                     const slideIndex = event.nativeEvent.contentOffset.x / slideWidth;
@@ -111,19 +130,7 @@ const ImageCarousel = () => {
 
 
             <View >
-                {/* {banners.map((_, index) => (
-                    <Animated.View
-                        key={index}
-                        style={{
-                            width: 8,
-                            height: 8,
-                            backgroundColor: index === activeSlide ? '#00008b' : 'gray',
-                            margin: 5,
-                            borderRadius: 4,
-                            transform: [{ scale: index === activeSlide ? dotScale : 1 }], // Apply scaling to the active dot
-                        }}
-                    />
-                ))} */}
+              
                 <Pagination data={banners || []} scrollX={scrollX} index={1} />
             </View>
 
