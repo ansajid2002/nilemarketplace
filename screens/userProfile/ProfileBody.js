@@ -69,8 +69,7 @@ export const ProfileBody = ({
     );
 };
 
-export const ProfileButtons = ({ phone, data, id ,policyContent}) => {
-    console.log(policyContent,"policyContentsdasdaefded");
+export const ProfileButtons = ({ phone, data, id }) => {
     const navigation = useNavigation();
     const { customerData } = useSelector((store) => store.userData)
 
@@ -123,41 +122,7 @@ export const ProfileButtons = ({ phone, data, id ,policyContent}) => {
                     </View>
                 </TouchableOpacity>
 
-                <Modal
-                    animationType="slide" // Change the animation type if needed
-                    transparent={true}
-                    visible={modalVisible}
-                    onRequestClose={closeModal}
-                >
-                    {/* Contents of your modal */}
-                    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: "#00000098" }}>
-                        <View
-                            className="bg-white w-[300px] p-3"
-                            style={{
-                                padding: 8,
-                                borderRadius: 10,
-                                // alignItems: 'center',
-                                shadowColor: '#000',
-                                shadowOffset: {
-                                    width: 0,
-                                    height: 2,
-                                },
-                                shadowOpacity: 0.25,
-                                shadowRadius: 4,
-                                elevation: 5,
-                            }}
-                        >
-                        <View className="flex-row items-center justify-between mt-1 mb-4">
-
-                            <Text className="text-lg font-medium">Business Policy</Text>
-                            <TouchableOpacity onPress={closeModal} className=" ">
-                                <MaterialIcons name="close" size={22} color="black" />
-                            </TouchableOpacity>
-                        </View>
-                            {policyContent && <Text>{policyContent}</Text>}
-                        </View>
-                    </View>
-                </Modal>
+                
             </View>
             <TouchableOpacity
                 style={{ width: '42%' }}
@@ -203,3 +168,39 @@ export const ProfileButtons = ({ phone, data, id ,policyContent}) => {
     </>
     );
 };
+
+
+{/* <Modal
+                    animationType="slide" // Change the animation type if needed
+                    transparent={true}
+                    visible={modalVisible}
+                    onRequestClose={closeModal}
+                >
+                    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: "#00000098" }}>
+                        <View
+                            className="bg-white w-[300px] p-3"
+                            style={{
+                                padding: 8,
+                                borderRadius: 10,
+                                // alignItems: 'center',
+                                shadowColor: '#000',
+                                shadowOffset: {
+                                    width: 0,
+                                    height: 2,
+                                },
+                                shadowOpacity: 0.25,
+                                shadowRadius: 4,
+                                elevation: 5,
+                            }}
+                        >
+                        <View className="flex-row items-center justify-between mt-1 mb-4">
+
+                            <Text className="text-lg font-medium">Business Policy</Text>
+                            <TouchableOpacity onPress={closeModal} className=" ">
+                                <MaterialIcons name="close" size={22} color="black" />
+                            </TouchableOpacity>
+                        </View>
+                            {policyContent && <Text>{policyContent}</Text>}
+                        </View>
+                    </View>
+                </Modal> */}

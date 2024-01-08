@@ -69,7 +69,7 @@ const ServicesList = ({ navigation }) => {
         renderItem={renderitem}
         keyExtractor={item => item.category_id}
         ListHeaderComponent={
-          <HeaderBar title={'Services'} goback={true} navigation={navigation} searchEnable={true} />
+          <HeaderBar title={t('Services')} goback={true} navigation={navigation} searchEnable={true} />
         } // Use the renderHeader function as the header
         stickyHeaderIndices={[0]}
       />

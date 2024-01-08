@@ -64,7 +64,7 @@ const HomeSlideItem = ({ item }) => {
                     <Text style={{ marginBottom: Sizes.fixPadding, ...Fonts.blackColor16SemiBold }}>
                         {t('Browse Categories')}
                     </Text>
-                    <Text onPress={debounce(() => navigation.navigate("Pick Interest"), 500)}>Pick interest</Text>
+                    <Text onPress={debounce(() => navigation.navigate("Pick Interest"), 500)}>{t("Pick interest")}</Text>
                     <Text style={{ marginBottom: Sizes.fixPadding, ...Fonts.blackColor16SemiBold }} onPress={debounce(() => navigation.push('productsList'), 500)}>{t('View All')}</Text>
                 </View>
 

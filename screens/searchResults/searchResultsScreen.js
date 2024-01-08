@@ -74,7 +74,7 @@ const SearchResultsScreen = ({ navigation, route }) => {
             {
                 VendorProductList ? 
             <>
-            <Text className="text-xl text-gray-600 font-medium mx-4 my-2">{`${totalProducts} Products Found`}</Text>
+            <Text className="text-xl text-gray-600 font-medium mx-4 my-2">{`${totalProducts} ${t("Products Found")} `}</Text>
             <FlatList
                 data={VendorProductList}
                 keyExtractor={(item) => `${item.uniquepid}`}
@@ -94,7 +94,7 @@ const SearchResultsScreen = ({ navigation, route }) => {
                         {
                             ( !hasMore && VendorProductList.length!==0) &&
                                     <View className="flex-row items-center justify-center">
-                                        <Text className="text-xl my-10 text-gray-300 font-bold">No More Products!</Text>
+                                        <Text className="text-xl my-10 text-gray-300 font-bold">{t("No More Products!")}</Text>
                                     </View>
                                 }
                         {

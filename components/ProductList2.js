@@ -39,6 +39,7 @@ const ProductItem = ({ item }) => {
     const { customerData } = useSelector((store) => store.userData);
     const customerId = customerData[0]?.customer_id;
     const dispatch = useDispatch();
+    const {t} = useTranslation()
 
     useEffect(() => {
         // Check if there's an item in wishlistItems with a matching uniquepid
@@ -193,7 +194,7 @@ const ProductItem = ({ item }) => {
                         {item?.ad_title}
                     </Text>
                     <View className="gap-1 flex-wrap" style={{ flexDirection: 'row', alignItems: 'center', paddingTop: 8 }}>
-                        <Text className="text-lg font-medium text-gray-700">Price:</Text>
+                        <Text className="text-base font-medium text-gray-700">{t("Price: ")}</Text>
                         {discountPercentageSimple && discountPercentageSimple > 0 && (
                             <Text className="text-base" style={{ color: 'green' }}>-{discountPercentageSimple?.toFixed(2)}%</Text>
                         )}
@@ -207,7 +208,7 @@ const ProductItem = ({ item }) => {
                     {
                         discountPercentageSimple !== 0 &&
                         <View className="flex-row items-center">
-                            <Text className="text-gray-500 font-medium">List Price: </Text>
+                            <Text className="text-gray-500 font-medium">{t("List Price: ")}</Text>
                             <Text style={styles.mrpPrice} className="font-medium">
                                 {`$${item.mrp % 1 === 0 ? Math.trunc(item.mrp) : item.mrp}`}
                             </Text>

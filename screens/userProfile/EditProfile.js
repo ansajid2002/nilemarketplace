@@ -285,8 +285,8 @@ const EditProfile = ({ route, navigation }) => {
                         animationType="slide">
                         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0, 0, 0, 0.7)' }}>
                             <View style={{ backgroundColor: 'white', padding: 15, borderRadius: 10, width: 250 }} >
-                                <Text className="font-bold text-xl text-gray-700">Enter OTP</Text>
-                                <Text className="text-sm text-gray-700 mb-5">A verification code has been sent to your email.</Text>
+                                <Text className="font-bold text-xl text-gray-700">{t("Enter OTP")}</Text>
+                                <Text className="text-sm text-gray-700 mb-5">{t("A verification code has been sent to your email.")}</Text>
                                 <TextInput
                                     placeholder="Enter OTP"
                                     value={otpInput}
@@ -295,10 +295,10 @@ const EditProfile = ({ route, navigation }) => {
                                 />
                                 <View className="flex-row w-1/2">
                                     <TouchableOpacity onPress={debounce(() => setOTPModalVisible(false), 500)} className="flex-row justify-center w-full">
-                                        <Text style={{ fontSize: 16, color: '#313131' }}>Cancel</Text>
+                                        <Text style={{ fontSize: 16, color: '#313131' }}>{t("Cancel")}</Text>
                                     </TouchableOpacity>
                                     <TouchableOpacity onPress={debounce(() => handleOTPVerification(), 500)} className="flex-row justify-center w-full">
-                                        <Text style={{ fontSize: 16, color: '#3493D9' }}>Verify</Text>
+                                        <Text style={{ fontSize: 16, color: '#3493D9' }}>{t("Verify")}</Text>
                                     </TouchableOpacity>
                                 </View>
                             </View>

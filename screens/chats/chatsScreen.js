@@ -272,7 +272,7 @@ console.log(typeof(ct),ct,"ct");
             }
             const newArrivalsData = await newArrivalsResponse.json();
             console.log(newArrivalsData, "newArrivalsData");
-            setExploreProducts(newArrivalsData);
+            setExploreProducts(newArrivalsData?.AllProducts);
 
         } catch (error) {
             console.log(error, "Error fetching new arrivals data");
@@ -349,7 +349,7 @@ console.log(typeof(ct),ct,"ct");
 
 
                         <View className="gap-1" style={{ flexDirection: 'row', alignItems: 'center', paddingTop: 4 }}>
-                            <Text className="text-base font-medium text-gray-700">Price:</Text>
+                            <Text className="text-base font-medium text-gray-700">{t("Price: ")}</Text>
                             {discountPercentageSimple && discountPercentageSimple > 0 && (
                                 <Text className="text-base" style={{ color: 'green' }}>-{discountPercentageSimple?.toFixed(2)}%</Text>
                             )}
@@ -363,7 +363,7 @@ console.log(typeof(ct),ct,"ct");
                         {
                             discountPercentageSimple !== 0 &&
                             <View className="flex-row items-center">
-                                <Text className="text-gray-500 font-medium">List Price: </Text>
+                                <Text className="text-gray-500 font-medium">{t("List Price: ")}</Text>
                                 <Text style={styles.mrpPrice} className="font-medium">
                                     {`$${item.mrp % 1 === 0 ? Math.trunc(item.mrp) : item.mrp}`}
                                 </Text>
@@ -428,12 +428,12 @@ console.log(typeof(ct),ct,"ct");
     const Exploremore = () => {
         return (
             <View className="mt-10 border-t border-gray-300">
-                <Text className="text-xl mt-4 mb-2 font-medium italic tracking-wide px-4">Continue Shopping</Text>
+                <Text className="text-xl mt-4 mb-2 font-medium italic tracking-wide px-4">{t("Continue Shopping")}</Text>
 
                 <ProductListing title="" productList={exploreProducts} />
 
                 <TouchableOpacity className="bg-green-700 space-x-1  mb-4 p-2 mx-2 px-4 flex-row items-center" style={{ borderRadius: 5 }} onPress={() => navigation.navigate("Channel", { channelName: "Explore More" })}>
-                    <Text className="text-lg italic tracking-wider  text-white font-medium " >Explore More</Text>
+                    <Text className="text-lg italic tracking-wider  text-white font-medium " >{t("Explore More")}</Text>
                     <MaterialCommunityIcons name="arrow-right" size={20} color="white" />
                 </TouchableOpacity>
             </View>
@@ -504,18 +504,18 @@ console.log(typeof(ct),ct,"ct");
                                     >
                                         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
                                             <View style={{ backgroundColor: 'white', padding: 20, borderRadius: 10, alignItems: 'center' }}>
-                                                <Text className="text-base font-bold text-gray-500 ">Select A Deliver Mode</Text>
+                                                <Text className="text-base font-bold text-gray-500 ">{t("Select A Deliver Mode")}</Text>
                                                 <View className="mt-6 space-y-4" >
 
                                                     <TouchableOpacity className="bg-gray-200" onPress={() => handlepickup()} style={{ padding: 10, borderRadius: 5 }}>
-                                                        <Text className="text-center" style={{ fontWeight: 'bold' }}>Pickup From Store</Text>
+                                                        <Text className="text-center" style={{ fontWeight: 'bold' }}>{t("Pickup From Store")}</Text>
                                                     </TouchableOpacity>
                                                     <TouchableOpacity className="bg-gray-200"
                                                         onPress={() => {
                                                             navigation.push('Checkout Address')
                                                             setModalVisible(false)
                                                         }} style={{ padding: 10, borderRadius: 5 }}>
-                                                        <Text className="text-center" style={{ fontWeight: 'bold' }}>Delivery Address</Text>
+                                                        <Text className="text-center" style={{ fontWeight: 'bold' }}>{t("Delivery Address")}</Text>
                                                     </TouchableOpacity>
                                                 </View>
                                             </View>

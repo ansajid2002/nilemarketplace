@@ -198,7 +198,7 @@ const AccountScreen = ({ navigation }) => {
                 {divider()}
                 {accountOptionsSort({
                     icon: <MaterialIcons name="forward-to-inbox" color={Colors.blackColor} size={20} />,
-                    option: 'Inbox',
+                    option: `${t("Inbox")}`,
                     navigateTo: customerData?.length > 0 ? 'Inbox' : "Login"
                 })}
                 {divider()}
@@ -210,7 +210,7 @@ const AccountScreen = ({ navigation }) => {
                 {divider()}
                 {accountOptionsSort({
                     icon: <MaterialIcons name="store" size={20} color={Colors.blackColor} />,
-                    option: 'Become a Seller'
+                    option: `${t("Become a Seller")}`
                 })}
 
 
@@ -230,7 +230,7 @@ const AccountScreen = ({ navigation }) => {
                 {customerData?.length > 0 && (
                     accountOptionsSort({
                         icon: <MaterialIcons name="check-circle" size={20} color={Colors.blackColor} />,
-                        option: 'My Interests',
+                        option: `${t("My Interests")}`,
                         navigateTo: 'Pick Interest'
                     })
                 )}

@@ -11,6 +11,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import FullPageLoader from '../../components/FullPageLoader';
 import { SafeAreaView } from 'react-native';
 import { CategoryPlaceholder, PickinterestPlaceholder } from '../../components/Skeleton';
+import { useTranslation } from 'react-i18next';
 
 const Pickinterest = ({ navigation }) => {
   const dispatch = useDispatch()
@@ -18,6 +19,7 @@ const Pickinterest = ({ navigation }) => {
   const [interest, setInterest] = useState([]);
   const [selectedInterests, setSelectedInterests] = useState([]);
   const [loading, setLoading] = useState(false);
+  const {t} = useTranslation()
 
   const minSelectedInterests = 5;
 
@@ -139,7 +141,7 @@ const Pickinterest = ({ navigation }) => {
         loading ? <FullPageLoader /> :             <SafeAreaView style={{ flex: 1, backgroundColor: Colors.whiteColor }} className="">
 
 
-          <HeaderBar goback={true} navigation={navigation} title={`Pick Interest (${selectedInterests?.length}/${minSelectedInterests})`} />
+          <HeaderBar goback={true} navigation={navigation} title={`${t("Pick Interest")} (${selectedInterests?.length}/${minSelectedInterests})`} />
           <ScrollView style={styles.scrollView} className="mt-2">
             
             {

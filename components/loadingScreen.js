@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, SafeAreaView, Dimensions } from "react-native";
+import { View, Text, SafeAreaView, Dimensions, ActivityIndicator } from "react-native";
 import * as Font from "expo-font";
 import { Colors } from "../constants/styles";
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -7,25 +7,23 @@ import { useDispatch, useSelector } from "react-redux";
 import { updateCustomerData } from "../store/slices/customerData";
 import { AdminUrl } from "../constant";
 import { Image } from "react-native";
+import { useTranslation } from "react-i18next";
 
 
 const LoadingScreen = ({ navigation }) => {
 
     const dispatch = useDispatch()
     const [lscreen, setLscreen] = useState(null)
-    const windowWidth = Dimensions.get('window').width;
-    const imageWidth = windowWidth * 0.8; // 80% of the window's width
+    const {t} = useTranslation()
 
 
     const fetchLoadingscreen = async () => {
         try {
-            console.log("CALLING lfunc");
             const response = await fetch(`${AdminUrl}/api/getApploadingscreen`);
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }
             const data = await response.json();
-            console.log(data, 'data');
             setLscreen(data)
         } catch (error) {
             console.error('Error:', error);
@@ -36,7 +34,7 @@ const LoadingScreen = ({ navigation }) => {
                 if (customerDataAsync) {
                     navigation.replace("Home")
                 } else {
-                    if (onboarding === 1) {
+                    if (onboarding === "1") {
                         navigation.replace('Login');
                     } else {
                         navigation.replace('Onboarding');
@@ -86,7 +84,10 @@ const LoadingScreen = ({ navigation }) => {
                     style={{ height: 600, width: 350}}
                 /> : 
            
-                <></>
+                <View>
+                <ActivityIndicator size="large" color="#00008b" />
+                </View>
+
             
             }
 

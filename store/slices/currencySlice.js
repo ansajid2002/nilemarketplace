@@ -26,8 +26,8 @@ const initialState = {
           { name: "US Dollar", code: "USD",symbol:"$" }
         ],
         languages: [ 
-          { name: "English", langcode: "en" },
           { name: "Somali", langcode: "so" },   
+          { name: "English", langcode: "en" },
           { name: "Arabic", langcode: "ar" }
         ] 
       },

@@ -83,18 +83,16 @@ const Channels = ({ navigation, route }) => {
         setPageloading(true);
         try {
             const response = await fetch(`${AdminUrl}/api/getexploreproducts?pageNumber=${page}&pageSize=10`);
-            // const response = await fetch(`${AdminUrl}/api/newArrivals/${'null'}`);
-
-            // const response = await fetch(`${AdminUrl}/api/recommendedProducts/${customerId}`);
             if (response.ok) {
                 const data = await response.json();
-
-                if (data?.length > 0) {
+                console.log(data,"JSON DATA");
+                if (data.AllProducts?.length > 0) {
+                    console.log(data,"data from explore more");
                     setVendorProductList(prevProducts => {
                         if (prevProducts) {
-                            return [...prevProducts, ...data];
+                            return [...prevProducts, ...data.AllProducts];
                         } else {
-                            return [...data];
+                            return [...data.AllProducts];
                         }
                     });
                     setHasMore(true); // If data is fetched and not an empty array, set hasMore to true
@@ -108,6 +106,7 @@ const Channels = ({ navigation, route }) => {
             console.log(error);
         } finally {
             setPageloading(false);
+            console.log("DNE-=-=-=-=-=-=-=-=--====================");
         }
     };
 
@@ -167,7 +166,7 @@ const Channels = ({ navigation, route }) => {
                                     {
                                         (!hasMore && VendorProductList.length !== 0) &&
                                         <View className="flex-row items-center justify-center">
-                                            <Text className="text-xl my-10 text-gray-300 font-bold">No More Products!</Text>
+                                            <Text className="text-xl my-10 text-gray-300 font-bold">{t("No More Products!")}</Text>
                                         </View>
                                     }
                                     {

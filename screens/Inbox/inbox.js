@@ -2,11 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, TouchableOpacity, Image, SafeAreaView } from 'react-native';
 import { AdminUrl, HeaderBar } from '../../constant';
 import { useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 
 const Inbox = ({ navigation }) => {
     const [conversations, setConversations] = useState(null);
     const [error, setError] = useState('');
     const { customerData } = useSelector((store) => store.userData)
+    const {t} = useTranslation()
+
 
     const customerId = customerData[0]?.customer_id
     // Fetch conversations from the backend
@@ -92,7 +95,7 @@ const Inbox = ({ navigation }) => {
             flex: 1,
             backgroundColor: "white",
         }} >
-            <HeaderBar title={'Inbox'} goback={true} navigation={navigation} searchEnable={false} />
+            <HeaderBar title={t("Inobx")} goback={true} navigation={navigation} searchEnable={false} />
             {
                 conversations == null ? (
                     // Handle the case when conversations is null

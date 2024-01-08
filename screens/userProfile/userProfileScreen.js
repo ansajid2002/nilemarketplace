@@ -7,7 +7,7 @@ import { renderItemOrSkeleton } from '../../components/ProductList2';
 import { useSelector } from 'react-redux';
 import { SafeAreaView } from 'react-native';
 import { ProductSkeleton } from '../../components/Skeleton';
-import { t } from 'i18next';
+import { useTranslation } from 'react-i18next';
 
 
 
@@ -19,6 +19,7 @@ const UserProfileScreen = ({ navigation, route }) => {
     // console.log(vendorInfo,"VENDORINFO");
 
     const { currencyCode } = useSelector((store) => store.selectedCurrency)
+    const {t} = useTranslation()
 
     const [page, setPage] = useState(1);
     const [pageloading, setPageloading] = useState(true);
@@ -27,7 +28,6 @@ const UserProfileScreen = ({ navigation, route }) => {
     const [hasMore, setHasMore] = useState(true);
     const [businesspolicies,setBusinesspolicies] = useState(null)
 
-    console.log(businesspolicies,"businesspolicies");
 
     let imageUrl // Default to the placeholder image URL
 
@@ -81,19 +81,19 @@ const UserProfileScreen = ({ navigation, route }) => {
         fetchVendorProducts();
     }, [page]);
 
-    useEffect(() => {
-        const fetchvendorpolicies = async() => {
-            const response = await fetch(`${AdminUrl}/api/getpoliciesofAppbyVendorid?vendor_id=${vendorInfo?.id}`)
-            if (response.ok) {
-             const data = await response.json()
-            //  console.log(data,"DATA COMING FROM USEEFFECT");
-             setBusinesspolicies(data[0].business_policy)
-            }
-        }
-        if (!businesspolicies) {
-            fetchvendorpolicies()
-        }
-    },[businesspolicies])
+    // useEffect(() => {
+    //     const fetchvendorpolicies = async() => {
+    //         const response = await fetch(`${AdminUrl}/api/getpoliciesofAppbyVendorid?vendor_id=${vendorInfo?.id}`)
+    //         if (response.ok) {
+    //          const data = await response.json()
+    //         //  console.log(data,"DATA COMING FROM USEEFFECT");
+    //          setBusinesspolicies(data[0].business_policy)
+    //         }
+    //     }
+    //     if (!businesspolicies) {
+    //         fetchvendorpolicies()
+    //     }
+    // },[businesspolicies])
 
     const loadMoreProducts = () => {
         setPageloading(true);
@@ -164,7 +164,7 @@ const UserProfileScreen = ({ navigation, route }) => {
                                 {
                                     (!hasMore && VendorProductList.length !== 0) &&
                                     <View className="flex-row items-center justify-center">
-                                        <Text className="text-xl my-10 text-gray-300 font-bold">No More Products!</Text>
+                                        <Text className="text-xl my-10 text-gray-300 font-bold">{t("No More Products!")}</Text>
                                     </View>
                                 }
                                 {
@@ -194,7 +194,7 @@ const UserProfileScreen = ({ navigation, route }) => {
                                     profileImage={imageUrl || null}
                                     data={vendorInfo || {}}
                                     phone={`${vendorInfo?.country_code} ${vendorInfo?.mobile_number}`}
-                                    policyContent={businesspolicies}
+                                    // policyContent={businesspolicies}
                                 />
                                 <Text className="text-2xl font-medium m-4" >All Products</Text>
                             </View>

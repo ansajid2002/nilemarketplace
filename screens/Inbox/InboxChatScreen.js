@@ -4,6 +4,7 @@ import { AdminUrl, HeaderBar } from '../../constant';
 import { useSelector } from 'react-redux';
 import moment from 'moment/moment';
 import { MaterialIcons } from "@expo/vector-icons";
+import { useTranslation } from 'react-i18next';
 
 const InboxChatScreen = ({ route, navigation }) => {
     const vendorData = route.params?.data || null;
@@ -14,6 +15,7 @@ const InboxChatScreen = ({ route, navigation }) => {
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState('');
     const flatListRef = useRef(null);
+    const {t} = useTranslation()
 
 
     // console.log(messages,"messages");

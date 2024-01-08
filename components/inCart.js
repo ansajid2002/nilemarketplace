@@ -29,7 +29,7 @@ const InCart = ({ cartItems, navigation }) => {
                                         : { uri: `${AdminUrl}/uploads/UploadedProductsFromVendors/${product.images?.[0]}` }}
                                 style={styles.productImage} />
                             <Text numberOfLines={1} style={styles.productTitle}>{product.ad_title}</Text>
-                            <Text style={styles.productPrice}>Price: ${product.sellingprice}</Text>
+                            <Text style={styles.productPrice}>{t("Price: ")}${product.sellingprice}</Text>
                         </View>
                     </TouchableOpacity>
                 ))}

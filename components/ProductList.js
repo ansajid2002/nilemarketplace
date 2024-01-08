@@ -24,8 +24,10 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { toggleFavouriteProductslice } from '../store/slices/productSlice';
 import { addItemToWishlist, removeItemFromWishlist } from '../store/slices/wishlistSlice';
 import Animated from 'react-native-reanimated';
+import { t } from 'i18next';
 
 const ProductItem = ({ item }) => {
+    const {t} = useTranslation()
     const navigation = useNavigation();
     const { c_symbol } = useSelector((store) => store.selectedCurrency);
     const discountPercentageSimple = ((item.mrp - item.sellingprice) / item.mrp) * 100;
@@ -193,7 +195,7 @@ const ProductItem = ({ item }) => {
                     </Text>
 
                     <View className="gap-1 flex-wrap" style={{ flexDirection: 'row', alignItems: 'center', paddingTop: 8 }}>
-                        <Text className="text-lg font-medium text-gray-700">Price:</Text>
+                        <Text className="text-base font-medium text-gray-700">{t("Price: ")}</Text>
                         {discountPercentageSimple && discountPercentageSimple > 0 && (
                             <Text className="text-base" style={{ color: 'green' }}>-{discountPercentageSimple?.toFixed(2)}%</Text>
                         )}
@@ -207,7 +209,7 @@ const ProductItem = ({ item }) => {
                     {
                         discountPercentageSimple !== 0 &&
                         <View className="flex-row items-center">
-                            <Text className="text-gray-500 font-medium">List Price: </Text>
+                            <Text className="text-gray-500 font-medium">{t("List Price: ")}</Text>
                             <Text style={styles.mrpPrice} className="font-medium">
                                 {`$${item.mrp % 1 === 0 ? Math.trunc(item.mrp) : item.mrp}`}
                             </Text>

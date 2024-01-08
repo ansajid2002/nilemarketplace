@@ -310,7 +310,7 @@ const HomeScreen = () => {
                     } */}
                     <View>
                         <View className="m-3 flex-row justify-between items-center">
-                            <Text className="font-bold text-lg">Recommended Products</Text>
+                            <Text className="font-bold text-lg">{t("Recommended Products")}</Text>
                             <TouchableOpacity onPress={() => {
                                 navigation.navigate("Channel", { channelName: "Recommended Products" })
                             }}>
@@ -321,7 +321,7 @@ const HomeScreen = () => {
                     </View>
                     <View>
                         <View className="m-3 flex-row justify-between items-center">
-                            <Text className="font-bold text-lg">New Arrivals</Text>
+                            <Text className="font-bold text-lg">{t("New Arrivals")}</Text>
                             <TouchableOpacity onPress={() => {
                                 navigation.navigate("Channel", { channelName:"New Arrivals"})
                             }}>

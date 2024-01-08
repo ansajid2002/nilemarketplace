@@ -24,6 +24,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import search from "../../assets/images/icons/search-interface-symbol.png"
 // import ShareProduct from "../../components/ShareProduct";
 import shareimg from "../../assets/images/icons/share.png"
+import { t } from "i18next";
 // import { AdminUrl } from '../../constant';
 
 
@@ -342,37 +343,37 @@ const ProductDetailScreen = ({ navigation, route }) => {
 
 
                 <View className="flex-row items-center">
-                    <Text className="  text-gray-600 mb-2 font-bold">Condition : </Text>
+                    <Text className="  text-gray-600 mb-2 font-bold">{t("Condition : ")}</Text>
                     {singleData?.condition === "New" &&
-                        <Text className="font-medium text-base mb-2">Used</Text>}
+                        <Text className="font-medium text-base mb-2">{t("Used")}</Text>}
                     {singleData?.condition === "Refurbished" &&
-                        <Text className="font-medium text-base mb-2">Refurbished</Text>}
+                        <Text className="font-medium text-base mb-2">{t("Refurbished")}</Text>}
                 </View>
                 <View className="flex-row items-center">
-                    <Text className="  text-gray-600 mb-2 font-bold">Category : </Text>
+                    <Text className="  text-gray-600 mb-2 font-bold">{t("Category : ")}</Text>
                     <Text className="font-medium text-base mb-2" >{singleData?.category}</Text>
                 </View>
                 <View className="flex-row items-center">
-                    <Text className=" text-gray-600 mb-2 font-bold">Subcategory : </Text>
+                    <Text className=" text-gray-600 mb-2 font-bold">{t("Subcategory : ")}</Text>
                     <Text className="font-medium text-base mb-2" >{singleData?.subcategory}</Text>
                 </View>
                 <View className="flex-row items-center  mb-3 italic">
-                    <Text className=" text-gray-600 mb-2 font-bold">Product location : </Text>
+                    <Text className=" text-gray-600 mb-2 font-bold">{t("Product location : ")}</Text>
                     <Text className="font-medium text-base mb-2" >{singleData?.product_ship_from}</Text>
                 </View>
                 {/* <Text className="text-base">Category : </Text></Text> */}
 
                 {
                     singleData?.additionaldescription && singleData?.additionaldescription.length > 0 ? <View >
-                        <Text className="font-bold text-xl mb-2">Description</Text>
+                        <Text className="font-bold text-xl mb-2">{t("Description")}</Text>
                         <Text className="leading-5">
                             {singleData?.additionaldescription}
                         </Text>
-                    </View> : <Text className="italic">No Description Available</Text>
+                    </View> : <Text className="italic">{t("No Description Available")}</Text>
                 }
                 {
                     singleData?.keyfeatures && <View >
-                        <Text className="font-bold text-xl py-4">Key Features</Text>
+                        <Text className="font-bold text-xl py-4">{t("Key Features")}</Text>
                         <Text>
                             {singleData.keyfeatures}
                         </Text>
@@ -380,9 +381,9 @@ const ProductDetailScreen = ({ navigation, route }) => {
                 }
                 <View>
                     {Object.entries(updatedAttributesSpecification).length > 0 ? (
-                        <Text className="font-bold text-xl py-4">Specifications</Text>
+                        <Text className="font-bold text-xl py-4">{t("Specifications")}</Text>
                     ) : (
-                        <Text className="italic mt-4">No Specifications Available</Text>
+                        <Text className="italic mt-4">{t("No Specifications Available")}</Text>
                     )}
 
                     {Object.entries(updatedAttributesSpecification).map(([key, value]) => (
@@ -782,7 +783,7 @@ const ProductDetailScreen = ({ navigation, route }) => {
                         </View>
                     ) : isvariant === 'Simple' ? (
                         // Display non-variant details
-                        priceSection(discountPercentageSimple, mrp, sellingprice, c_symbol,estimate_delivery_by,product_ship_from)
+                        priceSection(discountPercentageSimple, mrp, sellingprice, c_symbol, estimate_delivery_by, product_ship_from)
                     ) : (
                         // Display skeleton for Simple variant structure
                         // You can add your skeleton loading UI here
@@ -795,7 +796,7 @@ const ProductDetailScreen = ({ navigation, route }) => {
     }
 }
 
-const priceSection = (discountPercentageSimple, mrp, sellingprice, c_symbol,estimate_delivery_by,product_ship_from) => {
+const priceSection = (discountPercentageSimple, mrp, sellingprice, c_symbol, estimate_delivery_by, product_ship_from) => {
     return <>
         <View>
 
@@ -803,7 +804,7 @@ const priceSection = (discountPercentageSimple, mrp, sellingprice, c_symbol,esti
                 <View>
                     {
                         discountPercentageSimple > 50 && <Text className="font-bold ml-3 mr-1 text-green-700 tracking-wide">
-                            Special Offer
+                            {t("Special Offer")}
                             <MaterialCommunityIcons name="offer" className="ml-2" size={14} color={'green'} />
                         </Text>
                     }
@@ -816,7 +817,7 @@ const priceSection = (discountPercentageSimple, mrp, sellingprice, c_symbol,esti
             <View className="mx-4">
 
                 <View className="gap-1 flex-row items-center">
-                    <Text className="text-lg font-medium text-gray-700">Price:</Text>
+                    <Text className="text-lg font-medium text-gray-700">{t("Price:")}</Text>
                     {discountPercentageSimple && discountPercentageSimple > 0 && (
                         <Text className="text-lg" style={{ color: 'green' }}>-{discountPercentageSimple?.toFixed(2)}%</Text>
                     )}
@@ -831,7 +832,7 @@ const priceSection = (discountPercentageSimple, mrp, sellingprice, c_symbol,esti
                 {
                     discountPercentageSimple !== 0 &&
                     <View className="flex-row items-center mb-1">
-                        <Text className="text-gray-500 font-medium text-[14px] line-through">List Price: </Text>
+                        <Text className="text-gray-500 font-medium text-[14px] line-through">{t("List Price: ")}</Text>
                         <Text style={styles.mrpPrice} className="font-medium text-base line-through text-gray-500">
                             {`$${mrp % 1 === 0 ? Math.trunc(mrp) : mrp}`}
                         </Text>
@@ -839,7 +840,9 @@ const priceSection = (discountPercentageSimple, mrp, sellingprice, c_symbol,esti
                 }
                 {
                     !estimate_delivery_by &&
-                <Text className="text-gray-700 font-medium text-[14px] mb-2 italic underline ">{`Expected By : ${estimate_delivery_by} `}</Text>
+                    <Text style={{ color: 'gray', fontWeight: 'bold', fontSize: 14, marginBottom: 2, fontStyle: 'italic', textDecorationLine: 'underline' }}>
+                        {`${t("Expected By:")} ${t(estimate_delivery_by)}`}
+                    </Text>
                 }
             </View>
         </View>
@@ -847,73 +850,8 @@ const priceSection = (discountPercentageSimple, mrp, sellingprice, c_symbol,esti
 }
 
 const styles = StyleSheet.create({
-    headerWrapStyle: {
-        padding: Sizes.fixPadding * 2.0,
-        flexDirection: 'row',
-        alignItems: 'center',
-        backgroundColor: Colors.primaryColor,
-        borderBottomLeftRadius: Sizes.fixPadding + 5.0,
-        borderBottomRightRadius: Sizes.fixPadding + 5.0,
-    },
-    activeDotStyle: {
-        marginHorizontal: Sizes.fixPadding - 7.0,
-        width: 10.0,
-        height: 10.0,
-        borderRadius: 6.0,
-        backgroundColor: Colors.blackColor
-    },
-    inActiveDotStyle: {
-        marginHorizontal: Sizes.fixPadding - 7.0,
-        width: 8.0,
-        height: 8.0,
-        borderRadius: 4.0,
-        backgroundColor: Colors.grayColor
-    },
-    sliderPaginationWrapStyle: {
-        // position: 'absolute',
-        // bottom: 0,
-        // left: 0.0,
-        // right: 0.0,
-
-    },
-    snackBarStyle: {
-        backgroundColor: '#333333',
-        elevation: 0.0,
-        position: 'absolute',
-        bottom: -10.0,
-        left: -10.0,
-        right: -10.0,
-    },
-    similarProductDetailWrapStyle: {
-        position: 'absolute',
-        bottom: 0.0,
-        left: 0.0,
-        right: 0.0,
-        backgroundColor: Colors.whiteColor,
-        borderBottomLeftRadius: Sizes.fixPadding - 5.0,
-        borderBottomRightRadius: Sizes.fixPadding - 5.0,
-        paddingHorizontal: Sizes.fixPadding - 5.0,
-    },
-    similarProductWrapStyle: {
-        backgroundColor: Colors.whiteColor,
-        elevation: 2.0,
-        borderRadius: Sizes.fixPadding - 5.0,
-        width: 120.0, height: 150.0,
-        marginRight: Sizes.fixPadding,
-    },
-    container: {
-        position: "absolute",
-        top: 0,
-        width: Dimensions.get('window').width,
-        height: Dimensions.get('window').height,
-        flex: 1,
-        padding: 24,
-        backgroundColor: 'rgba(0,0,0,0.3)',
-    },
-    contentContainer: {
-        flex: 1,
-        alignItems: 'center',
-    },
+   
+   
 });
 
 export default ProductDetailScreen;

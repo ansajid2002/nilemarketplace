@@ -8,6 +8,7 @@ import { AdminUrl, HeaderBar } from "../../constant";
 
 import ProductListing from "../../components/ProductList";
 import FullPageLoader from "../../components/FullPageLoader";
+import { useTranslation } from "react-i18next";
 
 const FavoriteAdScreen = ({ navigation }) => {
   const dispatch = useDispatch()
@@ -16,6 +17,7 @@ const FavoriteAdScreen = ({ navigation }) => {
   const { wishlistItems } = useSelector((store) => store.wishlist)
 
   const customerId = customerData[0]?.customer_id
+  const {t} = useTranslation()
 
 
   return (
@@ -38,7 +40,7 @@ const FavoriteAdScreen = ({ navigation }) => {
                   />
 
                   <Text style={{ marginTop: Sizes.fixPadding, ...Fonts.grayColor16SemiBold }}>
-                    No items in favorite
+                    {t("No items in favorite")}
                   </Text>
                 </View>
               }
@@ -55,7 +57,7 @@ const FavoriteAdScreen = ({ navigation }) => {
 
   function header() {
     return (
-      <HeaderBar navigation={navigation} goback={true} title={`Wishlist (${wishlistItems?.length || 0})`} />
+      <HeaderBar navigation={navigation} goback={true} title={` ${t("Wishlist")} (${wishlistItems?.length || 0})`} />
     )
   }
 }

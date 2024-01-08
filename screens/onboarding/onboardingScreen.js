@@ -5,6 +5,7 @@ import Carousel, { Pagination } from 'react-native-snap-carousel-v4';
 import { useFocusEffect } from "@react-navigation/native";
 import { debounce } from "lodash";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useTranslation } from "react-i18next";
 
 const { width, height } = Dimensions.get('window');
 
@@ -41,7 +42,7 @@ const OnboardingScreen = ({ navigation }) => {
         backClickCount == 1 ? BackHandler.exitApp() : _spring();
         return true;
     }
-
+const {t} = useTranslation()
     useEffect(() => {
         const checkOnboarding = async () => {
             const onboarding = await AsyncStorage.getItem('onboarding');
@@ -123,7 +124,7 @@ const OnboardingScreen = ({ navigation }) => {
                     ?
                     <View style={[styles.animatedView]}>
                         <Text style={{ ...Fonts.whiteColor12Medium }}>
-                            Press Back Once Again to Exit
+                            {t("Press Back Once Again to Exit")}
                         </Text>
                     </View>
                     :
@@ -143,7 +144,7 @@ const OnboardingScreen = ({ navigation }) => {
                             navigation.push('Home')
                         }, 500)}
                         style={{ ...Fonts.grayColor14SemiBold }}>
-                        Skip
+                        {t("Skip")}
                     </Text>
                     :
                     <Text>
@@ -158,9 +159,7 @@ const OnboardingScreen = ({ navigation }) => {
                                 navigation.push('Home')
                             }, 500)}
                             style={{ ...Fonts.primaryColor14SemiBold }}
-                        >
-                            Login
-                        </Text>
+                        >{t("Login")}</Text>
                         :
                         <Text
                             onPress={debounce(() => {
@@ -175,9 +174,7 @@ const OnboardingScreen = ({ navigation }) => {
                                 }
                             }, 500)}
                             style={{ ...Fonts.primaryColor14SemiBold }}
-                        >
-                            Next
-                        </Text>
+                        >{t("Next")}</Text>
                 }
             </View>
         )

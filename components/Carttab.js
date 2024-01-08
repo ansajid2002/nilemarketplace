@@ -17,11 +17,9 @@ const Carttab = ({ color }) => {
 
   const getCartTotaldata = async () => {
     try {
-        console.log(customerId, "customerId from cartTab");
         if (!customerId) {
             console.log("GUEST MODE");
             const cartTotal = await AsyncStorage.getItem("cartTotal");
-            console.log(cartTotal,"from async storage cartTab");
             if (cartTotal) {
                 dispatch(getCartTotal(Number(cartTotal)))
             }
@@ -44,9 +42,7 @@ const Carttab = ({ color }) => {
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }
             const data = await response.json()
-            console.log(data.total, "cartTotal");
             dispatch(getCartTotal(data.total))
-            console.log(data.total, "Data.totla");
             await AsyncStorage.setItem('cartTotal', JSON.stringify(data.total));
 
         }
@@ -62,14 +58,9 @@ useEffect(() => {
 }, [cartTotal, customerId])
 
 
-
-
-  console.log(typeof cartTotal, 'cart');
-
   // Function to format cartTotal for display
   const formatCartTotal = (total) => {
     const numericTotal = parseInt(total, 10); // Convert to number
-    console.log(typeof numericTotal, 'num');
     if (numericTotal >= 1000) {
       return `${Math.floor(numericTotal / 1000)}k+`;
     } else if (numericTotal >= 100) {

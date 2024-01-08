@@ -16,9 +16,9 @@ const SplashScreen = ({ navigation }) => {
         }, [backAction])
     );
 
-    setTimeout(() => {
-        navigation.push('Onboarding')
-    }, 2000);
+    // setTimeout(() => {
+    //     navigation.push('Onboarding')
+    // }, 2000);
 
     return (
         <SafeAreaView style={{ flex: 1 }}>
