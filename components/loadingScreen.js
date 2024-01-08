@@ -64,11 +64,14 @@ const LoadingScreen = ({ navigation }) => {
 
             // Check if 'loggedid' and 'customerData' exist in AsyncStorage
             const customerDataAsync = await AsyncStorage.getItem('customerData');
+            console.log(customerDataAsync,"customerDataAsync");
             
             const a = JSON.parse(customerDataAsync)
             
             // Navigate to the appropriate screen based on AsyncStorage data
-            dispatch(updateCustomerData(a))
+            if (a !== null) {
+                dispatch(updateCustomerData(a))
+            }
 
         }
 

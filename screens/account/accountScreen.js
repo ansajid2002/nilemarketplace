@@ -32,12 +32,13 @@ const AccountScreen = ({ navigation }) => {
     const wishlistItems = useSelector((state) => state.wishlist.wishlistItems)
     const { family_name = '', given_name = '', city = '', state = '', picture = '', google_id = '' } = customerData?.[0] || {}
     const [profileImage, setImage] = useState('../../assets/avatarplaceholder.png');
-
+console.log(customerData,'customerData');
     useEffect(() => {
         setTimeout(() => {
             setLoading(false)
         }, 500);
     }, [])
+    console.log(customerData,"customerData from account");
 
     useEffect(() => {
 

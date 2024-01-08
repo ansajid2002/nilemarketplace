@@ -373,7 +373,7 @@ const Login = ({ navigation, route }) => {
                                 Hi Welcome Back ! 👋
                             </Text>
                             <TouchableOpacity onPress={debounce(() => {
-                                navigation.navigate("Home")
+                                navigation.replace("Home")
                             }, 500)}>
                                 <MaterialCommunityIcons name="close" size={25} color={"black"} />
                             </TouchableOpacity>
