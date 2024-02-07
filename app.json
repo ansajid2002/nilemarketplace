@@ -1,0 +1,78 @@
+{
+  "expo": {
+    "name": "Nile Global Market-place",
+    "slug": "nile-marketplace",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/mainicon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/images/mainlogovertical.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "plugins": [
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "The app accesses your photos to let you share them with your friends."
+        }
+      ],
+      "expo-apple-authentication",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/images/mainicon.png",
+          "color": "#ffffff",
+          "sounds": [
+            "./assets/ss.mp3"
+          ]
+        }
+      ]
+      
+    ],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "infoPlist": {
+        "UIBackgroundModes": [
+          "remote-notification"
+        ],
+        "NSPhotoLibraryUsageDescription": "Allow $(PRODUCT_NAME) to access your photos",
+        "NSPhotoLibraryAddUsageDescription": "Allow $(PRODUCT_NAME) to save photos"
+      },
+      "bundleIdentifier": "com.ngmp.ios",
+      "buildNumber": "26",
+      "supportsTablet": true,
+      "usesAppleSignIn": true
+    },
+    "android": {
+      "package": "com.ngmp.ios",
+      "versionCode": 6,
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/mainicon.png",
+        "backgroundColor": "#FFFFFF"
+      },
+      "googleServicesFile": "./google-services.json",
+      "permissions": [
+        "android.permission.RECORD_AUDIO",
+        "android.permission.RECEIVE_BOOT_COMPLETED",
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.ACCESS_MEDIA_LOCATION",
+        "android.permission.CAMERA"
+      ]
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "6d967be9-80f6-4c34-8520-e8e53c626f9c"
+      }
+    },
+    "scheme": "nile",
+    "owner": "sajid.ansari"
+  }
+}

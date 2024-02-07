@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "748121696868",
+    "project_id": "nilenotification-3c74f",
+    "storage_bucket": "nilenotification-3c74f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:748121696868:android:18a4bb0cc20a69b6fc0d71",
+        "android_client_info": {
+          "package_name": "com.ngmp.ios"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDGUtCMOHEIMuRODxFTzFMT2OLng2dKFVA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
