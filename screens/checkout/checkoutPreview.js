@@ -49,7 +49,7 @@ const CheckoutPreview = ({ route, navigation }) => {
   const customerEmail = customerData[0]?.email
   const { somalian_district } = useSelector((store) => store.customerAddress)
   const [shippingRate, setShippingrate] = useState(0)
-  const { c_symbol, currencyCode } = useSelector((store) => store.selectedCurrency)
+  const { c_symbol, currencyCode,appLangcode } = useSelector((store) => store.selectedCurrency)
   const { initPaymentSheet, presentPaymentSheet } = useStripe();
   const shippingAddress = route.params
   const { given_name_address = "", family_name_address = "", apt_address = "", subregion_address = "", city_address = "", country_address = "", region_address = "", zip_address = "", phone_address = "" } = shippingAddress || []
@@ -347,7 +347,9 @@ const CheckoutPreview = ({ route, navigation }) => {
           <View className=" flex-1 ml-4 " >
 
             <Text numberOfLines={2} className="text-base font-medium">
-              {item?.ad_title}
+            {appLangcode === "so" ?  
+                    item?.somali_ad_title=== "" ? item?.ad_title : item?.somali_ad_title  :
+                     item?.ad_title}
             </Text>
             <Text className=" font-bold text-gray-500">{`Qty ${item?.added_quantity}`}</Text>
             {

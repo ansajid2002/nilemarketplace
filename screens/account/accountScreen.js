@@ -255,11 +255,14 @@ console.log(appcountry,"dssssssssssssssssdddddddddddddddddddddddddddddddd");
                     navigateTo: 'SelectCountry',
                 })}
                 {divider()}
-                {accountOptionsSort({
+                {
+                    appcountry === "Somalia" &&
+                accountOptionsSort({
                     icon: <MaterialIcons name="public" size={20} color={Colors.blackColor} />,
                     option: `${t("Select Mogadishu District")}`,
                     navigateTo: 'selectMogadishuDistrict',
-                })}
+                })
+                }
                 {divider()}
                 {accountOptionsSort({
                     icon: <MaterialIcons name="language" size={20} color={Colors.blackColor} />,

@@ -20,7 +20,7 @@ const ReviewItemScreen = ({ navigation }) => {
         setModalVisible(!isModalVisible);
     }
 
-
+const {appLangcode} = useSelector((store) => store.selectedCurrency)
     const { adsList } = useSelector((store) => store.adPosting)
 
     const currenciesSymbol = (single) => {
@@ -173,7 +173,9 @@ const ReviewItemScreen = ({ navigation }) => {
                 </Text>
 
                 <Text style={{ marginTop: Sizes.fixPadding - 8.0, marginBottom: Sizes.fixPadding }} className="text-[17px]">
-                    {adsList.ad_title}
+                {appLangcode === "so" ?  
+                    item?.somali_ad_title=== "" ? item?.ad_title : item?.somali_ad_title  :
+                     item?.ad_title}
                 </Text>
                 <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                     <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>

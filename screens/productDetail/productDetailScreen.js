@@ -40,7 +40,7 @@ const ProductDetailScreen = ({ navigation, route }) => {
     const { customerData } = useSelector((store) => store.userData)
     const customerId = customerData[0]?.customer_id
     const { t } = useTranslation()
-    const { c_symbol } = useSelector((store) => store.selectedCurrency)
+    const { c_symbol,appLangcode } = useSelector((store) => store.selectedCurrency)
     const cartItems = useSelector((state) => state.cart.cartItems);
     const wishlistItems = useSelector((state) => state.wishlist.wishlistItems)
 
@@ -127,7 +127,9 @@ const ProductDetailScreen = ({ navigation, route }) => {
         const shareProduct = async () => {
 
             try {
-                const sharedMessage = `Check out this product: ${product.ad_title}\n\nProduct URL: https://stg.nilegmp.com/product-detail?product=${product.prod_slug}&uniqueid=${product.uniquepid}`;
+                const sharedMessage = `Check out this product: ${appLangcode === "so" ?  
+                product?.somali_ad_title=== "" ? product?.ad_title : product?.somali_ad_title  :
+                 product?.ad_title}\n\nProduct URL: https://stg.nilegmp.com/product-detail?product=${product?.prod_slug}&uniqueid=${product.uniquepid}`;
 
                 const result = await Share.share({
                     title: product.adtitle,
@@ -450,7 +452,9 @@ const ProductDetailScreen = ({ navigation, route }) => {
                     singleData?.additionaldescription && singleData?.additionaldescription.length > 0 ? <View >
                         <Text className="font-bold text-xl mb-2">{t("Description")}</Text>
                         <Text className="leading-5">
-                            {singleData?.additionaldescription}
+                        {appLangcode === "so" ?  
+                        singleData?.somali_additionaldescription === "" ? singleData?.additionaldescription : singleData?.somali_additionaldescription  :
+                        singleData?.additionaldescription}
                         </Text>
                     </View> : <Text className="italic">{t("No Description Available")}</Text>
                 }
@@ -693,6 +697,7 @@ const ProductDetailScreen = ({ navigation, route }) => {
         const {
             uniquepid,
             ad_title,
+            somali_ad_title,
             mrp,
             sellingprice,
             isvariant,
@@ -865,7 +870,9 @@ const ProductDetailScreen = ({ navigation, route }) => {
             <View>
 
                 <Text className="mx-3 my-1.5 text-lg">
-                    {ad_title}
+                {appLangcode === "so" ?  
+                somali_ad_title=== "" ? ad_title : somali_ad_title  :
+                 ad_title}
                 </Text>
                 <View className="border border-b-2 pb-2 border-gray-200 border-l-0 border-r-0 border-t-0">
                     {isvariant === 'Variant' ? (
