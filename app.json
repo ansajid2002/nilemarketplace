@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Nile Global Market-place",
+    "name": "Nile Global Market place",
     "slug": "nile-marketplace",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -42,14 +42,14 @@
         "NSPhotoLibraryUsageDescription": "Allow $(PRODUCT_NAME) to access your photos",
         "NSPhotoLibraryAddUsageDescription": "Allow $(PRODUCT_NAME) to save photos"
       },
-      "bundleIdentifier": "com.ngmp.ios",
-      "buildNumber": "26",
+      "bundleIdentifier": "com.ngmp1.ios",
+      "buildNumber": "1",
       "supportsTablet": true,
       "usesAppleSignIn": true
     },
     "android": {
-      "package": "com.ngmp.ios",
-      "versionCode": 6,
+      "package": "com.ngmp1.ios",
+      "versionCode": 1,
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/mainicon.png",
         "backgroundColor": "#FFFFFF"

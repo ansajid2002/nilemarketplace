@@ -147,15 +147,15 @@ const NotificationExpo = () => {
             console.error("Error while fetching cart total:", error);
         }
     };
-    // useEffect(() => {
-    //     if (!langFetched) {
-    //         loadSelectedLang()
-    //     }
-    //     if (!cartTotal && langFetched) {
-    //         fetchCartData()
-    //         getCartTotaldata()
-    //     }
-    // }, [langFetched,customerId])
+    useEffect(() => {
+        if (!langFetched) {
+            loadSelectedLang()
+        }
+        if (!cartTotal && langFetched) {
+            fetchCartData()
+            getCartTotaldata()
+        }
+    }, [langFetched,customerId])
 
     const loadSelectedLang = async () => {
         try {
@@ -164,7 +164,8 @@ const NotificationExpo = () => {
               changeLanguage(storedlangcode)
               dispatch(setAppLang(storedlangcode));
           }
-          const storedCountry = await AsyncStorage.getItem('selectedLangname');            
+          const storedCountry = await AsyncStorage.getItem('selectedLangname');    
+          console.log(storedCountry,"seeee");        
           if (storedCountry !== null) {
             dispatch(setAppLangname(storedCountry));
           }

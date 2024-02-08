@@ -6,8 +6,11 @@ import { useTranslation } from 'react-i18next';
 import { Link } from '@react-navigation/native';
 import { debounce } from 'lodash';
 import { productUrl } from '../constant'
+import { useSelector } from 'react-redux';
 const InCart = ({ cartItems, navigation }) => {
+    console.log(cartItems,"cartItems");
     const { t } = useTranslation()
+    const {appLangcode} = useSelector((store) => store.selectedCurrency)
     return (
         <View style={styles.container}>
             <View className="flex-row justify-between items-center mb-5">
@@ -28,8 +31,10 @@ const InCart = ({ cartItems, navigation }) => {
                                         ? require('../assets/noimage.jpg')
                                         : { uri: `${productUrl}/${product.images?.[0]}` }}
                                 style={styles.productImage} />
-                            <Text numberOfLines={1} style={styles.productTitle}>{product.ad_title}</Text>
-                            <Text style={styles.productPrice}>{t("Price: ")}${product.sellingprice}</Text>
+                            <Text numberOfLines={1} style={styles.productTitle}> {appLangcode === "so" ?  
+                        product?.somali_ad_title=== "" ? product?.ad_title : product?.somali_ad_title  :
+                         product?.ad_title }</Text>
+                            <Text style={styles.productPrice}>{t("Price: ")}${product?.sellingprice}</Text>
                         </View>
                     </TouchableOpacity>
                 ))}

@@ -28,9 +28,12 @@ import { t } from 'i18next';
 import { productUrl } from '../constant'
 
 const ProductItem = ({ item }) => {
+
     const { t } = useTranslation()
     const navigation = useNavigation();
     const { c_symbol } = useSelector((store) => store.selectedCurrency);
+    const {appLangcode} = useSelector((store) => store.selectedCurrency)
+
     const discountPercentageSimple = ((item.mrp - item.sellingprice) / item.mrp) * 100;
     const [reviewData, setReviewData] = useState([]);
     const [averageRating, setRating] = useState(0);
@@ -191,9 +194,11 @@ const ProductItem = ({ item }) => {
                 </View>
                 <View style={{ padding: 1 }} className="py-2">
                     <Text numberOfLines={2} className="font-medium text-[14px] leading-[21px] mt-2">
-                        {item?.condition === "Refurbished" && "(Refurbished) "}
-                        {item?.condition === "Used" && "(Used) "}
-                        {item?.ad_title}
+                        {item?.condition === "Refurbished" && `(${t("Refurbished")})`}
+                        {item?.condition === "Used" && `(${t("Used")})`}
+                        {appLangcode === "so" ?  
+                        item?.somali_ad_title=== "" ? item?.ad_title : item?.somali_ad_title  :
+                         item?.ad_title }
                     </Text>
 
                     <View className=" flex-row gap-1 flex-wrap" style={{ flexDirection: 'row', alignItems: 'center', paddingTop: 8 }}>

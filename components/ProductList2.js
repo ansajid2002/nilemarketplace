@@ -41,6 +41,7 @@ const ProductItem = ({ item }) => {
     const customerId = customerData[0]?.customer_id;
     const dispatch = useDispatch();
     const {t} = useTranslation()
+    const {appLangcode} = useSelector((store) => store.selectedCurrency)
 
     useEffect(() => {
         // Check if there's an item in wishlistItems with a matching uniquepid
@@ -191,9 +192,11 @@ const ProductItem = ({ item }) => {
                 </View>
                 <View style={{ padding: 1 }} className="py-2">
                     <Text numberOfLines={2} className="font-medium text-[14px] leading-[21px] mt-2">
-                        {item?.condition === "Refurbished" && "(Refurbished) "}
-                        {item?.condition === "Used" && "(Used) "}
-                        {item?.ad_title}
+                        {item?.condition === "Refurbished" &&  `(${t("Refurbished")})`}
+                        {item?.condition === "Used" && `(${t("Used")})`}
+                        {appLangcode === "so" ?  
+                        item?.somali_ad_title=== "" ? item?.ad_title : item?.somali_ad_title  :
+                         item?.ad_title }
                     </Text>
 
                     <View className=" flex-row gap-1 flex-wrap" style={{ flexDirection: 'row', alignItems: 'center', paddingTop: 8 }}>

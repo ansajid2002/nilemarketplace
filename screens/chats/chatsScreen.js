@@ -39,6 +39,7 @@ const ChatsScreen = ({ navigation }) => {
     const scrollViewRef = useRef(null);
     const [shippingRate, setShippingrate] = useState(0)
     const [pickupModal, setPickupModal] = useState([])
+    const {appLangcode} = useSelector((store) => store.selectedCurrency)
 
 
 
@@ -70,12 +71,14 @@ const ChatsScreen = ({ navigation }) => {
                 const data = await response.json();
                 if (type === 'cart') {
                     setLoading(false)
-                    Alert.alert("Product Removed", `${item.ad_title} Removed from Cart`)
+                    Alert.alert("Product Removed", `$ Removed from Cart`)
 
                 }
                 else if (type === 'wishlist') {
                     setLoading(false)
-                    Alert.alert("Added to Wishlist", `${item.ad_title} Added to wishlist✅`)
+                    Alert.alert("Added to Wishlist", `${appLangcode === "so" ?  
+                    item?.somali_ad_title=== "" ? item?.ad_title : item?.somali_ad_title  :
+                     item?.ad_title} Added to wishlist✅`)
                 }
                 dispatch(decrementCartTotalremove(item.added_quantity))
                 dispatch(removeItem(item));
@@ -416,7 +419,9 @@ const ChatsScreen = ({ navigation }) => {
                     <View className="ml-4 " style={{ width: secondViewWidth }}>
 
                         <Text numberOfLines={2} className="text-base font-medium">
-                            {item?.ad_title}
+                        {appLangcode === "so" ?  
+                    item?.somali_ad_title=== "" ? item?.ad_title : item?.somali_ad_title  :
+                     item?.ad_title}
                         </Text>
                         {
                             item.label && <Text className="text-[14px] text-gray-500 ">{item.label.split("/").join(" / ")}</Text>
@@ -519,13 +524,15 @@ const ChatsScreen = ({ navigation }) => {
                     <View className="w-[60%] ">
 
                         <Text numberOfLines={2} className="text-base font-medium">
-                            {item?.ad_title}
+                        {appLangcode === "so" ?  
+                    item?.somali_ad_title=== "" ? item?.ad_title : item?.somali_ad_title  :
+                     item?.ad_title}
                         </Text>
                         {
-                            item.label && <Text className="text-[14px] text-gray-500 ">{item.label.split("/").join(" / ")}</Text>
+                            item?.label && <Text className="text-[14px] text-gray-500 ">{item?.label.split("/").join(" / ")}</Text>
                         }
                         {
-                            item.quantity &&
+                            item?.quantity &&
 
                             <Text className="text-green-600 italic text-base font-medium mt-1">{`Only ${item?.quantity} left in stock`}</Text>
                         }

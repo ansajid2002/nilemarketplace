@@ -124,6 +124,8 @@ const HomeScreen = () => {
 
     }, [productCatData]);
 
+
+
     const playSound = async () => {
         try {
             const soundObject = new Audio.Sound();
