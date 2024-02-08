@@ -20,7 +20,7 @@ const CategoryProductList = ({ route, navigation }) => {
     const [currenctCategory, setCurrentCategory] = useState(''); // Flag to track initial index set
     const [sortValue, setsortValue] = useState(''); // Flag to track initial index set
     const [refreshing, setRefreshing] = useState(false);
-    const {t} = useTranslation()
+    const { t } = useTranslation()
 
     const [routes, setRoutes] = useState([]);
 

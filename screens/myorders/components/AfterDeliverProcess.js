@@ -66,10 +66,9 @@ const AfterDeliverProcess = ({ status = "Return", uniqueid, callBACKBuySimilar, 
                 navigation.navigate('Returns', orderData);
             } else {
                 // Navigate to the Cancel screen
-                navigation.navigate('CancelOrder', orderData);
+                // navigation.navigate('CancelOrder', orderData);
             }
         }
-
     };
 
     return (
@@ -79,7 +78,7 @@ const AfterDeliverProcess = ({ status = "Return", uniqueid, callBACKBuySimilar, 
                     <Text className="mr-2 uppercase tracking-widest text-center">
                         {
                             orderData?.return_order ?
-                                orderData?.order_status : status === 'Delivered' || status === 'Picked' ? 'Return' : 'Cancel'
+                                orderData?.order_status : status === 'Delivered' || status === 'Picked' ? 'Return' : ''
                         }
                     </Text>
                 </View>

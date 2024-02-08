@@ -1,5 +1,5 @@
-import React, {ActivityIndicator, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { SafeAreaView, TextInput,StatusBar, View, Text, ScrollView, Image, StyleSheet, Dimensions, TouchableOpacity, Button, KeyboardAvoidingView, Platform, Alert } from 'react-native';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { SafeAreaView, TextInput, ActivityIndicator, StatusBar, View, Text, ScrollView, Image, StyleSheet, Dimensions, TouchableOpacity, Alert } from 'react-native';
 import { Colors } from '../../constants/styles';
 import { AdminUrl, HeaderBar, productUrl } from '../../constant';
 import { FontAwesome, AntDesign, Entypo } from '@expo/vector-icons';
@@ -8,8 +8,6 @@ import { BottomSheetBackdrop, BottomSheetModal, BottomSheetModalProvider } from 
 
 import * as ImageManipulator from 'expo-image-manipulator';
 import * as ImagePicker from 'expo-image-picker';
-
-import * as FileSystem from 'expo-file-system';
 
 const Returns = ({ navigation, route }) => {
     const orderData = route.params
@@ -271,7 +269,7 @@ const Returns = ({ navigation, route }) => {
                     <View style={{ backgroundColor: '#D1D5DB', padding: 16, borderRadius: 9999 }}>
                         <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#4B5563', textAlign: 'center' }}>
                             {
-                                laoder ? <ActivityIndicator color='black' /> : 'Conifrm return'
+                                laoder ? <ActivityIndicator color='black' /> : 'Confirm return'
                             }
                         </Text>
                     </View>
