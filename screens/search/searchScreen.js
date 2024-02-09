@@ -201,14 +201,18 @@ const SearchScreen = ({ navigation }) => {
         const renderitem = ({ item }) => {
             return (
                 <TouchableOpacity onPress={debounce(() => handlesubcategoriesdata(item.category_id, item.category_name), 500)}
-                    className={`py-2 ${selectedcategory === item.category_name ? "border-[#ff7701] border-l-4 bg-white" : "border-b border-orange-300"}`}>
-                    <View className=" items-center">
+                    className={` ${selectedcategory === item.category_name ? "border-[#ff7701] border-l-4 bg-white" : "border-b border-orange-300"}`}>
+                    <View style={{ position: 'relative', alignItems: 'center' }}>
                         <Image
                             source={{ uri: `${AdminUrl}/uploads/CatgeoryImages/${item.category_image_url}` }}
-                            style={{ width: 80.0, height: 70.0, resizeMode: 'cover' }}
-                            className=""
+                            style={{ width: 100, height: 100, resizeMode: 'cover' }}
                         />
-                        <Text className="text-[11px] px-2 pt-2 pb-1  text-[#1b1b52] text-center font-medium">{t(`${item.category_name}`)}</Text>
+                        {selectedcategory !== item.category_name && (
+                            <View style={{ ...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(0, 0, 0, 0.4)' }} />
+                        )}
+                        <Text className={`  ${selectedcategory === item.category_name ? "text-gray-200" : "text-white"} font-bold text-center`} style={{ position: 'absolute', top: '50%', fontSize: 13 }}>
+                            {t(`${item.category_name}`)}
+                        </Text>
                     </View>
                 </TouchableOpacity>
             );
@@ -216,7 +220,7 @@ const SearchScreen = ({ navigation }) => {
 
         return (<>
             <View className="flex-row flex-1">
-                <View className="w-[25%]  bg-[#ffc363]/50 mr-2 ">
+                <View className="w-[25%]  bg-black/30 mr-2 ">
                     {
                         productCatData ?
                             <FlatList showsVerticalScrollIndicator={false}
@@ -229,7 +233,7 @@ const SearchScreen = ({ navigation }) => {
                                         <View className=" items-center">
                                             <Image
                                                 source={require('../../assets/images/allproducts.png')}
-                                                style={{ width: 50.0, height: 50.0, resizeMode: 'contain' }}
+                                                style={{ width: 60.0, height: 60.0, resizeMode: 'cover' }}
                                                 className=""
                                             />
                                             <Text className="text-[12px] px-2 pt-2 pb-1 text-[#1b1b52]" >{t('Featured')}</Text>
@@ -267,7 +271,7 @@ const SearchScreen = ({ navigation }) => {
                                                         <View className="w-[70px] h-[70px] rounded-full border border-gray-300">
                                                             <Image
                                                                 source={{ uri: `${AdminUrl}/uploads/SubcategoryImages/${subcategory_image_url}` }}
-                                                                style={{ resizeMode: 'contain' }}
+                                                                style={{ resizeMode: 'cover' }}
                                                                 className=" w-full h-full rounded-full"
                                                             />
 
