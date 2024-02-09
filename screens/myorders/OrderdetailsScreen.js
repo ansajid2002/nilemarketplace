@@ -1,5 +1,5 @@
-import {ScrollView, View, Text, TouchableOpacity, Dimensions } from 'react-native'
-import React, { useCallback, useMemo, useRef, useState } from 'react'
+import { ScrollView, View, Text, TouchableOpacity, Dimensions, ActivityIndicator, TextInput, KeyboardAvoidingView, Platform } from 'react-native'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { Image } from 'react-native';
 import { AdminUrl, HeaderBar } from '../../constant';
@@ -17,6 +17,38 @@ import { BottomSheetBackdrop, BottomSheetModal, BottomSheetModalProvider } from 
 import { StyleSheet } from 'react-native';
 import ProductListing from '../../components/ProductList';
 import { ProductSkeleton } from '../../components/Skeleton';
+import { RadioButton } from 'react-native-paper';
+import axios from 'axios';
+
+const OrderStatusMessage = ({ orderData }) => {
+  const currentDate = new Date();
+  const tentativeDeliveryDate = new Date(orderData?.tentative_delivery_date);
+
+  // Check if tentative delivery date has passed
+  const isTentativeDeliveryDatePassed = tentativeDeliveryDate < currentDate;
+
+  const createdDate = new Date(orderData?.created_at);
+  const timeDifference = currentDate - createdDate;
+  const daysDifference = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+
+  let statusMessage = '';
+
+  if (orderData?.order_status === 'Ordered' && daysDifference >= 5) {
+    statusMessage = "Item has been ordered but the status has not changed for a while. Please contact the seller.";
+  } else if (orderData?.order_status === 'Ordered' && daysDifference === 1) {
+    statusMessage = "Item was just ordered.";
+  } else if (isTentativeDeliveryDatePassed) {
+    statusMessage = "Tentative delivery date has passed.";
+  } else {
+    statusMessage = `Your item is ${orderData?.order_status}.`;
+  }
+
+  return (
+    <Text className="text-xl">{statusMessage}</Text>
+  );
+};
+
+
 
 const OrderdetailsScreen = ({ route, navigation }) => {
   const orderData = route.params
@@ -33,12 +65,14 @@ const OrderdetailsScreen = ({ route, navigation }) => {
 
   const [containerStyles, setContainerStyles] = useState({});
   const [similarproducts, setSimilar] = useState(null);
+  const [type, setType] = useState('');
+  const [loader, setLoader] = useState(false);
 
   // ref
   const bottomSheetModalRef = useRef(null);
 
   // variables
-  const snapPoints = useMemo(() => ["70%", "70%"], []);
+  const snapPoints = useMemo(() => ["70%", "90%"], []);
 
 
   const handleSheetChanges = useCallback((index) => {
@@ -51,6 +85,7 @@ const OrderdetailsScreen = ({ route, navigation }) => {
 
   const buynow = (prod) => {
     setSimilar(prod)
+    setType('product')
     bottomSheetModalRef.current?.present();
   }
 
@@ -60,13 +95,204 @@ const OrderdetailsScreen = ({ route, navigation }) => {
     []
   );
 
+  let message = '';
+
+  if (orderData?.ispickup) {
+    if (orderData?.order_status === 'Picked') {
+      message = orderData?.order_status;
+    } else {
+      message = 'Pickup before or on ' + formattedDate;
+    }
+  } else {
+    if (orderData?.tentative_delivery_date && orderData?.order_status !== 'Delivered') {
+      let deliveryMessage = '';
+      if (!['Delivered', 'Picked', 'Returned', 'Refunded', 'Exchanged', 'Cancelled'].includes(orderData?.order_status)) {
+        if (orderData?.order_status !== 'Ordered') {
+          if (orderData?.order_status !== 'Shipped') {
+            deliveryMessage = 'Arriving on ' + formattedDate;
+          } else {
+            deliveryMessage = orderData?.order_status;
+          }
+        } else {
+          deliveryMessage = orderData?.order_status;
+        }
+        message = `${deliveryMessage} - Tentative delivery date: ${orderData?.tentative_delivery_date}`;
+      }
+    }
+  }
+
+
+  const screenWidth = Dimensions.get('window').width;
+  const imageWidth = screenWidth * 0.2;
+  const contentWidth = screenWidth * 0.8;
+
+  const CustomRadioButton = ({ value, selected, onSelect }) => {
+    return (
+      <TouchableOpacity onPress={() => onSelect(value)}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', paddingVertical: 5 }}>
+          <View
+            style={{
+              width: 20,
+              height: 20,
+              borderRadius: 10,
+              borderWidth: 2,
+              borderColor: selected ? 'blue' : 'black',
+              backgroundColor: selected ? 'blue' : 'transparent',
+              marginRight: 10,
+            }}
+          />
+          <Text>{value}</Text>
+        </View>
+      </TouchableOpacity>
+    );
+  };
+
+  const RequestOptions = () => {
+    const [selectedOption, setSelectedOption] = useState(null);
+    const [requestText, setRequestText] = useState('');
+    const [loader, setLoader] = useState(false);
+    const [arrived_Data_Text, setArrivedData_text] = useState(null)
+
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(`${AdminUrl}/api/itemsNotReceivedByOrderId/${orderData?.order_id}`);
+        // console.log(); // Log the data to the console
+        setArrivedData_text(response.data);
+
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    useEffect(() => {
+      fetchData();
+    }, []);
+
+    const handleOptionChange = (value) => {
+      setSelectedOption(value);
+    };
+
+    const handleRequest = async () => {
+      try {
+        if (!selectedOption) return;
+        if (requestText?.length === 0) return;
+
+        const { vendor_id, customer_id, product_uniqueid, order_id } = orderData;
+
+        setLoader(true);
+
+        // Prepare the current date and time
+        const currentDateTime = new Date().toISOString();
+
+        // Prepare the data object to send to the backend
+        const requestData = {
+          vendor_id,
+          customer_id,
+          order_id,
+          product_uniqueid,
+          selected_option: selectedOption,
+          request_text: requestText,
+          created_at_request: currentDateTime, // Add the current date and time
+        };
+
+        // Send the request to the backend endpoint
+        const response = await axios.post(`${AdminUrl}/api/handleRequestforArrived`, requestData);
+
+        // Check if the response is successful
+        if (response.status === 200) {
+          setRequestText('')
+          setSelectedOption(null)
+          // Show a success message using an alert
+          alert('Request submitted successfully. The vendor has been notified.');
+          fetchData()
+        }
+      } catch (error) {
+        console.error('Error handling request:', error);
+      } finally {
+        setLoader(false);
+      }
+    };
+
+    return (
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'} // Adjust behavior for iOS and Android
+      >
+        <View className="px-4 py-4 space-y-5">
+          <Text className="mb-4 text-xl font-semibold">Select what you'd like to request</Text>
+
+          <CustomRadioButton value="I'd still like the item" selected={selectedOption === "I'd still like the item"} onSelect={handleOptionChange} />
+          <CustomRadioButton value="I'd like a refund" selected={selectedOption === "I'd like a refund"} onSelect={handleOptionChange} />
+
+          {/* Render TextInput when a radio button is selected */}
+          {selectedOption && (
+            <TextInput
+              value={requestText}
+              onChangeText={setRequestText}
+              placeholder="Enter your request..."
+              multiline={true}
+              numberOfLines={6}
+              style={{
+                backgroundColor: '#E5E7EB',
+                paddingHorizontal: 16,
+                paddingVertical: 12,
+                marginTop: 8,
+                borderColor: '#D1D5DB',
+                borderWidth: 2,
+                borderRadius: 8,
+                textAlignVertical: 'top', // This will align the text at the top
+                paddingTop: 16 // This will add padding at the top to push the text downwards
+              }}
+            />
+          )}
+
+          <TouchableOpacity style={{ marginTop: 10 }} onPress={handleRequest}>
+            <View style={{ backgroundColor: '#D1D5DB', padding: 16, borderRadius: 9999 }}>
+              <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#4B5563', textAlign: 'center' }}>
+                {loader ? <ActivityIndicator color='black' /> : 'Send Request'}
+              </Text>
+            </View>
+          </TouchableOpacity>
+        </View>
+
+        <View className="px-4 py-4">
+          {arrived_Data_Text && arrived_Data_Text.map(item => (
+            <View key={item.id}>
+              <View style={{ marginLeft: 16 }}>
+                {JSON.parse(item.request_text)?.map((text, index) => (
+                  <View className="space-y-1 py-2">
+                    {index === 0 && <Text style={{ fontWeight: 'bold' }} className="text-lg text-gray-500 mb-2">Request Text</Text>}
+                    <Text key={index}>{text?.text} <Text className="text-xs italic text-gray-400">{moment(text.created_at).format('LLL')}</Text></Text>
+
+                  </View>
+                ))}
+
+                {JSON.parse(item.response_text_from_seller)?.map((text, index) => (
+                  <View className="space-y-1 py-2">
+                    {index === 0 && <Text style={{ fontWeight: 'bold' }} className="text-lg text-gray-500 mb-2">Seller Reply</Text>}
+                    <Text key={index}>{text?.text} <Text className="text-xs italic text-gray-400">{moment(text.created_at).format('LLL')}</Text></Text>
+
+                  </View>
+                ))}
+
+
+              </View>
+            </View>
+          ))}
+
+        </View>
+
+
+      </KeyboardAvoidingView>
+    );
+  };
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: Colors.whiteColor }} className="">
       <ScrollView className="bg-white">
         <HeaderBar title={'Order Details'} goback={true} navigation={navigation} />
 
-        <View className="border-t border-b border-gray-300 py-4 px-4">
-          <Text className="text-base tracking-wider text-gray-700 font-light">Order ID - {orderData?.orderid}</Text>
+        <View className="border-t border-b border-gray-300 py-2 px-4 space-y-1">
+          <Text className="text-base tracking-wider text-gray-700 font-semibold">Order ID - {orderData?.orderid}</Text>
+          <Text className="text-xs tracking-wider text-gray-500 font-light">Order Date - {moment(orderData?.created_at).format('LLL')}</Text>
         </View>
 
         <View className="flex-row items-center justify-around bg-white p-4">
@@ -83,20 +309,7 @@ const OrderdetailsScreen = ({ route, navigation }) => {
             <Text className="text-sm tracking-wider text-gray-600">Seller: {brand_name || vendorname}</Text>
             <Text className="text-xl tracking-wider py-2 font-semibold">{formatCurrency(orderData?.total_amount)}</Text>
             <Text className="text-sm tracking-widest text-gray-700">
-              {
-                orderData?.ispickup
-                  ? orderData?.order_status === 'Picked'
-                    ? orderData?.order_status
-                    : 'Pickup before or on ' + formattedDate
-                  : (orderData?.tentative_delivery_date &&
-                    orderData?.order_status !== 'Delivered' &&
-                    orderData?.order_status !== 'Picked' &&
-                    orderData?.order_status !== 'Ordered' &&
-                    orderData?.order_status !== 'Shipped')
-                    ? 'Arriving on ' + formattedDate
-                    : orderData?.order_status
-              }
-
+              {message}
             </Text>
           </View>
           <Image className="mr-2"
@@ -106,23 +319,32 @@ const OrderdetailsScreen = ({ route, navigation }) => {
           />
         </View>
 
-        <View className={`border-t-4 border-b-4 p-4 border-gray-200 space-y-1 ${(orderData?.order_status === 'Delivered' || orderData?.order_status === 'Picked') && 'bg-green-700'}`}>
+        <View className={`border-t-4 border-b-4 p-4 border-gray-200 space-y-1 ${(orderData?.order_status === 'Delivered' || orderData?.order_status === 'Returned' || orderData?.order_status === 'Picked') && 'bg-green-700'}`}>
           {
-            orderData?.order_status === 'Delivered' || orderData?.order_status === 'Picked' ?
+            orderData?.order_status === 'Delivered' || orderData?.order_status === 'Returned' || orderData?.order_status === 'Picked' ?
               <>
-                <Text className="text-lg text-green-100 font-semibold tracking-widest">Order {orderData?.order_status} successfully...</Text>
-
-              </> : <>
-                <Text className="text-base font-semibold">
-                  OTP for {orderData?.ispickup ? 'pickup' : 'delivery'}:
-                  <Text className="text-lg font-semibold">{orderData?.ispickup ? orderData?.seller_otp : orderData?.customer_otp}</Text>
-                </Text>
-                <Text>
-                  {orderData?.ispickup
-                    ? 'Tell this PIN to the shop owner to confirm pickup'
-                    : 'Tell this PIN to the delivery agent to get the delivery'}
-                </Text>
+                <Text className="text-lg text-green-100 font-semibold tracking-widest">Order {orderData?.order_status} successfully.</Text>
               </>
+              : orderData?.order_status.startsWith('Retu') ?
+                <>
+                  <Text className="text-base font-semibold">
+                    OTP for return:
+                    <Text className="text-lg font-semibold mr-2"> {orderData?.return_otp}</Text>
+                  </Text>
+                  <Text>Tell this PIN to the delivery agent for the return process.</Text>
+                </>
+                :
+                <>
+                  <Text className="text-base font-semibold">
+                    OTP for {orderData?.ispickup ? 'pickup' : 'delivery'}:
+                    <Text className="text-lg font-semibold mr-2"> {orderData?.ispickup ? orderData?.seller_otp : orderData?.customer_otp}</Text>
+                  </Text>
+                  <Text>
+                    {orderData?.ispickup
+                      ? 'Tell this PIN to the shop owner to confirm pickup'
+                      : 'Tell this PIN to the delivery agent to get the delivery'}
+                  </Text>
+                </>
           }
         </View>
 
@@ -137,6 +359,14 @@ const OrderdetailsScreen = ({ route, navigation }) => {
 
         <Progress displayStatus={`${orderData.order_status}, ${moment(orderData?.created_at).format('ll')}`} orderData={orderData} orderStatus={orderData.order_status} pickup={orderData.ispickup} />
 
+        <View className="px-4 pt-4">
+          <TouchableOpacity onPress={() => {
+            setType('notarrived')
+            bottomSheetModalRef.current?.present();
+          }}>
+            <Text className="text-blue-500 text-base tracking-wide font-semibold">Item hasn't arrived</Text>
+          </TouchableOpacity>
+        </View>
         {/* <View className="flex-row bg-white">
           {orderData.order_status !== 'Returned' && orderData.order_status !== 'Exchanged' && orderData.order_status !== 'Canceled' &&
             <TouchableOpacity className="mx-2 rounded-md w-1/2  mt-2 mb-2 py-2 ">
@@ -221,17 +451,52 @@ const OrderdetailsScreen = ({ route, navigation }) => {
           >
             <ScrollView showsVerticalScrollIndicator={false}>
               {
-                !similarproducts ?
-                  <View className="py-4">
-                    <View className="animate-pulse w-1/2 ml-2 my-3" style={{ height: 15, borderRadius: 5, backgroundColor: '#e0e0e0' }}></View>
-                    <View className="flex-row">
-                      {
-                        [1, 2, 3, 4, , 5, 6].map(item => ProductSkeleton())
-                      }
+                type === 'product' ?
+                  !similarproducts ?
+                    <View className="py-4">
+                      <View className="animate-pulse w-1/2 ml-2 my-3" style={{ height: 15, borderRadius: 5, backgroundColor: '#e0e0e0' }}></View>
+                      <View className="flex-row">
+                        {
+                          [1, 2, 3, 4, , 5, 6].map(item => ProductSkeleton())
+                        }
+                      </View>
                     </View>
-                  </View>
-                  : similarproducts?.length > 0 ?
-                    <ProductListing title={`Similar Products for ${orderData?.product_name}`} productList={similarproducts} /> : <Text>No Similar Products Found</Text>
+                    : similarproducts?.length > 0 ?
+                      <ProductListing title={`Similar Products for ${orderData?.product_name}`} productList={similarproducts} /> : <Text>No Similar Products Found</Text>
+                  : <>
+                    <View className="flex-row justify-center items-center py-2">
+                      <Text className="text-xl font-semibold">Item hasn't arrived</Text>
+                    </View>
+                    <View className="flex-row justify-between h-24 m-4">
+                      {/* Flex container for image */}
+                      <View style={[{ width: imageWidth }]} className="h-24">
+                        <Image className="w-full h-full rounded-md" source={{ uri: `${productUrl}/${orderData?.product_image}` }} resizeMode="cover" />
+                      </View>
+                      {/* Flex container for content */}
+                      <View style={[{ width: contentWidth }]} className="px-4 py-2 gap-y-2">
+                        <Text numberOfLines={2} className="text-base tracking-widest font-semibold text-black">
+                          {orderData?.product_name}
+                        </Text>
+                        <Text className="text-sm tracking-widest text-black">
+                          Order - {orderData?.orderid}
+                        </Text>
+                      </View>
+                    </View>
+
+                    <View className="px-4 space-y-2">
+                      <OrderStatusMessage orderData={orderData} />
+                      <Text className="text-justify leading-5 ">If the item is not found, please consider checking other areas in and around your residence, building, or mailbox vicinity, and also inquire with neighbors. If you're still unable to locate it, you may request assistance from the seller. They will have up to three business days to respond before you can request our intervention.</Text>
+                    </View>
+
+                    <View className="px-4 pt-5">
+                      <Text className="text-lg font-semibold tracking-wide">
+                        Tracking Details
+                      </Text>
+                    </View>
+                    <Progress displayStatus={`${orderData.order_status}, ${moment(orderData?.created_at).format('ll')}`} orderData={orderData} orderStatus={orderData.order_status} pickup={orderData.ispickup} />
+
+                    <RequestOptions />
+                  </>
               }
             </ScrollView>
           </BottomSheetModal>

@@ -1,12 +1,13 @@
-import { View, Text } from 'react-native'
-import React from 'react'
+import { View, Text, SafeAreaView, StatusBar } from 'react-native';
+import React from 'react';
 
 const CancelOrder = () => {
     return (
-        <View>
+        <SafeAreaView style={{ flex: 1 }}>
+            <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
             <Text>CancelOrder</Text>
-        </View>
-    )
-}
+        </SafeAreaView>
+    );
+};
 
-export default CancelOrder
+export default CancelOrder;

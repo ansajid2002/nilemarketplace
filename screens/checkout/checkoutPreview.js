@@ -1,4 +1,4 @@
-import { View, Text,ScrollView } from 'react-native'
+import { View, Text, ScrollView } from 'react-native'
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { FlatList } from 'react-native';
@@ -58,17 +58,7 @@ const CheckoutPreview = ({ route, navigation }) => {
   const date = new Date();
   const order_date = date.toISOString();
 
-  const checkoutData = [
-    {
-      orders: cartItems,
-      shipping_address: shippingAddress,
-      customerData: customerData[0],
-      paymentIntent: [],
-      selectedPaymentMode,
-      checkoutItems,
-      order_date
-    }
-  ]
+
 
   useEffect(() => {
     if (cartItems?.length === 0) {
@@ -124,10 +114,9 @@ const CheckoutPreview = ({ route, navigation }) => {
     }
   };
 
-
   const handlePayment = async (clientSecret) => {
     const { error: paymentSheetError } = await initPaymentSheet({
-      merchantDisplayName: 'Nile Market-Place',
+      merchantDisplayName: 'Nile Global Market-Place',
       paymentIntentClientSecret: clientSecret,
       style: 'alwaysDark',
       paymentMethodTypes: ['card', 'applePay', 'googlePay'], // Include the wallet types you want
@@ -199,7 +188,6 @@ const CheckoutPreview = ({ route, navigation }) => {
 
   const RadioButton = ({ selected }) => (
     <View className="border  rounded-full mr-2">
-
       <View style={{ width: 12, height: 12, borderRadius: 12, margin: 4, borderWidth: 2, borderColor: selected ? 'blue' : 'gray', backgroundColor: selected ? 'blue' : 'gray' }} />
     </View>
   );
@@ -267,6 +255,18 @@ const CheckoutPreview = ({ route, navigation }) => {
   };
 
 
+  const checkoutData = [
+    {
+      orders: cartItems,
+      shipping_address: shippingAddress,
+      customerData: customerData[0],
+      paymentIntent: [],
+      selectedPaymentMode,
+      checkoutItems,
+      order_date,
+      shippingRate
+    }
+  ]
   // Use the function in your component
   useEffect(() => {
     if (somalian_district && cartItems
@@ -275,13 +275,13 @@ const CheckoutPreview = ({ route, navigation }) => {
         .filter(item => !checkoutItems.includes(item.uniquepid)), somalian_district)
         .then(totalShippingCharges => {
           setShippingrate(totalShippingCharges);
+          checkoutData[0].shippingRate = totalShippingCharges
         })
         .catch(error => {
           console.error("Error calculating total shipping charges", error);
         });
     }
   }, [somalian_district, cartItems]);
-
 
   const Cartdetails = () => {
     return (
