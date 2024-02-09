@@ -135,7 +135,7 @@ const AddMoney = ({ navigation }) => {
               <Ionicons name="wallet-outline" size={24} color={'blue'} />
             </View>
             <Text className="mt-2 text-xl tracking-wide font-semibold">{formatCurrency(parseFloat(walletTotal))}</Text>
-            <View className="flex-row space-x-10 py-2 justify-center mt-5">
+            <View className="flex-row space-x-5 py-2 justify-center mt-5 ">
               {
                 navigationOptions.map((item, index) => (
                   <TouchableOpacity key={index} onPress={() => navigation.navigate(item.screen)}>
@@ -208,7 +208,7 @@ const AddMoney = ({ navigation }) => {
                   }}
                   onPress={() => handleAmountSelect(option)}
                 >
-                  <Text>{`${formatCurrency(option)}`}</Text>
+                  <Text>{`${ formatCurrency(option).endsWith('.00') ? formatCurrency(option).slice(0, -3) : formatCurrency(option)}`}</Text>
                 </TouchableOpacity>
               ))}
             </View>

@@ -6,6 +6,7 @@ import { useSelector } from 'react-redux';
 import SearchUsertoSend from './SearchUsertoSend';
 import { t } from 'i18next';
 import { useTranslation } from 'react-i18next';
+import { AntDesign, MaterialIcons } from '@expo/vector-icons';
 
 const SendMoney = () => {
   const navigation = useNavigation();
@@ -45,7 +46,7 @@ const SendMoney = () => {
           showUserList ? <SearchUsertoSend amount={amount} goback={() => setShowUserComponent(false)} /> : <>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
               <TouchableOpacity onPress={() => navigation.goBack()}>
-                <Ionicons name="ios-arrow-back" size={24} color="black" />
+              <MaterialIcons name="arrow-back" size={25}  />
               </TouchableOpacity>
             </View>
             <View style={{ paddingTop: 50, flex: 1 }}>
@@ -76,7 +77,7 @@ const SendMoney = () => {
               <TouchableOpacity
                 onPress={handleSend}
                 style={{
-                  backgroundColor: error.trim() !== '' || amount.trim() === '' ? 'gray' : 'blue',
+                  backgroundColor: error.trim() !== '' || amount.trim() === '' ? 'rgb(220,220,220)' : 'blue',
                   width: 50, // Adjust the width as needed
                   height: 50, // Adjust the height as needed
                   flexDirection: 'row',
@@ -85,7 +86,7 @@ const SendMoney = () => {
                   borderRadius: 5,
                 }}
               >
-                <Ionicons name="md-send" size={24} color="white" />
+                 <MaterialIcons name="send" size={25}  />
               </TouchableOpacity>
             </KeyboardAvoidingView>
           </>

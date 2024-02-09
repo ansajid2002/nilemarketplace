@@ -122,9 +122,9 @@ const TransactionHistory = ({ navigation }) => {
     <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
       <StatusBar barStyle="dark-content" backgroundColor="white" />
       <View className="flex-1">
-        <View className="h-12  m-4 flex-row justify-between items-center">
+        <View className="h-12  m-4 mx-2 flex-row justify-between items-center">
           <TouchableOpacity onPress={handleGoBack} style={styles.goBackButton}>
-            <Ionicons name="ios-arrow-back" size={24} color="black" />
+           <MaterialIcons name="arrow-back" size={25}  />
           </TouchableOpacity>
           <TextInput
             ref={inputRef}

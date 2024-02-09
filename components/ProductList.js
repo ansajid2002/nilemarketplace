@@ -157,12 +157,12 @@ const ProductItem = ({ item }) => {
     return (
         <TouchableComponent onPress={handlePress}>
             <View style={{ padding: 5 }} className="border border-b-0 w-full border-gray-200">
-                <View>
+                <View className="">
                     {loading && (
                         <ActivityIndicator size="large" color="gray" style={styles.loadingIndicator} />
                     )}
                     <Animated.Image
-                        resizeMode="cover"
+                        resizeMode={imageError ? "contain" : "cover"}
                         source={
                             imageError
                                 ? require('../assets/noimage.jpg')
