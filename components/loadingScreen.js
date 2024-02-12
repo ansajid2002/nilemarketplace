@@ -16,7 +16,7 @@ const LoadingScreen = ({ navigation }) => {
     const dispatch = useDispatch()
     const [lscreen, setLscreen] = useState(null)
     const {t} = useTranslation()
-
+console.log("LOADING SCREEN");
 
     const fetchLoadingscreen = async () => {
         try {
@@ -36,7 +36,7 @@ const LoadingScreen = ({ navigation }) => {
                     navigation.replace("Home")
                 } else {
                     if (onboarding === "1") {
-                        navigation.replace('Login');
+                        navigation.replace('Home');
                     } else {
                         navigation.replace('Onboarding');
                     }
@@ -87,7 +87,7 @@ const LoadingScreen = ({ navigation }) => {
                 /> : 
            
                 <View>
-                <ActivityIndicator size="large" color="#00008b" />
+                <ActivityIndicator size="small" color="pink" />
                 </View>
 
             

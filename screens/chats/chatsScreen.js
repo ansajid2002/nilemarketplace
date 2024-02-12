@@ -41,9 +41,6 @@ const ChatsScreen = ({ navigation }) => {
     const [pickupModal, setPickupModal] = useState([])
     const {appLangcode} = useSelector((store) => store.selectedCurrency)
 
-
-
-
     const handleRemove = async (_, item, type) => {
         try {
             setLoading(true)

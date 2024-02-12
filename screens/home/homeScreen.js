@@ -26,7 +26,7 @@ import { AntDesign } from '@expo/vector-icons';
 import { CategoryPlaceholder, ServicesPlaceholder } from "../../components/Skeleton";
 import NoLogin from "../../components/NoLogin";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { getCartTotal } from "../../store/slices/cartSlice";
+import { fetchcart, getCartTotal } from "../../store/slices/cartSlice";
 import { updateCustomerData } from "../../store/slices/customerData";
 import { updateproductsListwishlist } from "../../store/slices/wishlistSlice";
 import { RefreshControl } from "react-native";
@@ -34,8 +34,6 @@ import WalletTab from "../../components/WalletTab";
 import { changeSomaliandistrict } from "../../store/slices/customerSlice";
 import { setAppLang, setAppLangname, setAppcountry } from "../../store/slices/currencySlice";
 import { changeLanguage } from "../../services/i18next";
-import { Audio } from "expo-av";
-
 
 const { width } = Dimensions.get('window');
 const HomeScreen = () => {
@@ -126,26 +124,10 @@ const HomeScreen = () => {
 
 
 
-    const playSound = async () => {
-        try {
-            const soundObject = new Audio.Sound();
-            await soundObject.loadAsync(require('./assets/notifysound.mp3'));
-            await soundObject.playAsync();
-
-            // Clean up resources when the sound finishes playing
-            soundObject && soundObject.setOnPlaybackStatusUpdate(status => {
-                if (status.didJustFinish) {
-                    soundObject.unloadAsync();
-                }
-            });
-        } catch (error) {
-            console.error('Error playing sound', error);
-        }
-    };
-
+  
     const fetchRecommendedProducts = async () => {
 
-        // playSound()
+     
         try {
             const recommendedResponse = await fetch(`${AdminUrl}/api/recommendedProducts/${customerId || 'null'}`);
             // const recommendedResponse = await fetch(`${AdminUrl}/api/recommendedProducts/${'null'}`);
@@ -207,6 +189,42 @@ const HomeScreen = () => {
             console.error('Error:', error);
         }
     };
+    const fetchCartData = async () => {
+
+        try {
+            if (!customerId) {
+                return
+            }
+            else {
+                const urlWithCustomerId = `${AdminUrl}/api/cart?customer_id=${customerId}`;
+                const requestOptions = {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                };
+                // Send the GET request and await the response
+                const response = await fetch(urlWithCustomerId, requestOptions);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                const data = await response.json()
+                console.log(data,"data from expo notification screen and expo");
+                dispatch(fetchcart(data))
+          
+            }
+
+        } catch (error) {
+            // Handle any errors here
+            console.error('Error fetching cart sdata:', error);
+        }
+       
+    }
+    useEffect(() => {
+        console.log("calling cart");
+        fetchCartData()
+    },[customerId])
 
     const getmgdistrict = async () => {
         if (customerId === null || customerId === undefined) {
