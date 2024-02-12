@@ -20,7 +20,7 @@ import { store } from "./store/index"
 import ServicesList from './screens/services/servicesList';
 import Language from './screens/Language/Language';
 import { I18nextProvider, useTranslation } from 'react-i18next';
-import i18n, { changeLanguage } from './services/i18next';
+import i18n from './services/i18next';
 
 ///////////////////////////////////////FORM SCREENS///////////////////////////////////////
 
@@ -56,7 +56,7 @@ import FavoriteAdScreen from './screens/favoriteAd/favoriteAdScreen';
 import Carttab from './components/Carttab';
 import Bottomsearch from './screens/search/Bottomsearch';
 import productDetailScreen from "./screens/productDetail/productDetailScreen";
-import { ActivityIndicator, BackHandler, Text, ToastAndroid } from 'react-native';
+import { BackHandler, Text, ToastAndroid } from 'react-native';
 import Inbox from './screens/Inbox/inbox';
 import InboxChatScreen from './screens/Inbox/InboxChatScreen';
 import Channels from './screens/channels/Channels';
@@ -74,7 +74,6 @@ import AddRaiseTicket from './screens/RaiseTicket/AddRaiseTicket';
 import Mogadishudistrict from './screens/Currency/Mogadishudistrict';
 import Returns from './screens/myorders/Returns';
 import CancelOrder from './screens/myorders/CancelOrder';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 ///////////////////////////////////////FORM SCREENS///////////////////////////////////////
 
@@ -86,8 +85,6 @@ const Tab = createBottomTabNavigator();
 
 const App = () => {
   const [isConnected, setIsConnected] = useState(true);
-  const [isLoading, setIsLoading] = useState(true);
-  const [languageLoaded, setLanguageLoaded] = useState(false);
   const { t } = useTranslation()
   function HomeTabs() {
     return (
@@ -174,30 +171,13 @@ const App = () => {
     };
   }, []);
 
-  const loadSelectedLang = async () => {
-    try {
-      const storedlangcode = await AsyncStorage.getItem('selectedLangcode');
-      if (storedlangcode !== null) {
-          changeLanguage(storedlangcode)
-      }
-    } catch (error) {
-      console.error('Error loading selected country from AsyncStorage:', error);
-    } finally {
-      setLanguageLoaded(true); // Set languageLoaded to true after language is loaded
-      setIsLoading(false); // Set isLoading to false
-    }
-  };
-
-  // useEffect(() => {
-  //   loadSelectedLang();
-  // }, []);
 
 
   const Mainnavigator = () => {
     return (
       <Provider store={store}>
         <NavigationContainer>
-
+        
           <NotificationExpo />
           <Stack.Navigator
             screenOptions={{
@@ -267,8 +247,7 @@ const App = () => {
       </Provider>
     );
   }
-  
- 
+
   return (
     <I18nextProvider i18n={i18n}>
       {isConnected ? (

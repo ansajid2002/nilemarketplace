@@ -66,7 +66,7 @@ const HomeScreen = () => {
         setRefreshing(false);
 
     };
-    console.log(`${AdminUrl}/api/getServicesData`);
+
 
     console.log(customerId, "custttt");
     const getservicesData = async () => {
@@ -210,7 +210,7 @@ const HomeScreen = () => {
                     throw new Error(`HTTP error! Status: ${response.status}`);
                 }
                 const data = await response.json()
-                console.log(data,"data from expo notification screen and expo");
+            
                 dispatch(fetchcart(data))
           
             }
@@ -222,7 +222,7 @@ const HomeScreen = () => {
        
     }
     useEffect(() => {
-        console.log("calling cart");
+        
         fetchCartData()
     },[customerId])
 

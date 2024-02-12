@@ -208,7 +208,7 @@ const SearchScreen = ({ navigation }) => {
                             style={{ width: 100, height: 100, resizeMode: 'cover' }}
                         />
                         {selectedcategory !== item.category_name && (
-                            <View style={{ ...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(0, 0, 0, 0.4)' }} />
+                            <View style={{ ...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(0, 0, 0, 0.3)' }} />
                         )}
                         <Text className={`  ${selectedcategory === item.category_name ? "text-gray-200" : "text-white"} font-bold text-center`} style={{ position: 'absolute', top: '50%', fontSize: 13 }}>
                             {t(`${item.category_name}`)}

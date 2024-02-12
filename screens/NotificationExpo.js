@@ -158,6 +158,7 @@ const NotificationExpo = () => {
         try {
           const storedlangcode = await AsyncStorage.getItem('selectedLangcode');
           if (storedlangcode !== null) {
+              changeLanguage(storedlangcode)
               dispatch(setAppLang(storedlangcode));
           }
           const storedCountry = await AsyncStorage.getItem('selectedLangname');    

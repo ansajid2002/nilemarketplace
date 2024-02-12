@@ -16,7 +16,7 @@ const LoadingScreen = ({ navigation }) => {
     const dispatch = useDispatch()
     const [lscreen, setLscreen] = useState(null)
     const {t} = useTranslation()
-console.log("LOADING SCREEN");
+
 
     const fetchLoadingscreen = async () => {
         try {
@@ -30,17 +30,16 @@ console.log("LOADING SCREEN");
             console.error('Error:', error);
         } finally {
             const onboarding = await AsyncStorage.getItem('onboarding');
-            const customerDataAsync = await AsyncStorage.getItem('customerData');
+            console.log(onboarding,"onboarding");
+
             setTimeout(() => {
-                if (customerDataAsync) {
-                    navigation.replace("Home")
-                } else {
+                
                     if (onboarding === "1") {
                         navigation.replace('Home');
                     } else {
                         navigation.replace('Onboarding');
                     }
-                }
+                
             }, 2000)
 
         }
@@ -87,7 +86,7 @@ console.log("LOADING SCREEN");
                 /> : 
            
                 <View>
-                <ActivityIndicator size="small" color="pink" />
+                <ActivityIndicator size="large" color="#00008b" />
                 </View>
 
             
