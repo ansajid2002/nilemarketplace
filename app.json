@@ -43,12 +43,12 @@
         "NSPhotoLibraryAddUsageDescription": "Allow $(PRODUCT_NAME) to save photos"
       },
       "bundleIdentifier": "com.ngmp1.ios",
-      "buildNumber": "3",
+      "buildNumber": "4",
       "supportsTablet": true,
       "usesAppleSignIn": true
     },
     "android": {
-      "package": "com.ngmp2.ios",
+      "package": "com.ngmp1.ios",
       "versionCode": 3,
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/mainicon.png",

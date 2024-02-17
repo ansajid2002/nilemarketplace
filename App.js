@@ -74,6 +74,8 @@ import AddRaiseTicket from './screens/RaiseTicket/AddRaiseTicket';
 import Mogadishudistrict from './screens/Currency/Mogadishudistrict';
 import Returns from './screens/myorders/Returns';
 import CancelOrder from './screens/myorders/CancelOrder';
+import Address from './screens/checkout/Address';
+import Addaddress from './screens/checkout/Addaddress';
 
 ///////////////////////////////////////FORM SCREENS///////////////////////////////////////
 
@@ -213,7 +215,9 @@ const App = () => {
             <Stack.Screen name="My Orders" component={MyOrdersScreen} />
             <Stack.Screen name="order details" component={OrderdetailsScreen} />
             <Stack.Screen name="Checkout Address" component={Checkoutaddress} />
+            <Stack.Screen name="Address" component={Address} />
             <Stack.Screen name="Checkout Add Address" component={CheckoutAddaddress} />
+            <Stack.Screen name="Add Address" component={Addaddress} />
             <Stack.Screen name="Checkout Payment" component={CheckoutPayment} />
             <Stack.Screen name="Checkout Preview" component={CheckoutPreview} />
             <Stack.Screen name="Order Placed" component={Orderplaced} />

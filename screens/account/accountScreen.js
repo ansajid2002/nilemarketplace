@@ -207,12 +207,12 @@ console.log(appcountry,"dssssssssssssssssdddddddddddddddddddddddddddddddd");
                 {accountOptionsSort({
                     icon: <MaterialIcons name="map" color={Colors.blackColor} size={20} />,
                     option: `${t("Manage Address")}`,
-                    navigateTo: customerData?.length > 0 ? 'Checkout Address' : "Login"
+                    navigateTo: customerData?.length > 0 ? 'Address' : "Login"
                 })}
                 {divider()}
                 {accountOptionsSort({
                     icon: <MaterialIcons name="store" size={20} color={Colors.blackColor} />,
-                    option: `${t("Become a Seller")}`
+                    option: `Become a Seller`
                 })}
 
 

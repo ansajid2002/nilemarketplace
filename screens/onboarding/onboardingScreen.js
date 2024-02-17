@@ -3,9 +3,10 @@ import { BackHandler, SafeAreaView, View, StatusBar, StyleSheet, Image, Dimensio
 import { Colors, Fonts, Sizes, } from "../../constants/styles";
 
 import Onboarding from 'react-native-onboarding-swiper';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const OnboardingScreen = ({ navigation }) => {
-
+    AsyncStorage.setItem('onboarding',"1")
     const Done = ({ ...props }) => (
         <TouchableOpacity
             {...props}

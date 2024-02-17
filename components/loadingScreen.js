@@ -30,7 +30,7 @@ const LoadingScreen = ({ navigation }) => {
             console.error('Error:', error);
         } finally {
             const onboarding = await AsyncStorage.getItem('onboarding');
-            console.log(onboarding,"onboarding");
+            console.log(onboarding,"onboardingscreen newly updated");
 
             setTimeout(() => {
                 
