@@ -84,30 +84,31 @@ const CategoryProductList = ({ route, navigation }) => {
                     scrollEnabled
                     indicatorStyle={{ backgroundColor: 'transparent' }}
                     style={{ backgroundColor: 'white' }}
-                    tabStyle={{ width: 120 }}
+                    tabStyle={{ width: 110 }}
                     renderLabel={({ route }) => (
-                        <View style={{ alignItems: 'center', justifyContent: 'center', height: 100 }}>
+                        <View style={{ alignItems: 'center', justifyContent: 'center', height: 100 }} className="my-2">
                             {loading ? (
                                 <ActivityIndicator size="small" color="blue" />
                             ) : (
                                 <>
                                     {subcategoriesToShow && subcategoriesToShow[parseInt(route.key)] && subcategoriesToShow[parseInt(route.key)].subcategory_name === 'All' ? (
                                         <View
-                                            className={`border ${(isInitialTabFocused && route.key === index.toString()) ? 'border-2 border-black' : 'border-1 border-gray-300'}  rounded-full p-2`}
+                                            className={` overflow-hidden border ${(isInitialTabFocused && route.key === index.toString()) ? 'border-2 border-black' : 'border-1 border-gray-300'}  rounded-full`}
                                         >
                                             <Image
                                                 source={require('../../assets/images/allproducts.png')}
-                                                style={{ resizeMode: 'cover', width: 60, height: 60 }}
+                                                style={{ resizeMode: 'cover', width: 75, height: 75 }}
                                             />
                                         </View>
                                     ) : (
                                         subcategoriesToShow && subcategoriesToShow[parseInt(route.key)] && (
                                             <View
-                                                className={`border ${(isInitialTabFocused && route.key === index.toString()) ? 'border-2 border-black' : 'border-1 border-gray-300'}  rounded-full p-2`}
+                                                className={`border overflow-hidden ${(isInitialTabFocused && route.key === index.toString()) ? 'border-2 border-black' : 'border-1 border-gray-300'}  rounded-full `}
                                             >
                                                 <Image
                                                     source={{ uri: `${AdminUrl}/uploads/SubcategoryImages/${subcategoriesToShow[parseInt(route.key)].subcategory_image_url}` }}
-                                                    style={{ resizeMode: 'contain', width: 60, height: 60 }}
+                                                    
+                                                    style={{ resizeMode: 'cover', width: 80, height: 80 }}
                                                 />
                                             </View>
                                         )
@@ -120,7 +121,7 @@ const CategoryProductList = ({ route, navigation }) => {
                                                 textAlign: 'center',
                                                 marginTop: 5,
                                             }}
-                                            className={`${isInitialTabFocused && route.key === index.toString() ? 'font-bold' : ''}`}
+                                            className={`  ${isInitialTabFocused && route.key === index.toString() ? 'font-bold' : ''}`}
                                             numberOfLines={2}
                                             ellipsizeMode="tail"
 

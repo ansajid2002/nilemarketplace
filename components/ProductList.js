@@ -152,31 +152,24 @@ const ProductItem = ({ item }) => {
     const TouchableComponent = Platform.OS === 'android' ? TouchableNativeFeedback : TouchableOpacity;
 
     const [loading, setLoading] = useState(true);
-    const [imageError, setImageError] = useState(false);
+  
 
     return (
         <TouchableComponent onPress={handlePress}>
             <View style={{ padding: 5 }} className="border border-b-0 w-full border-gray-200">
-                <View>
+                <View className="">
                     {loading && (
                         <ActivityIndicator size="large" color="gray" style={styles.loadingIndicator} />
                     )}
                     <Animated.Image
                         resizeMode="cover"
-                        source={
-                            imageError
-                                ? require('../assets/noimage.jpg')
-                                : { uri: `${productUrl}/${item.images?.[0]}` }
-                        }
-
+                        source={{ uri: `${productUrl}/${item.images?.[0]}` }}
+                        defaultSource={require('../assets/noimage.jpg')}
                         // style={styles.image}
                         className="max-w-full aspect-[0.857]"
                         onLoadStart={() => setLoading(true)}
                         onLoadEnd={() => setLoading(false)}
-                        onError={() => {
-                            setLoading(false);
-                            setImageError(true);
-                        }}
+                        
                     />
                     <TouchableOpacity
                         style={{ position: 'absolute', top: 4, right: 4 }}

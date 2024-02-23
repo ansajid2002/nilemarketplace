@@ -9,6 +9,11 @@ const Progress = ({ orderStatus, pickup, orderData }) => {
             descriptions: [],
         },
         {
+            label: 'Confirmed',
+            displayStatus: 'Confirmed',
+            descriptions: [],
+        },
+        {
             label: 'Shipped',
             displayStatus: 'Shipped',
             descriptions: [],
@@ -36,11 +41,11 @@ const Progress = ({ orderStatus, pickup, orderData }) => {
             displayStatus: 'Return Processed',
             descriptions: [],
         },
-        {
-            label: 'Return Canceled',
-            displayStatus: 'Return Canceled',
-            descriptions: [],
-        },
+        // {
+        //     label: 'Return Canceled',
+        //     displayStatus: 'Return Canceled',
+        //     descriptions: [],
+        // },
         {
             label: 'Returned',
             displayStatus: 'Returned',
@@ -59,7 +64,11 @@ const Progress = ({ orderStatus, pickup, orderData }) => {
             displayStatus: 'Ordered',
             descriptions: [],
         },
-
+        {
+            label: 'Confirmed',
+            displayStatus: 'Confirmed',
+            descriptions: [],
+        },
         {
             label: 'Picked',
             displayStatus: 'Picked',

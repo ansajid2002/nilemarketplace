@@ -43,20 +43,20 @@
         "NSPhotoLibraryAddUsageDescription": "Allow $(PRODUCT_NAME) to save photos"
       },
       "bundleIdentifier": "com.ngmp1.ios",
-      "buildNumber": "1",
+      "buildNumber": "5",
       "supportsTablet": true,
       "usesAppleSignIn": true
     },
     "android": {
       "package": "com.ngmp1.ios",
-      "versionCode": 1,
+      "versionCode": 3,
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/mainicon.png",
         "backgroundColor": "#FFFFFF"
       },
       "googleServicesFile": "./google-services.json",
       "permissions": [
-        "android.permission.RECORD_AUDIO",
+       
         "android.permission.RECEIVE_BOOT_COMPLETED",
         "android.permission.READ_EXTERNAL_STORAGE",
         "android.permission.WRITE_EXTERNAL_STORAGE",

@@ -28,13 +28,12 @@ export const CategorysidebarPlaceholder = () => {
     return (
         <View>
             {/* <ShimmerPlaceHolder className="w-1/2 mb-4 ml-4 h-4 rounded-sm" shimmerColors={['#ffcf87', '#ddd', '#ddd']} /> */}
-            <View className="flex flex-row flex-wrap justify-center gap-2">
+            <View className="flex flex-row flex-wrap justify-center ">
                 {
                     [1, 2, 3, 4, 5, 6, 7, 8].map((item, i) => {
-                        return <View key={i} style={{ padding: 10 }}>
+                        return <View key={i} style={{ padding: 4 }}>
                             {/* Text Placeholder */}
-                            <ShimmerPlaceHolder width={70} height={70} style={{ borderRadius: 10 }} shimmerColors={['#ffcf87', '#ddd', '#ffcf87']} />
-                            <ShimmerPlaceHolder width={60} height={8} style={{ marginTop: 10 }} className="mx-auto rounded-sm" shimmerColors={['#ffcf87', '#ddd', '#ffcf87']} />
+                            <ShimmerPlaceHolder width={90} height={90} style={{ borderRadius: 1 }} shimmerColors={['#ffcf87', '#ddd', '#ffcf87']} />
                         </View>
                     })
                 }

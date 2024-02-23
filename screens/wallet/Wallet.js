@@ -251,7 +251,7 @@ const Wallet = ({ navigation }) => {
                             resizeMode='contain'
                             source={notranscation}
                             style={{ width: 200.0, height: 200, borderRadius: 20.0 }}
-                        />
+                        /> 
                     </View>
                 ) : (
                     <>
@@ -259,8 +259,8 @@ const Wallet = ({ navigation }) => {
                             <View key={category}>
                                 <Text className="p-4 bg-gray-200 font-semibold tracking-wide">{t(`${category}`)}</Text>
                                 {categorizedTransactions[category].map((transaction) => (
-                                    <View key={transaction.transaction_id} style={{ flexDirection: 'row', flexWrap: 'nowrap', marginBottom: 8 }}>
-                                        <View style={{ width: '10%', padding: 10 }}>
+                                    <View key={transaction.transaction_id} style={{ flexDirection: 'row',justifyContent:"space-around", flexWrap: 'nowrap', marginBottom: 8 }}>
+                                        <View style={{ width: '15%', padding: 5 }}>
                                             {transaction.status === 'paid' ? (
                                                 transaction.amount < 0 ? (
                                                     <AntDesign name="arrowdown" size={24} color="red" />
@@ -275,18 +275,18 @@ const Wallet = ({ navigation }) => {
                                         <TouchableOpacity
                                             key={transaction.transaction_id}
                                             onPress={() => openDetailsModal(transaction)}
-                                            style={{ width: '50%', padding: 10 }} // Adjusted width for the center content
+                                            style={{ width: '40%', padding: 5 }} // Adjusted width for the center content
                                         >
                                             <View style={{ flex: 1 }}>
-                                                <Text style={{ fontWeight: 'bold', fontSize: 16, lineHeight: 24 }}>{t(`${transaction.description}`)}</Text>
+                                                <Text style={{ fontWeight: 'bold', fontSize: 14, lineHeight: 24 }}>{t(`${transaction.description}`)}</Text>
                                                 <Text style={{ marginTop: 2, color: '#999' }}>{moment(transaction.datetime).format('LT')}</Text>
                                             </View>
                                         </TouchableOpacity>
 
-                                        <View style={{ alignSelf: 'flex-end', position: "relative", right: 5 }}>
+                                        <View style={{  position: "relative",alignSelf: 'flex-end' }}>
                                             <Text
                                                 style={{
-                                                    fontSize: 16,
+                                                    fontSize: 14,
                                                     fontWeight: 'bold',
                                                     color: transaction.amount < 0 ? 'red' : 'green',
                                                     ...(transaction.status === 'unpaid' ? { color: 'orange' } : {}),
@@ -300,7 +300,7 @@ const Wallet = ({ navigation }) => {
                                                     <Text style={{ color: 'blue', marginTop: 2, textAlign: 'right' }}>{t("Check Paid Status")}</Text>
                                                 </TouchableOpacity>
                                             )}
-                                            <Text style={{ marginTop: 2, color: '#999', fontSize: 16, textAlign: 'right' }}>{t(`Closing Balance: ${formatCurrency(transaction.closing_balance)}`)}
+                                            <Text style={{ marginTop: 2, color: '#999', fontSize: 14, textAlign: 'right' }}>{t(`Closing Balance: ${formatCurrency(transaction.closing_balance)}`)}
                                                 
                                             </Text>
                                         </View>

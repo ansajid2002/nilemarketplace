@@ -617,7 +617,7 @@ const Login = ({ navigation, route }) => {
 
                         <TouchableOpacity onPress={debounce(() => navigation.navigate('ForgotPassword'), 500)}>
                             <View>
-                                <Text>{t("Forgot Passowrd ?")}</Text>
+                                <Text className="text-[#fb7701] font-semibold  italic " >{t("Forgot Passowrd ?")}</Text>
                             </View>
                         </TouchableOpacity>
                     </View>

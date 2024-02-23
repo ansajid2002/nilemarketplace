@@ -20,7 +20,7 @@ const SearchUsertoSend = ({ goback, amount }) => {
     const [selectedUser, setSelectedUser] = useState(null); // Selected user for sending money
     const [buttonloader, setButtonLoader] = useState(false); // Transaction summary
     const [modalVisible, setModalVisible] = useState(false);
-    const [pinComponent, setShowPin] = useState(false);
+    const [showPin, setShowPin] = useState(false);
     const { t } = useTranslation()
 
     const { customerData } = useSelector((store) => store.userData)
@@ -181,8 +181,12 @@ const SearchUsertoSend = ({ goback, amount }) => {
 
     const handleTransfer = async () => {
         // setButtonLoader(true)
+        console.log('hello');
+        setModalVisible(false)
         setShowPin(true)
     }
+
+    console.log(showPin, 'pn');
 
     const hanelCLose = () => {
         setShowPin(false)
@@ -225,7 +229,7 @@ const SearchUsertoSend = ({ goback, amount }) => {
             <View style={styles.container}>
                 <View style={styles.header}>
                     <TouchableOpacity onPress={goback}>
-                        <Ionicons name="ios-arrow-back" size={24} color="black" />
+                        <Ionicons name="arrow-back" size={24} color="black" />
                     </TouchableOpacity>
                 </View>
                 <View style={styles.searchContainer}>
@@ -265,7 +269,7 @@ const SearchUsertoSend = ({ goback, amount }) => {
                     selectedUser && <Modal
                         animationType="slide"
                         transparent={modalVisible}
-                        visible={true}
+                        visible={modalVisible}
                         onRequestClose={handleCloseModal}
                     >
                         <View style={styles.overlay}>
@@ -366,9 +370,9 @@ const SearchUsertoSend = ({ goback, amount }) => {
 
 
                 {
-                    pinComponent && <Modal
+                    showPin && <Modal
                         animationType="slide"
-                        transparent={pinComponent}
+                        transparent={true}
                         visible={true}
                         onRequestClose={() => setShowPin(false)}
                     >
@@ -389,7 +393,7 @@ const SearchUsertoSend = ({ goback, amount }) => {
             </View>
 
 
-        </TouchableWithoutFeedback>
+        </TouchableWithoutFeedback >
     );
 };
 

@@ -30,17 +30,16 @@ const LoadingScreen = ({ navigation }) => {
             console.error('Error:', error);
         } finally {
             const onboarding = await AsyncStorage.getItem('onboarding');
-            const customerDataAsync = await AsyncStorage.getItem('customerData');
+            console.log(onboarding,"onboardingscreen newly updated");
+
             setTimeout(() => {
-                if (customerDataAsync) {
-                    navigation.replace("Home")
-                } else {
+                
                     if (onboarding === "1") {
-                        navigation.replace('Login');
+                        navigation.replace('Home');
                     } else {
                         navigation.replace('Onboarding');
                     }
-                }
+                
             }, 2000)
 
         }

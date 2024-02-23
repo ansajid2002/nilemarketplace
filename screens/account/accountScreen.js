@@ -16,11 +16,15 @@ import { emptyWishlist } from "../../store/slices/wishlistSlice";
 import FullPageLoader from "../../components/FullPageLoader";
 import avatarPlaceholder from '../../assets/avatarplaceholder.png'
 import { getwalletTotal } from "../../store/slices/walletSlice";
+import WalletTab from "../../components/WalletTab";
+import { formatCurrency } from "../wallet/Wallet";
 
 
 
 const AccountScreen = ({ navigation }) => {
     const dispatch = useDispatch()
+    const walletTotal = useSelector(state => state.wallet.walletTotal);
+
     const [showLogoutDialog, setShowLogoutDialog] = useState(false);
     const [loading, setLoading] = useState(true);
     const [LogoutLoader, setLogoutLoader] = useState(false);
@@ -30,15 +34,14 @@ const AccountScreen = ({ navigation }) => {
     const { appcountry } = useSelector((store) => store.selectedCurrency)
     const { t } = useTranslation();
     const wishlistItems = useSelector((state) => state.wishlist.wishlistItems)
-    const { family_name = '', given_name = '', city = '', state = '', picture = '', google_id = '' } = customerData?.[0] || {}
+    const { family_name = '', given_name = '', city = '', state = '', picture = '', google_id = '', customer_id } = customerData?.[0] || {}
     const [profileImage, setImage] = useState('../../assets/avatarplaceholder.png');
-    const {appLangname} = useSelector((store) => store.selectedCurrency)
+    const { appLangname } = useSelector((store) => store.selectedCurrency)
     useEffect(() => {
         setTimeout(() => {
             setLoading(false)
         }, 500);
     }, [])
-console.log(appcountry,"dssssssssssssssssdddddddddddddddddddddddddddddddd");
 
     useEffect(() => {
 
@@ -199,6 +202,12 @@ console.log(appcountry,"dssssssssssssssssdddddddddddddddddddddddddddddddd");
                 })}
                 {divider()}
                 {accountOptionsSort({
+                    icon: <MaterialIcons name="wallet" color={Colors.blackColor} size={20} />,
+                    option: `Wallet (${formatCurrency(walletTotal)})`,
+                    navigateTo: customerData?.length > 0 ? 'Wallet' : "Login"
+                })}
+                {divider()}
+                {accountOptionsSort({
                     icon: <MaterialIcons name="forward-to-inbox" color={Colors.blackColor} size={20} />,
                     option: `${t("Inbox")}`,
                     navigateTo: customerData?.length > 0 ? 'Inbox' : "Login"
@@ -207,12 +216,12 @@ console.log(appcountry,"dssssssssssssssssdddddddddddddddddddddddddddddddd");
                 {accountOptionsSort({
                     icon: <MaterialIcons name="map" color={Colors.blackColor} size={20} />,
                     option: `${t("Manage Address")}`,
-                    navigateTo: customerData?.length > 0 ? 'Checkout Address' : "Login"
+                    navigateTo: customerData?.length > 0 ? 'Address' : "Login"
                 })}
                 {divider()}
                 {accountOptionsSort({
                     icon: <MaterialIcons name="store" size={20} color={Colors.blackColor} />,
-                    option: `${t("Become a Seller")}`
+                    option: `Become a Seller`
                 })}
 
 
@@ -257,11 +266,11 @@ console.log(appcountry,"dssssssssssssssssdddddddddddddddddddddddddddddddd");
                 {divider()}
                 {
                     appcountry === "Somalia" &&
-                accountOptionsSort({
-                    icon: <MaterialIcons name="public" size={20} color={Colors.blackColor} />,
-                    option: `${t("Select Mogadishu District")}`,
-                    navigateTo: 'selectMogadishuDistrict',
-                })
+                    accountOptionsSort({
+                        icon: <MaterialIcons name="public" size={20} color={Colors.blackColor} />,
+                        option: `${t("Select Mogadishu District")}`,
+                        navigateTo: 'selectMogadishuDistrict',
+                    })
                 }
                 {divider()}
                 {accountOptionsSort({
@@ -291,6 +300,14 @@ console.log(appcountry,"dssssssssssssssssdddddddddddddddddddddddddddddddd");
                     option: 'Privacy Policy',
                 })}
                 {divider()}
+
+                {accountOptionsSort({
+                    icon: <MaterialIcons name="settings" size={20} color={Colors.blackColor} />,
+                    option: `${t("Settings")} `,
+                    navigateTo: 'Settings'
+                })}
+                {divider()}
+
                 {accountOptionsSort({
                     icon: <MaterialIcons name="policy" size={20} color={Colors.blackColor} />,
                     option: 'Terms & Conditions',

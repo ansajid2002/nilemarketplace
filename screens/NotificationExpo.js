@@ -7,7 +7,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigation } from '@react-navigation/core';
 import Toast from 'react-native-toast-message';
 import { BackHandler } from 'react-native';
-import { fetchcart, getCartTotal } from '../store/slices/cartSlice';
 import { AdminUrl } from '../constant';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { setAppLang, setAppLangname } from '../store/slices/currencySlice';
@@ -57,15 +56,13 @@ export async function sendNotificationWithNavigation(title, body, screenName) {
 
 const NotificationExpo = () => {
     const dispatch = useDispatch()
-    const [expoPushToken, setExpoPushToken] = useState('');
-    const [notification, setNotification] = useState(false);
+
     const notificationListener = useRef();
     const responseListener = useRef();
     const navigation = useNavigation();
     const lastBackPressed = useRef(0);
     const [cartTotal, setCartTotal] = useState(null)
-    const [cartData, setCartData] = useState(false)
-    const [loading, setLoading] = useState(false)
+ 
     const [langFetched,setLangfetched] = useState(false)
 
     const { customerData } = useSelector((store) => store.userData)
@@ -152,7 +149,7 @@ const NotificationExpo = () => {
             loadSelectedLang()
         }
         if (!cartTotal && langFetched) {
-            fetchCartData()
+      
             getCartTotaldata()
         }
     }, [langFetched,customerId])
@@ -177,40 +174,7 @@ const NotificationExpo = () => {
         }
       };
 
-    const fetchCartData = async () => {
-        setLoading(true)
-        try {
-            if (!customerId) {
-
-            }
-            else {
-                const urlWithCustomerId = `${AdminUrl}/api/cart?customer_id=${customerId}`;
-                const requestOptions = {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                };
-                // Send the GET request and await the response
-                const response = await fetch(urlWithCustomerId, requestOptions);
-
-                if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}`);
-                }
-                const data = await response.json()
-                dispatch(fetchcart(data))
-                setCartData(true)
-            }
-
-        } catch (error) {
-            // Handle any errors here
-            console.error('Error fetching cart sdata:', error);
-        }
-        finally {
-            setLoading(false)
-        }
-    }
-
+    
 
     useEffect(() => {
         const unsubscribe = navigation.addListener('state', () => {
@@ -256,7 +220,6 @@ const NotificationExpo = () => {
         registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
 
         notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
-            setNotification(notification);
         });
 
         responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {

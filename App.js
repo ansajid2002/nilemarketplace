@@ -10,7 +10,6 @@ import userProfileScreen from "./screens/userProfile/userProfileScreen";
 import searchResultsScreen from "./screens/searchResults/searchResultsScreen";
 import aboutUsScreen from "./screens/aboutUs/aboutUsScreen";
 import contactUsScreen from "./screens/contactUs/contactUsScreen";
-import splashScreen from "./screens/splashScreen";
 import onboardingScreen from "./screens/onboarding/onboardingScreen";
 import loginScreen from "./screens/auth/loginScreen";
 import registerScreen from "./screens/auth/registerScreen";
@@ -75,6 +74,10 @@ import AddRaiseTicket from './screens/RaiseTicket/AddRaiseTicket';
 import Mogadishudistrict from './screens/Currency/Mogadishudistrict';
 import Returns from './screens/myorders/Returns';
 import CancelOrder from './screens/myorders/CancelOrder';
+import Address from './screens/checkout/Address';
+import Addaddress from './screens/checkout/Addaddress';
+import UpdateNilePin from './screens/Settings/UpdateNilePin';
+import Settings from './screens/Settings';
 
 ///////////////////////////////////////FORM SCREENS///////////////////////////////////////
 
@@ -178,6 +181,7 @@ const App = () => {
     return (
       <Provider store={store}>
         <NavigationContainer>
+
           <NotificationExpo />
           <Stack.Navigator
             screenOptions={{
@@ -188,7 +192,7 @@ const App = () => {
             <Stack.Screen name="Loading" component={LoadingScreen} />
             <Stack.Screen name="Home" component={HomeTabs} />
 
-            <Stack.Screen name="Splash" component={splashScreen} options={{ ...TransitionPresets.DefaultTransition }} />
+
             <Stack.Screen name="Onboarding" component={onboardingScreen} />
             <Stack.Screen name="Login" component={loginScreen} options={{ ...TransitionPresets.DefaultTransition }} />
             <Stack.Screen name="Register" component={registerScreen} />
@@ -213,7 +217,9 @@ const App = () => {
             <Stack.Screen name="My Orders" component={MyOrdersScreen} />
             <Stack.Screen name="order details" component={OrderdetailsScreen} />
             <Stack.Screen name="Checkout Address" component={Checkoutaddress} />
+            <Stack.Screen name="Address" component={Address} />
             <Stack.Screen name="Checkout Add Address" component={CheckoutAddaddress} />
+            <Stack.Screen name="Add Address" component={Addaddress} />
             <Stack.Screen name="Checkout Payment" component={CheckoutPayment} />
             <Stack.Screen name="Checkout Preview" component={CheckoutPreview} />
             <Stack.Screen name="Order Placed" component={Orderplaced} />
@@ -240,6 +246,8 @@ const App = () => {
             <Stack.Screen name="AddRaiseTicket" component={AddRaiseTicket} />
             <Stack.Screen name="Returns" component={Returns} />
             <Stack.Screen name="CancelOrder" component={CancelOrder} />
+            <Stack.Screen name="Settings" component={Settings} />
+            <Stack.Screen name="UpdateNilePin" component={UpdateNilePin} />
 
           </Stack.Navigator>
 

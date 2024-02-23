@@ -33,9 +33,9 @@ const OrderStatusMessage = ({ orderData }) => {
 
   let statusMessage = '';
 
-  if (orderData?.order_status === 'Ordered' && daysDifference >= 5) {
+  if ((orderData?.order_status === 'Ordered' || orderData?.order_status === 'Confirmed') && daysDifference >= 5) {
     statusMessage = "Item has been ordered but the status has not changed for a while. Please contact the seller.";
-  } else if (orderData?.order_status === 'Ordered' && daysDifference === 1) {
+  } else if ((orderData?.order_status === 'Ordered' || orderData?.order_status === 'Confirmed') && daysDifference === 1) {
     statusMessage = "Item was just ordered.";
   } else if (isTentativeDeliveryDatePassed) {
     statusMessage = "Tentative delivery date has passed.";
@@ -359,14 +359,17 @@ const OrderdetailsScreen = ({ route, navigation }) => {
 
         <Progress displayStatus={`${orderData.order_status}, ${moment(orderData?.created_at).format('ll')}`} orderData={orderData} orderStatus={orderData.order_status} pickup={orderData.ispickup} />
 
-        <View className="px-4 pt-4">
-          <TouchableOpacity onPress={() => {
-            setType('notarrived')
-            bottomSheetModalRef.current?.present();
-          }}>
-            <Text className="text-blue-500 text-base tracking-wide font-semibold">Item hasn't arrived</Text>
-          </TouchableOpacity>
-        </View>
+        {
+          (orderData?.order_status === 'Ordered' || orderData?.order_status === 'Confirmed' || orderData?.order_status === 'Shipped' || orderData?.order_status === 'Out for Delivery') && <View className="px-4 pt-4">
+            <TouchableOpacity onPress={() => {
+              setType('notarrived')
+              bottomSheetModalRef.current?.present();
+            }}>
+              <Text className="text-blue-500 text-base tracking-wide font-semibold">Item hasn't arrived {orderData?.order_status}</Text>
+            </TouchableOpacity>
+          </View>
+
+        }
         {/* <View className="flex-row bg-white">
           {orderData.order_status !== 'Returned' && orderData.order_status !== 'Exchanged' && orderData.order_status !== 'Canceled' &&
             <TouchableOpacity className="mx-2 rounded-md w-1/2  mt-2 mb-2 py-2 ">

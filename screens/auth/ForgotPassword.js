@@ -106,6 +106,7 @@ const ForgotPassword = ({ navigation }) => {
                     // For example, you can show a success message
                     const data = await response.json()
                     navigation.navigate('ChangePassword', data?.customer_id)
+                    setOTPModalVisible(false)
                 } else {
                     // Request failed, handle the error
                     throw new Error('Failed to verify OTP. Please try again.');

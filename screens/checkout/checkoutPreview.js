@@ -8,7 +8,7 @@ import { Image } from 'react-native';
 import { StyleSheet } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 // import {storeNotification} from "../NotificationExpo"
-
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 import { useState } from 'react';
 import { AdminUrl, HeaderBar } from '../../constant';
@@ -29,10 +29,9 @@ import { productUrl } from '../../constant'
 import SlideToAction from '../../components/Slidetoaction';
 
 const CheckoutPreview = ({ route, navigation }) => {
-  const [selectedPaymentMode, setSelectedPaymentMode] = useState('Stripe');
+  const [selectedPaymentMode, setSelectedPaymentMode] = useState('Wallet');
   const [showLoader, setshowLoader] = useState(false);
   const [couponCode, setCouponCode] = useState('');
-  const [imageError, setImageError] = useState(false);
   const [status, setStatus] = useState(false);
 
 
@@ -387,9 +386,7 @@ const CheckoutPreview = ({ route, navigation }) => {
   }
   ////////////////FROM CART//////////////////////////////////////////////////////////
   const handlePaymentSubmit = async () => {
-    if (selectedPaymentMode === 'Stripe') {
-      makePayment()
-    } else if (selectedPaymentMode === 'Wallet') {
+  
       setshowLoader(true)
       setStatus(true)
 
@@ -440,7 +437,7 @@ const CheckoutPreview = ({ route, navigation }) => {
         setStatus(false)
 
       }
-    }
+    
   }
   // Define ListFooterComponent
   const ListFooterComponent = () => (
@@ -474,13 +471,14 @@ const CheckoutPreview = ({ route, navigation }) => {
       <View style={{ marginVertical: 10, backgroundColor: 'white', padding: 16, borderRadius: 8 }}>
         <Text style={{ fontSize: 18, fontWeight: 'bold', marginBottom: 10 }}>{t("Choose Payment Mode")}</Text>
 
-        <TouchableOpacity
+        {/* <TouchableOpacity
           style={{ flexDirection: 'row', alignItems: 'center', marginVertical: 8 }}
           onPress={() => handlePaymentModeChange('Stripe')}
         >
           <RadioButton selected={selectedPaymentMode === 'Stripe'} />
           <Text style={{ fontSize: 16, marginLeft: 8, color: selectedPaymentMode === 'Stripe' ? 'black' : 'gray' }}>Stripe</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
+        <View className="flex-row items-center">
 
         <TouchableOpacity
           style={{ flexDirection: 'row', alignItems: 'center', marginVertical: 8 }}
@@ -489,6 +487,16 @@ const CheckoutPreview = ({ route, navigation }) => {
           <RadioButton selected={selectedPaymentMode === 'Wallet'} />
           <Text style={{ fontSize: 16, marginLeft: 8, color: selectedPaymentMode === 'Wallet' ? 'black' : 'gray' }}>Wallet ({formatCurrency(walletTotal)})</Text>
         </TouchableOpacity>
+{
+    walletTotal === 0 &&
+        <TouchableOpacity onPress={() => navigation.navigate("AddMoney")}>
+
+
+        <Text className="text-red-600 font-semibold ml-1 mr-0.5"> Recharge</Text>
+        {/* <MaterialCommunityIcons name="share" color="#e53935" /> */}
+        </TouchableOpacity>
+}
+        </View>
       </View>
     </View>
   );
@@ -524,9 +532,9 @@ const CheckoutPreview = ({ route, navigation }) => {
       {
         showLoader && <FullScreenLoader />
       }
-      <StripeProvider
+      {/* <StripeProvider
         publishableKey="pk_test_51NyX2ELOvL7BZfFQr5Ie3hElBBFVYu8ML70jVRCOKMtrgfmd52QGW6hms6fgZyCrVNYRFQEQ9VtsZKNgwe8mkj31007MetaQ5I"
-      >
+      > */}
         <HeaderBar title={'Order Summary'} goback={true} navigation={navigation} searchEnable={false} cartEnable={false} />
         <ScrollView className="" showsHorizontalScrollIndicator={false} showsVerticalScrollIndicator={false}>
           {/* <FlatList
@@ -599,7 +607,7 @@ const CheckoutPreview = ({ route, navigation }) => {
           //     {` ${t("Pay")} $${(cartTotalSellingPrice - cartDiscount + shippingRate).toFixed(2)}`} </Text>
           // </TouchableOpacity>
         }
-      </StripeProvider>
+      {/* </StripeProvider> */}
     </SafeAreaView>
 
   )

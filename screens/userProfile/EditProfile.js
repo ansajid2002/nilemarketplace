@@ -7,8 +7,9 @@ import {
     TextInput,
     ScrollView,
     Alert,
-    Modal,
+    Modal, StyleSheet,
     Button,
+    Linking,
 } from 'react-native';
 import Ionic from 'react-native-vector-icons/Ionicons';
 import { AdminUrl } from '../../constant';
@@ -46,6 +47,13 @@ const EditProfile = ({ route, navigation }) => {
     const [originalUserProfile, setOriginalUserProfile] = useState({ ...userProfile });
     const [formValueChanged, setFormValueChanged] = useState(false);
     const [modalVisible, setModalVisible] = useState(false);
+    const [modalVisibledel, setModalVisibledel] = useState(false);
+
+    const handleDeleteAccount = () => {
+        // Perform delete account action
+        Linking.openURL('mailto:info@nilegmp.com');
+        setModalVisibledel(false);
+    };
     const [imageOptions] = useState([
         { label: <AntDesign name="camera" size={24} color="white" />, value: 'camera' },
         { label: <MaterialIcons name="perm-media" size={24} color="white" />, value: 'gallery' },
@@ -65,7 +73,7 @@ const EditProfile = ({ route, navigation }) => {
     }, [picture, google_id]);
 
 
-    console.log(profileImage,"profile image which is not displayed");
+    console.log(profileImage, "profile image which is not displayed");
     useEffect(() => {
         // Compare the current form values with the original values
         const hasFormValueChanged = !isEqual(userProfile, originalUserProfile);
@@ -151,6 +159,11 @@ const EditProfile = ({ route, navigation }) => {
         }
 
     };
+
+    const handleSendRequest = () => {
+        Linking.openURL('mailto:info@nilegmp.com');
+    };
+
 
     const handleOTPVerification = async () => {
         // Check if OTP is a 4-digit number
@@ -244,7 +257,37 @@ const EditProfile = ({ route, navigation }) => {
             console.log(error);
         }
     };
+    const ConfirmationModal = ({ visible, onRequestClose, onConfirm }) => {
+        return (
+            <Modal
+                visible={visible}
+                onRequestClose={onRequestClose}
+                animationType="slide"
+                transparent={true}
+            >
+                <View style={styles.centeredView}>
+                    <View style={styles.modalView}>
+                        <Text style={styles.modalText}>Are you sure you want to delete your account?</Text>
+                        <View style={styles.buttonContainer}>
+                            <TouchableOpacity
+                                style={[styles.button, styles.confirmButton]}
+                                onPress={onConfirm}
 
+                            >
+                                <Text style={styles.buttonText}>Send Request</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                style={[styles.button, styles.cancelButton]}
+                                onPress={onRequestClose}
+                            >
+                                <Text style={styles.buttonText}>Cancel</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </View>
+            </Modal>
+        );
+    };
     return (
         !loader ?
             <SafeAreaView style={{ flex: 1, backgroundColor: Colors.whiteColor }} className="">
@@ -275,6 +318,34 @@ const EditProfile = ({ route, navigation }) => {
                             <InputField label="Bio" placeholder="Bio" value={userProfile.bio} onChangeText={(text) => handleProfileChange('bio', text)} />
                             <InputField label="Email *" placeholder="Email" value={userProfile.email} onChangeText={(text) => handleProfileChange('email', text)} />
                             <InputField label="Mobile Number *" placeholder="Mobile Number with Country Code" value={userProfile.phone_number} onChangeText={(text) => handleProfileChange('phone_number', text)} />
+                        </View>
+
+
+                        <View className="m-2 border border-gray-200 bg-gray-100 p-3 rounded-md">
+                            <Text className="text-base text-justify mt-2">If you wish to delete your account and all related data from Nile Global Marketplace (NGMP), please send an email to our administrators at admin@nilegmp.com with the subject line "Account Deletion Request". Please include your account details and the reason for your request in the email.</Text>
+                            <Text className="text-base text-justify mt-2">
+                                Please note that account deletion is irreversible and will result in the permanent loss of all data associated with your account, including your profile information, posts, and any other data you have shared on NGMP. Once your account is deleted, you will not be able to recover it or access any of your data.
+                            </Text>
+                            <Text className="text-base text-justify mt-2">
+                                We will process your request as soon as possible, but please allow up to [7 days] for the complete deletion of your account and data from our systems.
+                            </Text>
+                            <Text className="text-base text-justify mt-2">
+                                If you have any questions or need further assistance, please feel free to contact us.
+                            </Text>
+                            <Text className="text-base text-justify mt-2">
+                                Thank you, Regards The Nile Global Marketplace Team
+                            </Text>
+                            <TouchableOpacity className="mt-2"
+                                style={{ backgroundColor: 'red', padding: 10, borderRadius: 5 }}
+                                onPress={() => setModalVisibledel(true)}
+                            >
+                                <Text className="text-center" style={{ color: 'white', fontWeight: 'bold' }}>Delete My Account</Text>
+                            </TouchableOpacity>
+                            <ConfirmationModal
+                                visible={modalVisibledel}
+                                onRequestClose={() => setModalVisibledel(false)}
+                                onConfirm={handleDeleteAccount}
+                            />
                         </View>
                     </View>
 
@@ -355,3 +426,51 @@ const InputField = ({ label, placeholder, value, onChangeText }) => {
 };
 
 export default EditProfile;
+const styles = StyleSheet.create({
+    centeredView: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    },
+    modalView: {
+        backgroundColor: 'white',
+        borderRadius: 10,
+        padding: 20,
+        alignItems: 'center',
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5,
+    },
+    modalText: {
+        marginBottom: 20,
+        textAlign: 'center',
+        fontSize: 16,
+    },
+    buttonContainer: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+    },
+    button: {
+        borderRadius: 5,
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        marginHorizontal: 10,
+    },
+    buttonText: {
+        color: 'white',
+        fontWeight: 'bold',
+        textAlign: 'center',
+    },
+    confirmButton: {
+        backgroundColor: 'rgb(180,180,180)',
+    },
+    cancelButton: {
+        backgroundColor: 'gray',
+    },
+});
