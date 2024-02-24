@@ -78,6 +78,7 @@ import Address from './screens/checkout/Address';
 import Addaddress from './screens/checkout/Addaddress';
 import UpdateNilePin from './screens/Settings/UpdateNilePin';
 import Settings from './screens/Settings';
+import UserAgreement from './screens/UserAgreement';
 
 ///////////////////////////////////////FORM SCREENS///////////////////////////////////////
 
@@ -190,6 +191,7 @@ const App = () => {
             }}
           >
             <Stack.Screen name="Loading" component={LoadingScreen} />
+            <Stack.Screen name="UserAgreement" component={UserAgreement} />
             <Stack.Screen name="Home" component={HomeTabs} />
 
 

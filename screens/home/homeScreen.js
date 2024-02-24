@@ -124,10 +124,10 @@ const HomeScreen = () => {
 
 
 
-  
+
     const fetchRecommendedProducts = async () => {
 
-     
+
         try {
             const recommendedResponse = await fetch(`${AdminUrl}/api/recommendedProducts/${customerId || 'null'}`);
             // const recommendedResponse = await fetch(`${AdminUrl}/api/recommendedProducts/${'null'}`);
@@ -210,21 +210,21 @@ const HomeScreen = () => {
                     throw new Error(`HTTP error! Status: ${response.status}`);
                 }
                 const data = await response.json()
-            
+
                 dispatch(fetchcart(data))
-          
+
             }
 
         } catch (error) {
             // Handle any errors here
             console.error('Error fetching cart sdata:', error);
         }
-       
+
     }
     useEffect(() => {
-        
+
         fetchCartData()
-    },[customerId])
+    }, [customerId])
 
     const getmgdistrict = async () => {
         if (customerId === null || customerId === undefined) {

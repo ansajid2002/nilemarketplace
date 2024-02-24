@@ -15,7 +15,7 @@ const LoadingScreen = ({ navigation }) => {
 
     const dispatch = useDispatch()
     const [lscreen, setLscreen] = useState(null)
-    const {t} = useTranslation()
+    const { t } = useTranslation()
 
 
     const fetchLoadingscreen = async () => {
@@ -30,16 +30,16 @@ const LoadingScreen = ({ navigation }) => {
             console.error('Error:', error);
         } finally {
             const onboarding = await AsyncStorage.getItem('onboarding');
-            console.log(onboarding,"onboardingscreen newly updated");
+            console.log(onboarding, "onboardingscreen newly updated");
 
             setTimeout(() => {
-                
-                    if (onboarding === "1") {
-                        navigation.replace('Home');
-                    } else {
-                        navigation.replace('Onboarding');
-                    }
-                
+
+                if (onboarding === "1") {
+                    navigation.replace('UserAgreement');
+                } else {
+                    navigation.replace('Onboarding');
+                }
+
             }, 2000)
 
         }
@@ -63,12 +63,17 @@ const LoadingScreen = ({ navigation }) => {
 
             // Check if 'loggedid' and 'customerData' exist in AsyncStorage
             const customerDataAsync = await AsyncStorage.getItem('customerData');
-            
+
             const a = JSON.parse(customerDataAsync)
-            
+
+
             // Navigate to the appropriate screen based on AsyncStorage data
             if (a !== null) {
                 dispatch(updateCustomerData(a))
+            }
+
+            if (a?.customer_id) {
+
             }
 
         }
@@ -80,16 +85,16 @@ const LoadingScreen = ({ navigation }) => {
 
             {
                 lscreen ?
-                <Image
-                    source={{ uri: `${AdminUrl}/uploads/Apploadingscreen/${lscreen[0]?.apploading_url}` }}
-                    style={{ height: 600, width: 350}}
-                /> : 
-           
-                <View>
-                <ActivityIndicator size="large" color="#00008b" />
-                </View>
+                    <Image
+                        source={{ uri: `${AdminUrl}/uploads/Apploadingscreen/${lscreen[0]?.apploading_url}` }}
+                        style={{ height: 600, width: 350 }}
+                    /> :
 
-            
+                    <View>
+                        <ActivityIndicator size="large" color="#00008b" />
+                    </View>
+
+
             }
 
 

@@ -15,8 +15,9 @@ const Settings = ({ navigation }) => {
     ];
 
     // Filter out "Update Nile Pin" setting if customerData is undefined or empty
-    const filteredSettings = customerData ? settings : settings.filter(setting => setting.title !== "Update Nile Pin");
+    const filteredSettings = customerData && customerData?.length > 0 ? settings : settings.filter(setting => setting.title !== "Update Nile Pin");
 
+    console.log(customerData, 'customerData');
     // Function to handle navigation to the specified route
     const handleNavigation = (route) => {
         navigation.navigate(route);

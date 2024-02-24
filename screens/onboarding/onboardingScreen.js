@@ -6,7 +6,7 @@ import Onboarding from 'react-native-onboarding-swiper';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const OnboardingScreen = ({ navigation }) => {
-    AsyncStorage.setItem('onboarding',"1")
+    AsyncStorage.setItem('onboarding', "1")
     const Done = ({ ...props }) => (
         <TouchableOpacity
             {...props}
@@ -33,12 +33,12 @@ const OnboardingScreen = ({ navigation }) => {
         <SafeAreaView style={{ flex: 1 }}>
             <Onboarding
                 //To handle the navigation to the Homepage if Skip is clicked
-                onSkip={() => navigation.replace("Home")}
+                onSkip={() => navigation.replace("Onboarding")}
                 DotComponent={Dots}
                 //To handle the navigation to the Homepage after Done is clicked
-                onDone={() => navigation.replace("Home")}
+                onDone={() => navigation.replace("Onboarding")}
                 DoneButtonComponent={Done}
-                
+
                 pages={[
                     {
                         backgroundColor: '#00008b',
@@ -64,7 +64,7 @@ const OnboardingScreen = ({ navigation }) => {
                         title: 'Safe and Secure Transactions',
                         subtitle: 'Rest easy knowing that Nile Marketplace prioritizes your safety. Our secure payment system ensures worry-free transactions for both buyers and sellers.',
                     },
-                    
+
                 ]}
             />
         </SafeAreaView>
