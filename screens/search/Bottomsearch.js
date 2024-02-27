@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, StatusBar, SafeAreaView } from 'react-native'
+import { View, Text, ScrollView, StatusBar, SafeAreaView, FlatList } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
 import { TouchableOpacity } from 'react-native'
 import { Feather, MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons'
@@ -10,20 +10,28 @@ import { TextInput } from 'react-native'
 import { AdminUrl } from '../../constant'
 import { debounce } from 'lodash'
 import { Keyboard } from "react-native";
+import { FontAwesome } from '@expo/vector-icons';
+import axios from 'axios'
 
 const Bottomsearch = ({ navigation }) => {
     const [searchInput, setSearchInput] = useState("")
     const [isFocused, setIsFocused] = useState(false);
+    const [searchHistory, setSearchHistory] = useState(null)
+    const [popularSearches, setPopularSearches] = useState(null)
+
     const [MatchingKeyword, setMatchingKeyword] = useState([]);
     const { currencyCode } = useSelector((store) => store.selectedCurrency)
     const { t } = useTranslation()
+
+    const { customerData } = useSelector((store) => store.userData)
+    const customer_id = customerData?.[0]?.customer_id || null
+
     const inputRef = useRef(null);
 
     useEffect(() => {
         // Focus the input once the component is mounted
         inputRef.current.focus();
     }, []);
-
 
     const handleFocus = () => {
         setIsFocused(true);
@@ -45,11 +53,49 @@ const Bottomsearch = ({ navigation }) => {
     };
 
     const handleKeywordPress = async (selectedKeyword) => {
-        if (searchInput) {
-            navigation.navigate('SearchResults', selectedKeyword)
+        navigation.navigate('SearchResults', selectedKeyword)
+        if (selectedKeyword.length >= 3) {
+            navigation.navigate('SearchResults', selectedKeyword);
+            await fetch(`${AdminUrl}/api/postsearchquery`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ searchTerm: selectedKeyword, customer_id: customer_id }),
+            });
+        } else {
+            console.log("Keyword length is less than 3. Not making API call.");
         }
     };
 
+
+    const fetchsearch = async () => {
+        try {
+            const res = await fetch(`${AdminUrl}/api/getmostoccurredsearches`)
+            if (!res.ok) {
+                throw new Error("Failed to fetch search history")
+            }
+            const data1 = await res.json()
+            setPopularSearches(data1.data)
+            if (!customer_id) return;
+
+            const response = await fetch(`${AdminUrl}/api/getsearchhistorybycid?customer_id=${customer_id}&limit=5`)
+            if (!response.ok) {
+                throw new Error("Failed to fetch search history")
+            }
+            const data = await response.json()
+            setSearchHistory(data.data)
+
+        } catch (error) {
+            console.log(error, "ERROR FETCHING SEARCH...");
+
+        }
+    }
+
+
+    useEffect(() => {
+        fetchsearch()
+    }, [isFocused])
 
     function header() {
         return (
@@ -81,10 +127,80 @@ const Bottomsearch = ({ navigation }) => {
                         }}
                     />
                 </View>
+
             </View>
 
         )
     }
+
+
+    const handleCancel = async (id) => {
+        try {
+            // Send the id to the backend
+            const response = await axios.get(`${AdminUrl}/api/cancelItem?id=${id}`);
+
+            // Assuming the backend returns a success message upon successful cancellation
+            if (response.data.success) {
+                console.log("Item canceled successfully.");
+                // Filter the item from the state
+                const filteredSearchHistory = searchHistory.filter(item => item.id !== id);
+                setSearchHistory(filteredSearchHistory);
+            } else {
+                console.log("Failed to cancel item.");
+            }
+        } catch (error) {
+            console.error("Error while canceling item:", error);
+        }
+    };
+
+    const renderSearchData = () => {
+        return (
+            <View>
+                {
+                    searchHistory && searchHistory?.length > 0 &&
+                    <FlatList
+                        data={searchHistory}
+                        keyExtractor={(item) => item.id.toString()}
+                        ListHeaderComponent={() => {
+                            return <Text className="px-2 py-4 text-gray-700">Recent searches</Text>
+                        }}
+                        ListEmptyComponent={() => <Text className="px-2 py-4 text-gray-700">No Recent searches</Text>}
+                        renderItem={({ item }) => (
+                            <View style={styles.itemContainer} className="flex-row justify-between items-center">
+                                <TouchableOpacity className="w-[90%]" style={styles.keywordContainer} onPress={debounce(() => handleKeywordPress(item.search_keyword), 1000)}>
+                                    <FontAwesome name="history" size={24} color="gray" />
+                                    <Text style={styles.keywordText}>{item.search_keyword}</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity onPress={() => handleCancel(item.id)} style={styles.cancelButton} className="flex-1 justify-end w-full">
+                                    <FontAwesome name="times" size={16} color="black" />
+                                </TouchableOpacity>
+                            </View>
+                        )}
+                    />
+                }
+
+
+                <FlatList
+                    data={popularSearches}
+                    keyExtractor={(item) => item.id.toString()}
+                    ListHeaderComponent={() => {
+                        return <Text className="px-2 py-4 text-gray-700">Popular searches</Text>
+                    }}
+                    ListEmptyComponent={() => <Text className="px-2 py-4 text-gray-700">No Recent searches</Text>}
+                    renderItem={({ item }) => (
+                        <TouchableOpacity key={item} onPress={debounce(() => handleKeywordPress(item.search_keyword), 1000)}>
+                            <View style={styles.keywordContainer}>
+                                <FontAwesome name="history" size={24} color="gray" />
+
+                                <Text style={styles.keywordText}>{item.search_keyword}</Text>
+                                {/* Add more Text components to display other details */}
+                            </View>
+                        </TouchableOpacity>
+                    )}
+                />
+            </View>
+        );
+    };
 
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: Colors.whiteColor }} className="">
@@ -92,14 +208,14 @@ const Bottomsearch = ({ navigation }) => {
             <StatusBar translucent={false} backgroundColor={Colors.primaryColor} />
             {header()}
             <ScrollView className="bg-white">
-                {MatchingKeyword.length > 0 && MatchingKeyword.map((keyword, index) => (
+                {MatchingKeyword.length > 0 ? MatchingKeyword.map((keyword, index) => (
                     <TouchableOpacity key={index} onPress={debounce(() => handleKeywordPress(keyword), 1000)}>
                         <View style={styles.keywordContainer}>
                             <Feather name="arrow-up-right" size={24} color="black" />
                             <Text style={styles.keywordText}>{keyword}</Text>
                         </View>
                     </TouchableOpacity>
-                ))}
+                )) : renderSearchData()}
             </ScrollView>
         </SafeAreaView>
     )
