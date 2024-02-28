@@ -7,7 +7,6 @@ import { updateCustomerData } from '../store/slices/customerData';
 
 export const sendAgreetoDb = async (customerId) => {
     try {
-        console.log(customerId, 'cus');
         if (!customerId) {
             await AsyncStorage.setItem('@agreed', JSON.stringify(true));
             return null;
@@ -47,17 +46,31 @@ const UserAgreement = ({ navigation }) => {
                 const customerDataAsync = await AsyncStorage.getItem('customerData');
                 const agreedAsync = await AsyncStorage.getItem('@agreed');
                 const customerData = JSON.parse(customerDataAsync);
-                const agreed = JSON.parse(agreedAsync);
+                console.log(agreedAsync, 'agreedAsync');
+                if (agreedAsync) {
+                    if (customerData && customerData.customer_term_accepted) {
+                        const data = await sendAgreetoDb(customerData?.customer_id); // Call sendAgreetoDb function with customer_id
+                        if (data) dispatch(updateCustomerData(data))
+                        navigation.replace("Home")
+                        setIsLoading(false);
 
-                console.log(agreed, 'agreed');
-                console.log(customerDataAsync, 'customerDataAsync');
-                if (customerData && customerData.customer_term_accepted) {
-                    navigation.replace('Home');
-                } else if (agreed) {
-                    navigation.replace('Home');
-                } else {
+                        return
+                    }
                     setIsLoading(false);
+
+                    navigation.replace("Home")
+
+                } else if (customerData && customerData.customer_term_accepted) {
+                    const data = await sendAgreetoDb(customerData?.customer_id); // Call sendAgreetoDb function with customer_id
+                    if (data) dispatch(updateCustomerData(data))
+                    navigation.replace("Home")
+                    setIsLoading(false);
+
+                    navigation.replace("Home")
                 }
+
+                setIsLoading(false);
+
             } catch (error) {
                 console.error('Error checking agreement:', error);
                 setIsLoading(false);

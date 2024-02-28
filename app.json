@@ -4,7 +4,7 @@
     "slug": "nile-marketplace",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/mainicon.png",
+    "icon": "./assets/images/icon_new.jpg",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/images/mainlogovertical.png",
@@ -22,14 +22,13 @@
       [
         "expo-notifications",
         {
-          "icon": "./assets/images/mainicon.png",
+          "icon": "./assets/images/icon_new.jpg",
           "color": "#ffffff",
           "sounds": [
             "./assets/ss.mp3"
           ]
         }
       ]
-      
     ],
     "assetBundlePatterns": [
       "**/*"
@@ -51,12 +50,11 @@
       "package": "com.ngmp1.ios",
       "versionCode": 3,
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/mainicon.png",
+        "foregroundImage": "./assets/images/icon_new.jpg",
         "backgroundColor": "#FFFFFF"
       },
       "googleServicesFile": "./google-services.json",
       "permissions": [
-       
         "android.permission.RECEIVE_BOOT_COMPLETED",
         "android.permission.READ_EXTERNAL_STORAGE",
         "android.permission.WRITE_EXTERNAL_STORAGE",

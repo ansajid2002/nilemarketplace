@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import { SafeAreaView,Overlay, View, StatusBar, ScrollView, TouchableOpacity, StyleSheet, Text, TextInput } from "react-native";
+import { SafeAreaView, View, StatusBar, ScrollView, TouchableOpacity, StyleSheet, Text, TextInput } from "react-native";
 import { Colors, Fonts, Sizes, } from "../../constants/styles";
 import { MaterialIcons } from '@expo/vector-icons';
 // import { CircleFade } from 'react-native-animated-spinkit';
@@ -11,8 +11,9 @@ import { Alert } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { updateCustomerData } from "../../store/slices/customerData";
 import { useDispatch } from "react-redux";
-import { debounce} from "lodash";
- 
+import { debounce } from "lodash";
+import { Overlay } from "@rneui/base";
+
 const VerificationScreen = ({ navigation, route }) => {
     const { customer_id } = route.params
     const [otpInputs, setOtpInputs] = useState(['', '', '', '']);

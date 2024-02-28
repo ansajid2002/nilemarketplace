@@ -55,17 +55,18 @@ const AddRaiseTicket = ({ navigation }) => {
     };
 
     const handleVideoSelection = async () => {
-        const maxVideoCount = 1;
         let result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.Videos,
             allowsEditing: true,
             aspect: [4, 3],
             quality: 1,
+            allowsMultipleSelection: true,
         });
 
+        console.log(result);
         if (!result.cancelled) {
             // Set the selected video
-            setSelectedVideo(result.uri);
+            setSelectedVideo(result?.assets?.[0]?.uri);
         }
     };
 

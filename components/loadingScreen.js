@@ -34,7 +34,7 @@ const LoadingScreen = ({ navigation }) => {
 
             setTimeout(() => {
 
-                if (onboarding === "1") {
+                if (onboarding === "1" || onboarding === 1) {
                     navigation.replace('UserAgreement');
                 } else {
                     navigation.replace('Onboarding');

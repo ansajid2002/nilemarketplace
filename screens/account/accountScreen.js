@@ -138,6 +138,7 @@ const AccountScreen = ({ navigation }) => {
                                     await AsyncStorage.removeItem('customerData');
                                     await AsyncStorage.removeItem('cartData');
                                     await AsyncStorage.removeItem('cartTotal');
+                                    await AsyncStorage.removeItem('@agreed');
                                     dispatch(emptyCustomer())
                                     dispatch(getCartTotal(0))
                                     dispatch(getwalletTotal(0))

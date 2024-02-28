@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView, Pressable, Image, Alert, Keyboard, ActivityIndicator } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, ScrollView, Pressable, Image, Alert, Keyboard, ActivityIndicator, Platform } from 'react-native';
 import { Ionicons } from "@expo/vector-icons";
 import Button from '../../components/Button';
 import { AdminUrl } from '../../constant';
@@ -25,7 +25,7 @@ const RegisterScreen = ({ navigation }) => {
     const [countryCode, setCountryCode] = useState('+');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
-    const {t} = useTranslation()
+    const { t } = useTranslation()
 
 
     const [isPasswordShown, setIsPasswordShown] = useState(false);
@@ -137,7 +137,7 @@ const RegisterScreen = ({ navigation }) => {
                 if (!data?.success) {
                     Alert.alert('Error', data?.message)
                 } else if (data?.success) {
-                    navigation.navigate('Verification', { customer_id: data?.insertedId })
+                    navigation.navigate('UserAgreement') //v , { customer_id: data?.insertedId }
                 }
             })
             .catch(error => {

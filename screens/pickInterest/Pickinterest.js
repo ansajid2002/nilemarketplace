@@ -34,8 +34,8 @@ const Pickinterest = ({ navigation }) => {
     try {
       const response = await fetch(`${AdminUrl}/api/getinterestsbyCustomerId/${customerId}`)
       const data = await response.json()
-      console.log(data);
-      setSelectedInterests(data)
+      console.log(data, 'data');
+      setSelectedInterests(data || [])
 
     } catch (error) {
       console.error('Error:', error);
@@ -70,17 +70,16 @@ const Pickinterest = ({ navigation }) => {
   }, [])
 
   const handleInterest = (category_id) => {
-    console.log(category_id, "iiiddd");
     console.log(selectedInterests, "ididididid");
     // Check if the category is already in the interest array
-    const isAlreadyAdded = selectedInterests.some((item) => item === category_id);
-  
+    const isAlreadyAdded = selectedInterests?.length > 0 && selectedInterests.some((item) => item === category_id);
+
     console.log(isAlreadyAdded, "isAlreadyAdded");
     if (isAlreadyAdded) {
       // Remove the category from the interest array
       const updatedInterest = selectedInterests.filter((item) => item !== category_id);
       console.log(updatedInterest, "sss");
-      setSelectedInterests(updatedInterest);
+      setSelectedInterests(updatedInterest || []);
     } else {
       // Check if the maximum limit of 5 categories is reached
       if (selectedInterests.length < 5) {
@@ -148,7 +147,7 @@ const Pickinterest = ({ navigation }) => {
         loading ? <FullPageLoader /> :
 
           <SafeAreaView style={{ flex: 1, backgroundColor: Colors.whiteColor }} className="">
-            <HeaderBar goback={true} navigation={navigation} title={`${t("Pick Interest")} (${selectedInterests?.length}/${minSelectedInterests})`} />
+            <HeaderBar goback={true} navigation={navigation} title={`${t("Pick Interest")} (${(selectedInterests?.length || 0)}/${minSelectedInterests})`} />
             <ScrollView style={styles.scrollView} className="mt-2">
 
               {
@@ -167,7 +166,7 @@ const Pickinterest = ({ navigation }) => {
                           <View
                             style={[
                               styles.categoryImageWrapStyle,
-                              selectedInterests.includes(category_id),
+                              selectedInterests && selectedInterests?.length > 0 && selectedInterests?.includes(category_id),
                             ]}
                           >
                             <Image
@@ -176,7 +175,7 @@ const Pickinterest = ({ navigation }) => {
                               style={{ width: 100.0, height: 100.0 }}
                               className="rounded-full"
                             />
-                            {selectedInterests.includes(category_id) && (
+                            {selectedInterests && selectedInterests?.length > 0 && selectedInterests?.includes(category_id) && (
                               <View style={styles.checkmark}>
                                 <MaterialCommunityIcons name="heart" size={25} color="#fb7701" />
                               </View>

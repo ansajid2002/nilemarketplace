@@ -39,7 +39,7 @@ const Addaddress = ({ route, navigation }) => {
             let { status } = await Location.requestForegroundPermissionsAsync();
 
             if (status !== 'granted') {
-                setErrorMsg('Permission to access location was denied');
+                Alert.alert('Error', 'Permission to access location was denied');
                 return;
             }
 
@@ -70,7 +70,7 @@ const Addaddress = ({ route, navigation }) => {
     const fetchCurrentLocation = async (data) => {
         try {
             setloading(true)
-            
+
             let updatedAddress;
             if (data) {
 
@@ -198,7 +198,7 @@ const Addaddress = ({ route, navigation }) => {
                         console.error('Failed to fetch Address:', error);
                     });
 
-                    navigation.navigate("Address")
+                navigation.navigate("Address")
             };
 
         }
