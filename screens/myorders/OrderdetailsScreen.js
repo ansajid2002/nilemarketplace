@@ -17,7 +17,6 @@ import { BottomSheetBackdrop, BottomSheetModal, BottomSheetModalProvider } from 
 import { StyleSheet } from 'react-native';
 import ProductListing from '../../components/ProductList';
 import { ProductSkeleton } from '../../components/Skeleton';
-import { RadioButton } from 'react-native-paper';
 import axios from 'axios';
 
 const OrderStatusMessage = ({ orderData }) => {
@@ -365,7 +364,7 @@ const OrderdetailsScreen = ({ route, navigation }) => {
               setType('notarrived')
               bottomSheetModalRef.current?.present();
             }}>
-              <Text className="text-blue-500 text-base tracking-wide font-semibold">Item hasn't arrived {orderData?.order_status}</Text>
+              <Text className="text-blue-500 text-base tracking-wide font-semibold">Item hasn't arrived</Text>
             </TouchableOpacity>
           </View>
 

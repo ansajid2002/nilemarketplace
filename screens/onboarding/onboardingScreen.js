@@ -33,10 +33,10 @@ const OnboardingScreen = ({ navigation }) => {
         <SafeAreaView style={{ flex: 1 }}>
             <Onboarding
                 //To handle the navigation to the Homepage if Skip is clicked
-                onSkip={() => navigation.replace("Onboarding")}
+                onSkip={() => navigation.replace("Home")}
                 DotComponent={Dots}
                 //To handle the navigation to the Homepage after Done is clicked
-                onDone={() => navigation.replace("Onboarding")}
+                onDone={() => navigation.replace("Home")}
                 DoneButtonComponent={Done}
 
                 pages={[

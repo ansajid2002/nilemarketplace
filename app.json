@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Nile Global Market place",
-    "slug": "nile-marketplace",
+    "slug": "ngmp",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon_new.jpg",
@@ -67,10 +67,10 @@
     },
     "extra": {
       "eas": {
-        "projectId": "6d967be9-80f6-4c34-8520-e8e53c626f9c"
+        "projectId": "4b4f8b17-f8cc-40ca-9013-3beb0ea4d163"
       }
     },
     "scheme": "nile",
-    "owner": "sajid.ansari"
+    "owner": "skshadab12345"
   }
 }

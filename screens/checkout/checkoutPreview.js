@@ -31,13 +31,9 @@ import SlideToAction from '../../components/Slidetoaction';
 const CheckoutPreview = ({ route, navigation }) => {
   const [selectedPaymentMode, setSelectedPaymentMode] = useState('Wallet');
   const [showLoader, setshowLoader] = useState(false);
-  const [couponCode, setCouponCode] = useState('');
+  const [couponCodeData, setCouponCodeData] = useState(null);
   const [status, setStatus] = useState(false);
 
-
-  const handleCouponCodeChange = (event) => {
-    setCouponCode(event.target.value);
-  };
   const dispatch = useDispatch()
   const { t } = useTranslation()
 
@@ -48,8 +44,11 @@ const CheckoutPreview = ({ route, navigation }) => {
   const customerEmail = customerData[0]?.email
   const { somalian_district } = useSelector((store) => store.customerAddress)
   const [shippingRate, setShippingrate] = useState(0)
-  const { c_symbol, currencyCode,appLangcode } = useSelector((store) => store.selectedCurrency)
+  const { c_symbol, currencyCode, appLangcode } = useSelector((store) => store.selectedCurrency)
   const { initPaymentSheet, presentPaymentSheet } = useStripe();
+
+  const [cartDiscount, setDiscountPrice] = useState(0)
+  const [totalAmount, setTotalAmount] = useState(0)
   const shippingAddress = route.params
   const { given_name_address = "", family_name_address = "", apt_address = "", subregion_address = "", city_address = "", country_address = "", region_address = "", zip_address = "", phone_address = "" } = shippingAddress || []
 
@@ -58,11 +57,13 @@ const CheckoutPreview = ({ route, navigation }) => {
   const order_date = date.toISOString();
 
 
-
   useEffect(() => {
     if (cartItems?.length === 0) {
       navigation.navigate("Home");
     }
+
+    setDiscountPrice(((cartTotalMRP - cartTotalSellingPrice) / cartTotalMRP) * 100)
+    setTotalAmount((cartTotalSellingPrice - cartDiscount + shippingRate).toFixed(2))
   }, [cartItems]);
 
   const handlePaymentModeChange = (mode) => {
@@ -89,7 +90,7 @@ const CheckoutPreview = ({ route, navigation }) => {
         // Add other parameters as needed
       });
 
-      const response = await fetch(`${AdminUrl}/api/create-payment-intent`, {
+      const response = await fetch(`${AdminUrl} / api / create - payment - intent`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -139,7 +140,7 @@ const CheckoutPreview = ({ route, navigation }) => {
     setshowLoader(true)
     // Alert.alert('Payment Successful', 'Your payment was successful. Thank you!');
     try {
-      const response = await fetch(`${AdminUrl}/api/Insertorders`, {
+      const response = await fetch(`${AdminUrl} / api / Insertorders`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -170,8 +171,8 @@ const CheckoutPreview = ({ route, navigation }) => {
 
       dispatch(emptyCart());
       dispatch(addOrders(ordersWithShippingAddress))
-      await sendNotificationWithNavigation(`🛍️ Order Placed', 'Your order has been successfully placed. Thank you for shopping with us!`, 'My Orders');
-      storeNotification(customerId, "ORDERPLACED", `🛍️ Order Placed', 'Your order has been successfully placed. Thank you for shopping with us!`, new Date().toISOString())
+      await sendNotificationWithNavigation(`🛍️ Order Placed', 'Your order has been successfully placed.Thank you for shopping with us!`, 'My Orders');
+      storeNotification(customerId, "ORDERPLACED", `🛍️ Order Placed', 'Your order has been successfully placed.Thank you for shopping with us!`, new Date().toISOString())
       setStatus(false)
 
       navigation.push('Order Placed', responseData)
@@ -212,8 +213,6 @@ const CheckoutPreview = ({ route, navigation }) => {
 
   const cartTotalSellingPrice = parseFloat(TotalSellingPrice?.toFixed(2));
   const cartTotalMRP = parseFloat(TotalMRP?.toFixed(2));
-  const cartDiscount = 0;
-
 
   const calculateTotalShippingCharges = async (cartItems, destination) => {
     let totalShippingCharges = 0;
@@ -225,11 +224,11 @@ const CheckoutPreview = ({ route, navigation }) => {
 
       // Skip items with null origin
       if (origin) {
-        const vendorKey = `${vendorId}_${origin}`;
+        const vendorKey = `${vendorId}_${origin} `;
 
         if (!processedVendors[vendorKey]) {
           try {
-            const response = await fetch(`${AdminUrl}/api/getShippingRate?origin=${origin}&destination=${destination}`);
+            const response = await fetch(`${AdminUrl}/api/getShippingRate?origin=${origin}&destination=${destination} `);
 
             if (response.ok) {
               const data = await response.json();
@@ -254,18 +253,6 @@ const CheckoutPreview = ({ route, navigation }) => {
   };
 
 
-  const checkoutData = [
-    {
-      orders: cartItems,
-      shipping_address: shippingAddress,
-      customerData: customerData[0],
-      paymentIntent: [],
-      selectedPaymentMode,
-      checkoutItems,
-      order_date,
-      shippingRate
-    }
-  ]
   // Use the function in your component
   useEffect(() => {
     if (somalian_district && cartItems
@@ -283,45 +270,162 @@ const CheckoutPreview = ({ route, navigation }) => {
   }, [somalian_district, cartItems]);
 
   const Cartdetails = () => {
+    const handleCancel = (coupon) => {
+      // Check if the coupon discount type is a percentage (%)
+
+      if (coupon.discount_type === '%') {
+        // Calculate the discount amount as a percentage of the total amount
+        const discountAmount = ((cartTotalSellingPrice) * parseFloat(coupon.discount_amount)) / 100;
+        console.log(discountAmount);
+        // Subtract the discount amount from the total amount
+        const updatedTotalAmount = totalAmount + discountAmount;
+        // Set the updated total amount
+        setTotalAmount(updatedTotalAmount.toFixed(2));
+      } else {
+        // For other discount types (e.g., fixed amount), directly subtract the discount amount
+        const updatedTotalAmount = parseFloat(totalAmount) + parseFloat(coupon.discount_amount);
+        // Set the updated total amount
+        setTotalAmount(updatedTotalAmount);
+      }
+      setDiscountPrice(prev => prev - coupon.discount_amount)
+
+      setCouponCodeData((prev) => prev.coupon_id !== coupon.coupon_id)
+    };
+
     return (
       <View className="m-1 p-2 mt-2 ">
         <Text className="text-[18px] font-medium mb-2">{t("Price Details")}</Text>
         <View className="flex-row justify-between items-center  my-1 py-0.5">
           <Text className="text-[14px]">{t("Price")}</Text>
-          <Text className="text-[16px]  font-normal">{`${c_symbol} ${cartTotalMRP}`}</Text>
+          <Text className="text-[16px]  font-normal">{`${c_symbol} ${cartTotalMRP} `}</Text>
         </View>
         <View className="flex-row justify-between items-center  my-1 py-0.5">
           <Text className="text-[14px]">{t("Shipping Charges")}</Text>
-          <Text className="text-[16px]  font-normal">{`${c_symbol} ${shippingRate}`}</Text>
+          <Text className="text-[16px]  font-normal">{`${c_symbol} ${shippingRate} `}</Text>
         </View>
         <View className="flex-row justify-between items-center items  ">
           <Text className="text-[14px]">{t("Discount")}</Text>
-          <Text className="text-[16px] text-green-600 font-medium">{`-${(((cartTotalMRP - cartTotalSellingPrice) / cartTotalMRP) * 100).toFixed(2)} %`} ({`${c_symbol}${(cartTotalMRP - cartTotalSellingPrice).toFixed(2)}`})</Text>
+          <View className="flex-row gap-2 items-center">
+            {
+              couponCodeData && <View className="bg-gray-300 px-2 py-2 rounded-full flex-row  justify-center items-center">
+                <Text className="flex-col text-xs font-semibold"> {couponCodeData?.coupon_code}</Text>
+                <Feather
+                  name="x-circle"
+                  size={18}
+                  color="black"
+                  onPress={() => handleCancel(couponCodeData)}
+                  style={{ marginLeft: 10 }}
+                />
+              </View>
+            }
+            <Text className="text-[16px] text-green-600 font-medium">{`-${cartDiscount}`}</Text>
+          </View>
         </View>
 
         <View className="flex-row justify-between items-center  my-2 py-1.5 border-t border-gray-200">
           <Text className="text-base font-medium">{t("Total Amount")}</Text>
-          <Text className="text-[16px] font-medium">{`${c_symbol} ${(cartTotalSellingPrice - cartDiscount + shippingRate).toFixed(2)}`}</Text>
+          <Text className="text-[16px] font-medium">{`${c_symbol} ${parseFloat(totalAmount) + (parseFloat(shippingRate))} `}</Text>
         </View>
-        <Text className="text-[16px] text-green-600 font-medium tracking-wider ">{` ${t("You will save")} ${c_symbol} ${(cartTotalSellingPrice - cartDiscount + shippingRate).toFixed(2)} ${t("on this order")}`}</Text>
+        {/* <Text className="text-[16px] text-green-600 font-medium tracking-wider ">{` ${ t("You will save") } ${ c_symbol } ${ (cartTotalSellingPrice - cartDiscount + shippingRate).toFixed(2) } ${ t("on this order") } `}</Text> */}
       </View>
     )
   }
 
   const applycoupon = () => {
+    const [couponCode, setCouponCode] = useState('');
+
+    const handleCouponCodeChange = (value) => {
+      setCouponCode(value);
+    };
+
+    const handleApplyCoupon = () => {
+
+      if (!couponCode.trim()) {
+        Alert.alert('Error', 'Please enter a coupon code');
+        return;
+      }
+
+      // Prepare the data to be sent in the request body
+      const currentDate = new Date(); // Get the current date and time
+      const data = {
+        couponCode: couponCode,
+        customerID: customerData?.[0]?.customer_id,
+        currentDate: currentDate.toISOString(), // Convert to ISO string format
+        cartItems: cartItems.map(item => item.uniquepid) // Extract product_uniquepid from cartItems
+      };
+
+      if (!customerData?.[0]?.customer_id) return;
+
+      // Make a POST request to your backend endpoint
+      fetch(`${AdminUrl}/api/applyCoupon`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          // Add any other headers if required
+        },
+        body: JSON.stringify(data)
+      })
+        .then(response => {
+          if (response.ok) {
+            // Handle successful response
+            return response.json(); // Parse response body as JSON
+          } else {
+            // Handle error response
+            throw new Error('Failed to apply coupon');
+          }
+        })
+        .then(data => {
+          if (data?.success) {
+            const coupon = data?.couponData
+            console.log(coupon);
+            let updatedTotalAmount;
+
+            if (coupon.discount_type === '%') {
+              const discount = (parseFloat(totalAmount) * parseFloat(coupon.discount_amount)) / 100;
+              updatedTotalAmount = parseFloat(totalAmount) - discount;
+            } else {
+              updatedTotalAmount = parseFloat(totalAmount) - parseFloat(coupon.discount_amount);
+            }
+
+            // Now, updatedTotalAmount contains the new total amount after applying the discount
+            setDiscountPrice((prev) => prev + parseFloat(coupon.discount_amount));
+            setCouponCodeData(coupon)
+            setTotalAmount(updatedTotalAmount);
+          } else {
+            Alert.alert('Error', `${data?.message || 'An unknown error occurred.'} `);
+          }
+        })
+        .catch(error => {
+          // Alert with error message
+          Alert.alert('Error', 'Failed to apply coupon');
+          console.error('Error occurred while applying coupon:', error);
+        });
+    };
+
+    console.log(couponCodeData, 'coupon');
+
+
     return (
       <View className="bg-white my-1 mt-1 py-4 p-2">
-        <Text className="text-[18px] font-medium  mx-1">{t("Apply Coupon")}</Text>
+        <Text className="text-[18px] font-medium mx-1">Apply Coupon</Text>
 
         <View className="flex-row items-center mt-4 mx-1 space-x-3 h-9">
-          <TextInput className="flex-1 tracking-wider border border-gray-500 h-9 rounded-md pl-2 text-base" placeholder={t('Enter Coupon Code')}
-            onChange={handleCouponCodeChange}
+          <TextInput
+            className="flex-1 tracking-wider border border-gray-500 h-9 rounded-md pl-2 text-base"
+            placeholder="Enter Coupon Code"
+            onChangeText={(text) => handleCouponCodeChange(text)}
           />
-          <TouchableOpacity className="border bg-gray-100 border-gray-400 h-full rounded-md flex-row items-center px-1.5"><Text className="font-semibold">{t("Apply")}</Text></TouchableOpacity>
+          <TouchableOpacity
+            className="border bg-gray-100 border-gray-400 h-full rounded-md flex-row items-center px-1.5"
+            onPress={handleApplyCoupon}
+          >
+            <Text className="font-semibold">Apply</Text>
+          </TouchableOpacity>
         </View>
       </View>
-    )
-  }
+    );
+  };
+
   const renderItem = ({ item }) => {
     const discountPercentageSimple = ((item.mrp - item.sellingprice) / item.mrp) * 100;
 
@@ -334,7 +438,7 @@ const CheckoutPreview = ({ route, navigation }) => {
               resizeMode="contain"
               source={
                 item.images
-                  ? { uri: `${productUrl}/${item.images[0]}` }
+                  ? { uri: `${productUrl} /${item.images[0]}` }
                   : require('../../assets/noimage.jpg')
               }
 
@@ -342,13 +446,13 @@ const CheckoutPreview = ({ route, navigation }) => {
 
               style={{ width: '100%', height: undefined, aspectRatio: 4 / 4 }} className="rounded-md"
             />
-          </View>
+          </View >
           <View className=" flex-1 ml-4 " >
 
             <Text numberOfLines={2} className="text-base font-medium">
-            {appLangcode === "so" ?  
-                    item?.somali_ad_title=== "" ? item?.ad_title : item?.somali_ad_title  :
-                     item?.ad_title}
+              {appLangcode === "so" ?
+                item?.somali_ad_title === "" ? item?.ad_title : item?.somali_ad_title :
+                item?.ad_title}
             </Text>
             <Text className=" font-bold text-gray-500">{`Qty ${item?.added_quantity}`}</Text>
             {
@@ -379,65 +483,65 @@ const CheckoutPreview = ({ route, navigation }) => {
 
           </View>
 
-        </TouchableOpacity>
+        </TouchableOpacity >
 
-      </View>
+      </View >
     )
   }
   ////////////////FROM CART//////////////////////////////////////////////////////////
   const handlePaymentSubmit = async () => {
-  
-      setshowLoader(true)
-      setStatus(true)
 
-      try {
-        const response = await fetch(`${AdminUrl}/api/Insertorders`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            // Add any other headers as needed
-          },
-          body: JSON.stringify(checkoutData),
-        });
+    setshowLoader(true)
+    setStatus(true)
 
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
-        }
+    try {
+      const response = await fetch(`${AdminUrl}/api/Insertorders`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          // Add any other headers as needed
+        },
+        body: JSON.stringify(checkoutData),
+      });
 
-        const responseData = await response.json();
-        const shippingAddressMap = responseData.insertedAddress.reduce((map, address) => {
-          if (!map[address.unique_order_id]) {
-            map[address.unique_order_id] = [];
-          }
-          map[address.unique_order_id].push(address);
-          return map;
-        }, {});
-
-        // Add shipping_address as an array to each order
-        const ordersWithShippingAddress = responseData.insertedOrders.map(order => ({
-          ...order,
-          shipping_address: shippingAddressMap[order.order_id] || [],
-        }));
-
-
-        dispatch(emptyCart());
-        dispatch(addOrders(ordersWithShippingAddress))
-        if (selectedPaymentMode === 'Wallet') dispatch(getwalletTotal(walletTotal - (cartTotalSellingPrice - cartDiscount)))
-        await sendNotificationWithNavigation('🛍️ Order Placed', 'Your order has been successfully placed. Thank you for shopping with us!', 'My Orders');
-        storeNotification(customerId, "ORDERPLACED", `🛍️ Order Placed', 'Your order has been successfully placed. Thank you for shopping with us!`, new Date().toISOString())
-
-        navigation.push('Order Placed', responseData)
-        setshowLoader(false)
-
-        // Handle the response data as needed
-      } catch (error) {
-        console.error('Error inserting order:', error);
-        Alert.alert('Error', 'An error occurred while inserting the order.');
-        setshowLoader(false)
-        setStatus(false)
-
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
       }
-    
+
+      const responseData = await response.json();
+      const shippingAddressMap = responseData.insertedAddress.reduce((map, address) => {
+        if (!map[address.unique_order_id]) {
+          map[address.unique_order_id] = [];
+        }
+        map[address.unique_order_id].push(address);
+        return map;
+      }, {});
+
+      // Add shipping_address as an array to each order
+      const ordersWithShippingAddress = responseData.insertedOrders.map(order => ({
+        ...order,
+        shipping_address: shippingAddressMap[order.order_id] || [],
+      }));
+
+
+      dispatch(emptyCart());
+      dispatch(addOrders(ordersWithShippingAddress))
+      if (selectedPaymentMode === 'Wallet') dispatch(getwalletTotal(walletTotal - (cartTotalSellingPrice - cartDiscount)))
+      await sendNotificationWithNavigation('🛍️ Order Placed', 'Your order has been successfully placed. Thank you for shopping with us!', 'My Orders');
+      storeNotification(customerId, "ORDERPLACED", `🛍️ Order Placed', 'Your order has been successfully placed. Thank you for shopping with us!`, new Date().toISOString())
+
+      navigation.push('Order Placed', responseData)
+      setshowLoader(false)
+
+      // Handle the response data as needed
+    } catch (error) {
+      console.error('Error inserting order:', error);
+      Alert.alert('Error', 'An error occurred while inserting the order.');
+      setshowLoader(false)
+      setStatus(false)
+
+    }
+
   }
   // Define ListFooterComponent
   const ListFooterComponent = () => (
@@ -480,28 +584,28 @@ const CheckoutPreview = ({ route, navigation }) => {
         </TouchableOpacity> */}
         <View className="flex-row items-center">
 
-        <TouchableOpacity
-          style={{ flexDirection: 'row', alignItems: 'center', marginVertical: 8 }}
-          onPress={() => handlePaymentModeChange('Wallet')}
-        >
-          <RadioButton selected={selectedPaymentMode === 'Wallet'} />
-          <Text style={{ fontSize: 16, marginLeft: 8, color: selectedPaymentMode === 'Wallet' ? 'black' : 'gray' }}>Wallet ({formatCurrency(walletTotal)})</Text>
-        </TouchableOpacity>
-{
-    walletTotal === 0 &&
-        <TouchableOpacity onPress={() => navigation.navigate("AddMoney")}>
+          <TouchableOpacity
+            style={{ flexDirection: 'row', alignItems: 'center', marginVertical: 8 }}
+            onPress={() => handlePaymentModeChange('Wallet')}
+          >
+            <RadioButton selected={selectedPaymentMode === 'Wallet'} />
+            <Text style={{ fontSize: 16, marginLeft: 8, color: selectedPaymentMode === 'Wallet' ? 'black' : 'gray' }}>Wallet ({formatCurrency(walletTotal)})</Text>
+          </TouchableOpacity>
+          {
+            walletTotal === 0 &&
+            <TouchableOpacity onPress={() => navigation.navigate("AddMoney")}>
 
 
-        <Text className="text-red-600 font-semibold ml-1 mr-0.5"> Recharge</Text>
-        {/* <MaterialCommunityIcons name="share" color="#e53935" /> */}
-        </TouchableOpacity>
-}
+              <Text className="text-red-600 font-semibold ml-1 mr-0.5"> Recharge</Text>
+              {/* <MaterialCommunityIcons name="share" color="#e53935" /> */}
+            </TouchableOpacity>
+          }
         </View>
       </View>
     </View>
   );
 
-  const shouldRenderButton = selectedPaymentMode === 'Wallet' && walletTotal >= (cartTotalSellingPrice - cartDiscount);
+  const shouldRenderButton = selectedPaymentMode === 'Wallet' && walletTotal >= ((totalAmount + parseFloat(shippingRate)) - cartDiscount);
 
   const pickupItems = cartItems
     .filter(item => checkoutItems.includes(item.uniquepid))
@@ -527,6 +631,22 @@ const CheckoutPreview = ({ route, navigation }) => {
     status && handlePaymentSubmit()
   }
 
+
+  const checkoutData = [
+    {
+      orders: cartItems,
+      shipping_address: shippingAddress,
+      customerData: customerData[0],
+      paymentIntent: [],
+      selectedPaymentMode,
+      checkoutItems,
+      order_date,
+      shippingRate,
+      couponCodeData: couponCodeData
+    }
+  ]
+
+  console.log(couponCodeData, 's');
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: Colors.whiteColor }} className="">
       {
@@ -535,9 +655,9 @@ const CheckoutPreview = ({ route, navigation }) => {
       {/* <StripeProvider
         publishableKey="pk_test_51NyX2ELOvL7BZfFQr5Ie3hElBBFVYu8ML70jVRCOKMtrgfmd52QGW6hms6fgZyCrVNYRFQEQ9VtsZKNgwe8mkj31007MetaQ5I"
       > */}
-        <HeaderBar title={'Order Summary'} goback={true} navigation={navigation} searchEnable={false} cartEnable={false} />
-        <ScrollView className="" showsHorizontalScrollIndicator={false} showsVerticalScrollIndicator={false}>
-          {/* <FlatList
+      <HeaderBar title={'Order Summary'} goback={true} navigation={navigation} searchEnable={false} cartEnable={false} />
+      <ScrollView className="" showsHorizontalScrollIndicator={false} showsVerticalScrollIndicator={false}>
+        {/* <FlatList
           className="mt-1"
           data={cartItems}
           keyExtractor={(item) => `${item.uniquepid}`}
@@ -546,67 +666,67 @@ const CheckoutPreview = ({ route, navigation }) => {
           showsVerticalScrollIndicator={false}
           ListFooterComponent={<ListFooterComponent />}
         /> */}
+        <View>
           <View>
-            <View>
-              {
-                pickupItems?.length !== 0 &&
-                <Text className="text-xl font-bold italic mx-4 mt-6 mb-2 text-[#00008b]">Items For Pickup</Text>
-              }
-              {
-                pickupItems?.map((single, index) => {
-                  return (
-                    <View key={index} className="border-b border-black pb-3 ">
-                      <View className="border-t mt-1">
-                        {
-                          single.Items?.map(item => renderItem({ item }))
-                        }
-                        <View className=" mx-3">
-                          <Text className="text-lg font-bold my-1">{t("Pickup Info")}</Text>
-                          <Text className="text-base font-medium">{single?.vendorInfo?.vendorname}</Text>
-                          <Text className="text-base">{single?.vendorInfo?.brand_name}</Text>
-                          <Text className="text-base">{single?.vendorInfo?.mobile_number}</Text>
-                          <Text className="text-base">{single?.vendorInfo?.shipping_address}</Text>
-                        </View>
+            {
+              pickupItems?.length !== 0 &&
+              <Text className="text-xl font-bold italic mx-4 mt-6 mb-2 text-[#00008b]">Items For Pickup</Text>
+            }
+            {
+              pickupItems?.map((single, index) => {
+                return (
+                  <View key={index} className="border-b border-black pb-3 ">
+                    <View className="border-t mt-1">
+                      {
+                        single.Items?.map(item => renderItem({ item }))
+                      }
+                      <View className=" mx-3">
+                        <Text className="text-lg font-bold my-1">{t("Pickup Info")}</Text>
+                        <Text className="text-base font-medium">{single?.vendorInfo?.vendorname}</Text>
+                        <Text className="text-base">{single?.vendorInfo?.brand_name}</Text>
+                        <Text className="text-base">{single?.vendorInfo?.mobile_number}</Text>
+                        <Text className="text-base">{single?.vendorInfo?.shipping_address}</Text>
                       </View>
                     </View>
-                  )
-                })
-              }
-            </View>
-            <View>
-              {
-                cartItems
-                  .filter(item => !checkoutItems.includes(item.uniquepid)).length !== 0 &&
-                <Text className="text-xl font-bold text-[#00008b] italic mx-4 mt-6 mb-2">{t("Items For Shipping")}</Text>
-              }
-              {
-                cartItems
-                  .filter(item => !checkoutItems.includes(item.uniquepid))
-                  .map(item => renderItem({ item }))
-              }
-              {
-
-
-                <ListFooterComponent />
-              }
-            </View>
-
+                  </View>
+                )
+              })
+            }
           </View>
-        </ScrollView>
+          <View>
+            {
+              cartItems
+                .filter(item => !checkoutItems.includes(item.uniquepid)).length !== 0 &&
+              <Text className="text-xl font-bold text-[#00008b] italic mx-4 mt-6 mb-2">{t("Items For Shipping")}</Text>
+            }
+            {
+              cartItems
+                .filter(item => !checkoutItems.includes(item.uniquepid))
+                .map(item => renderItem({ item }))
+            }
+            {
 
 
-        {
-          !shouldRenderButton && selectedPaymentMode === 'Wallet' ?
-            <View className="p-4 bg-gray-100 flex-row justify-center">
-              <Text className="text-red-500 text-xl">{t("Insufficent Balance")}</Text>
-            </View>
-            :
-            <SlideToAction onSwipe={hanleSwipe} status={status} text={`Swipe to Pay (${formatCurrency((cartTotalSellingPrice - cartDiscount + shippingRate))})`} />
-          // <TouchableOpacity className="bg-[#00008b] " onPress={debounce(() => handlePaymentSubmit(), 500)}>
-          //   <Text className="text-[22px]  py-2 pb-3  tracking-widest rounded-md  text-center text-white font-bold">
-          //     {` ${t("Pay")} $${(cartTotalSellingPrice - cartDiscount + shippingRate).toFixed(2)}`} </Text>
-          // </TouchableOpacity>
-        }
+              <ListFooterComponent />
+            }
+          </View>
+
+        </View>
+      </ScrollView>
+
+
+      {
+        !shouldRenderButton && selectedPaymentMode === 'Wallet' ?
+          <View className="p-4 bg-gray-100 flex-row justify-center">
+            <Text className="text-red-500 text-xl">{t("Insufficent Balance")}</Text>
+          </View>
+          :
+          <SlideToAction onSwipe={hanleSwipe} status={status} text={`Swipe to Pay (${formatCurrency((totalAmount + shippingRate))})`} />
+        // <TouchableOpacity className="bg-[#00008b] " onPress={debounce(() => handlePaymentSubmit(), 500)}>
+        //   <Text className="text-[22px]  py-2 pb-3  tracking-widest rounded-md  text-center text-white font-bold">
+        //     {` ${t("Pay")} $${(cartTotalSellingPrice - cartDiscount + shippingRate).toFixed(2)}`} </Text>
+        // </TouchableOpacity>
+      }
       {/* </StripeProvider> */}
     </SafeAreaView>
 
