@@ -23,6 +23,11 @@ const AddMoney = ({ navigation }) => {
     { label: 'Request Wallet Statement', screen: 'DownloadStatement', icon: 'download' },
   ];
 
+  const [selectedOption, setSelectedOption] = useState('EVC');
+
+  const handleOptionSelect = (option) => {
+    setSelectedOption(option);
+  };
 
   const handleAmountChange = (text) => {
     setAmount(text);
@@ -36,61 +41,114 @@ const AddMoney = ({ navigation }) => {
   };
 
   const handleAddMoney = async () => {
+    if (selectedOption === 'EVC') {
+      await addMoneyFromEVC()
+    }
+
+    else if (selectedOption === 'eDahab') {
+      setLoadingButton(true)
+
+      if (edahabNumber.trim() === '') {
+        Alert.alert("Error", 'Please enter your eDahab Number');
+        return;
+      }
+
+      try {
+        // Call your API to add money and get the payment link
+        const response = await fetch(`${AdminUrl}/api/issue-invoice`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ amount: parseFloat(amount), customerId, edahabNumber, returnUrl: 'https://www.stg.nilegmp.com' }),
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          // Check StatusCode and show a simple alert or validation errors
+          if (data.StatusCode === 0) {
+            // Show a simple alert with a link to pay
+            Alert.alert(
+              'Invoice Issued Successfully!',
+              'Please proceed to pay the amount.\n\nInstructions:\n1. Click "Pay Now" and pull to refresh the page to see the updated balance.\n2. After clicking "Pay Now," you will be redirected to the official eDahab payment link to complete the payment.\n3. After successfully paying and redirecting to the thank you page, come back to the application to check the payment status.',
+              [
+                { text: 'Later', style: 'cancel' },
+                {
+                  text: 'Pay Now',
+                  onPress: async () => {
+                    // Redirect the user to the payment link
+                    await Linking.openURL(`https://edahab.net/API/Payment?invoiceId=${data.InvoiceId}`);
+
+                    // Navigate back to the previous screen
+                    navigation.goBack();
+                  },
+                },
+              ],
+              { cancelable: false }
+            );
+          } else {
+            // Show validation errors in an alert
+            const validationErrors = data.ValidationErrors.map(error => error.ErrorMessage).join('\n');
+            Alert.alert('Validation Error', validationErrors);
+          }
+        } else {
+          // Show a simple alert with an error message
+          Alert.alert('Error', 'Failed to issue invoice. Please try again later.');
+        }
+      } catch (error) {
+        // Handle errors
+        console.error('Error adding money:', error);
+
+        // Show a simple alert with an error message
+        Alert.alert('Error', 'An error occurred. Please try again later.');
+      } finally {
+        setLoadingButton(false)
+      }
+    }
+
+  };
+
+  const addMoneyFromEVC = async () => {
     setLoadingButton(true)
     try {
-      // Call your API to add money and get the payment link
-      const response = await fetch(`${AdminUrl}/api/issue-invoice`, {
+
+      // Check if edahabNumber is a number and has exactly 9 digits
+      const isValidEdahabNumber = /^\d{9}$/.test(edahabNumber);
+
+      if (!isValidEdahabNumber) {
+        Alert.alert("Error", "Please enter a 9-digit number for Evc.");
+      }
+
+      const response = await fetch(`${AdminUrl}/api/doEvcTransactiontoWallet`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ amount: parseFloat(amount), customerId, edahabNumber, returnUrl: 'https://www.stg.nilegmp.com' }),
+        body: JSON.stringify({ amount: parseFloat(amount), customerId, evcNumber: edahabNumber }),
       });
 
       const data = await response.json();
 
-      if (response.ok) {
-        // Check StatusCode and show a simple alert or validation errors
-        if (data.StatusCode === 0) {
-          // Show a simple alert with a link to pay
-          Alert.alert(
-            'Invoice Issued Successfully!',
-            'Please proceed to pay the amount.\n\nInstructions:\n1. Click "Pay Now" and pull to refresh the page to see the updated balance.\n2. After clicking "Pay Now," you will be redirected to the official eDahab payment link to complete the payment.\n3. After successfully paying and redirecting to the thank you page, come back to the application to check the payment status.',
-            [
-              { text: 'Later', style: 'cancel' },
-              {
-                text: 'Pay Now',
-                onPress: async () => {
-                  // Redirect the user to the payment link
-                  await Linking.openURL(`https://edahab.net/API/Payment?invoiceId=${data.InvoiceId}`);
+      if (data?.success) {
+        Alert.alert(
+          'Transaction Successful',
+          'Your transaction was successful.',
+        )
+        navigation.goBack();
 
-                  // Navigate back to the previous screen
-                  navigation.goBack();
-                },
-              },
-            ],
-            { cancelable: false }
-          );
-        } else {
-          // Show validation errors in an alert
-          const validationErrors = data.ValidationErrors.map(error => error.ErrorMessage).join('\n');
-          Alert.alert('Validation Error', validationErrors);
-        }
       } else {
-        // Show a simple alert with an error message
-        Alert.alert('Error', 'Failed to issue invoice. Please try again later.');
+        Alert.alert(
+          'Transaction Failed',
+          'Your transaction failed.',
+        )
       }
     } catch (error) {
-      // Handle errors
-      console.error('Error adding money:', error);
-
-      // Show a simple alert with an error message
-      Alert.alert('Error', 'An error occurred. Please try again later.');
+      console.log(error.message);
     } finally {
       setLoadingButton(false)
     }
-  };
-
+  }
 
   return (
     <KeyboardAvoidingView
@@ -165,6 +223,39 @@ const AddMoney = ({ navigation }) => {
               <Text style={{ fontSize: 20, fontWeight: 'bold' }}>{t("Add Money to Wallet")}</Text>
             </View>
 
+            <View>
+              {/* Options for selecting EVC or eDahab */}
+              <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 10 }}>
+                <TouchableOpacity
+                  style={{
+                    borderWidth: 1,
+                    borderColor: selectedOption === 'EVC' ? 'blue' : '#ccc',
+                    borderRadius: 5,
+                    padding: 10,
+                    width: '48%',
+                    alignItems: 'center',
+                  }}
+                  onPress={() => handleOptionSelect('EVC')}
+                >
+                  <Text style={{ color: selectedOption === 'EVC' ? 'blue' : 'black' }}>EVC</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={{
+                    borderWidth: 1,
+                    borderColor: selectedOption === 'eDahab' ? 'blue' : '#ccc',
+                    borderRadius: 5,
+                    padding: 10,
+                    width: '48%',
+                    alignItems: 'center',
+                  }}
+                  onPress={() => handleOptionSelect('eDahab')}
+                >
+                  <Text style={{ color: selectedOption === 'eDahab' ? 'blue' : 'black' }}>eDahab</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+
             {/* Input for entering custom amount */}
             <TextInput
               style={{
@@ -174,11 +265,12 @@ const AddMoney = ({ navigation }) => {
                 padding: 10,
                 marginTop: 10,
               }}
-              placeholder="Enter Edhab Number"
+              placeholder={selectedOption === 'EVC' ? "Enter 9 digit EVC Number" : "Enter 9 digit eDahab Number"}
               keyboardType="numeric"
               value={edahabNumber}
               onChangeText={handleedahabNumberChange}
             />
+
             <TextInput
               style={{
                 borderWidth: 1,
@@ -208,7 +300,7 @@ const AddMoney = ({ navigation }) => {
                   }}
                   onPress={() => handleAmountSelect(option)}
                 >
-                  <Text>{`${ formatCurrency(option).endsWith('.00') ? formatCurrency(option).slice(0, -3) : formatCurrency(option)}`}</Text>
+                  <Text>{`${formatCurrency(option).endsWith('.00') ? formatCurrency(option).slice(0, -3) : formatCurrency(option)}`}</Text>
                 </TouchableOpacity>
               ))}
             </View>

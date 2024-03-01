@@ -68,7 +68,6 @@ const Bottomsearch = ({ navigation }) => {
         }
     };
 
-
     const fetchsearch = async () => {
         try {
             const res = await fetch(`${AdminUrl}/api/getmostoccurredsearches`)
@@ -180,24 +179,31 @@ const Bottomsearch = ({ navigation }) => {
                 }
 
 
-                <FlatList
-                    data={popularSearches}
-                    keyExtractor={(item) => item.id.toString()}
-                    ListHeaderComponent={() => {
-                        return <Text className="px-2 py-4 text-gray-700">Popular searches</Text>
-                    }}
-                    ListEmptyComponent={() => <Text className="px-2 py-4 text-gray-700">No Recent searches</Text>}
-                    renderItem={({ item }) => (
-                        <TouchableOpacity key={item} onPress={debounce(() => handleKeywordPress(item.search_keyword), 1000)}>
-                            <View style={styles.keywordContainer}>
-                                <FontAwesome name="history" size={24} color="gray" />
+                {
+                    popularSearches && popularSearches?.length > 0 && <FlatList
+                        data={popularSearches}
+                        keyExtractor={(item) => item.id.toString()}
+                        ListHeaderComponent={() => {
+                            return <Text className="px-2 py-4 text-gray-700">Popular searches</Text>
+                        }}
+                        ListEmptyComponent={() => <Text className="px-2 py-4 text-gray-700">No Recent searches</Text>}
+                        renderItem={({ item }) => (
+                            <TouchableOpacity key={item} onPress={debounce(() => handleKeywordPress(item.search_keyword), 1000)}>
+                                <View style={styles.keywordContainer}>
+                                    <FontAwesome name="history" size={24} color="gray" />
 
-                                <Text style={styles.keywordText}>{item.search_keyword}</Text>
-                                {/* Add more Text components to display other details */}
-                            </View>
-                        </TouchableOpacity>
-                    )}
-                />
+                                    <Text style={styles.keywordText}>{item.search_keyword}</Text>
+                                    {/* Add more Text components to display other details */}
+                                </View>
+                            </TouchableOpacity>
+                        )}
+                    />
+                }
+
+                <View>
+
+                </View>
+
             </View>
         );
     };
