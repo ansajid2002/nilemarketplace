@@ -1,10 +1,10 @@
-import { View, Text, StyleSheet, StatusBar, SafeAreaView, TouchableOpacity, Image, Button, Touchable, ScrollView } from 'react-native'
+import { View, Text, StyleSheet, StatusBar, SafeAreaView, TouchableOpacity, Image, Button, Touchable, ScrollView, RefreshControl } from 'react-native'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { Colors, Sizes, } from "../../constants/styles";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { FlatList } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
-import { removeItem, incrementItem, decrementItem, addCheckoutItem, incrementCartTotal, decrementCartTotal, decrementCartTotalremove, removeCheckoutItem } from '../../store/slices/cartSlice';
+import { removeItem, incrementItem, decrementItem, addCheckoutItem, incrementCartTotal, decrementCartTotal, decrementCartTotalremove, removeCheckoutItem, fetchcart } from '../../store/slices/cartSlice';
 import { debounce } from 'lodash';
 import { AdminUrl, HeaderBar } from '../../constant';
 import emptyCart from "../../assets/images/icons/empty-cart.png"
@@ -32,14 +32,15 @@ const ChatsScreen = ({ navigation }) => {
     const { c_symbol } = useSelector((store) => store.selectedCurrency)
     ////////////////////////////////////////////////////////////////////////////////////////
     const dispatch = useDispatch()
-    const { cartItems, checkoutItems } = useSelector((state) => state.cart);
+    const { cartItems } = useSelector((state) => state.cart);
     const ct = useSelector((state) => state.cart.cartTotal);
     const screenWidth = Dimensions.get('window').width;
     const [exploreProducts, setExploreProducts] = useState(null)
     const scrollViewRef = useRef(null);
     const [shippingRate, setShippingrate] = useState(0)
     const [pickupModal, setPickupModal] = useState([])
-    const {appLangcode} = useSelector((store) => store.selectedCurrency)
+    const { appLangcode } = useSelector((store) => store.selectedCurrency)
+    const [refreshing, setRefreshing] = useState(false);
 
     const handleRemove = async (_, item, type) => {
         try {
@@ -73,9 +74,9 @@ const ChatsScreen = ({ navigation }) => {
                 }
                 else if (type === 'wishlist') {
                     setLoading(false)
-                    Alert.alert("Added to Wishlist", `${appLangcode === "so" ?  
-                    item?.somali_ad_title=== "" ? item?.ad_title : item?.somali_ad_title  :
-                     item?.ad_title} Added to wishlist✅`)
+                    Alert.alert("Added to Wishlist", `${appLangcode === "so" ?
+                        item?.somali_ad_title === "" ? item?.ad_title : item?.somali_ad_title :
+                        item?.ad_title} Added to wishlist✅`)
                 }
                 dispatch(decrementCartTotalremove(item.added_quantity))
                 dispatch(removeItem(item));
@@ -237,7 +238,6 @@ const ChatsScreen = ({ navigation }) => {
         return totalShippingCharges;
     };
 
-
     // Use the function in your component
     useEffect(() => {
         if (somalian_district && cartItems.length > 0) {
@@ -256,7 +256,6 @@ const ChatsScreen = ({ navigation }) => {
 
     // Calculate cartTotal
     const cartTotal = (cartTotalSellingPrice + shippingRate).toFixed(2);
-
 
     /////////////////////SAVE FOR LATER/////////////////////////
     const handleToggleWishlist = async (id) => {
@@ -316,7 +315,7 @@ const ChatsScreen = ({ navigation }) => {
         setModalVisible(false)
         dispatch(addCheckoutItem(pickupModal))
         navigation.push('Checkout Address');
-       
+
     }
 
     function header() {
@@ -350,14 +349,61 @@ const ChatsScreen = ({ navigation }) => {
             fetchExploreProducts()
         }
     })
+
     useFocusEffect(
         React.useCallback(() => {
             // Check if scrollViewRef and its current property exist
             if (scrollViewRef.current) {
                 scrollViewRef.current.scrollToOffset({ offset: 0, animated: true });
             }
+            fetchCartData()
         }, [scrollViewRef]) // Include scrollViewRef in dependencies array
     );
+
+
+    const fetchCartData = async () => {
+
+        try {
+            if (!customerId) {
+                return
+            }
+            else {
+                const urlWithCustomerId = `${AdminUrl}/api/cart?customer_id=${customerId}`;
+                const requestOptions = {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                };
+                // Send the GET request and await the response
+                const response = await fetch(urlWithCustomerId, requestOptions);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                const data = await response.json()
+                dispatch(fetchcart(data))
+                setRefreshing(false)
+            }
+
+        } catch (error) {
+            // Handle any errors here
+            console.error('Error fetching cart sdata:', error);
+        }
+
+    }
+    useEffect(() => {
+        fetchCartData()
+    }, [customerId])
+
+    const onRefresh = useCallback(() => {
+        setRefreshing(true);
+        fetchCartData()
+        // Perform your data fetching or refreshing actions here
+        // After data fetching is complete, setRefreshing(false)
+        // to indicate that the refresh process is completed.
+        // For example, you can refetch the cart items here.
+    }, []);
     //////////////////////////explore more ////////////////////////////
     const renderItem = ({ item }) => {
         const discountPercentageSimple = ((item.mrp - item.sellingprice) / item.mrp) * 100;
@@ -416,9 +462,9 @@ const ChatsScreen = ({ navigation }) => {
                     <View className="ml-4 " style={{ width: secondViewWidth }}>
 
                         <Text numberOfLines={2} className="text-base font-medium">
-                        {appLangcode === "so" ?  
-                    item?.somali_ad_title=== "" ? item?.ad_title : item?.somali_ad_title  :
-                     item?.ad_title}
+                            {appLangcode === "so" ?
+                                item?.somali_ad_title === "" ? item?.ad_title : item?.somali_ad_title :
+                                item?.ad_title}
                         </Text>
                         {
                             item.label && <Text className="text-[14px] text-gray-500 ">{item.label.split("/").join(" / ")}</Text>
@@ -480,6 +526,7 @@ const ChatsScreen = ({ navigation }) => {
             </View>
         )
     }
+
     const renderItemModal = ({ item }) => {
         const discountPercentageSimple = ((item.mrp - item.sellingprice) / item.mrp) * 100;
         const id = item?.uniquepid;
@@ -521,9 +568,9 @@ const ChatsScreen = ({ navigation }) => {
                     <View className="w-[60%] ">
 
                         <Text numberOfLines={2} className="text-base font-medium">
-                        {appLangcode === "so" ?  
-                    item?.somali_ad_title=== "" ? item?.ad_title : item?.somali_ad_title  :
-                     item?.ad_title}
+                            {appLangcode === "so" ?
+                                item?.somali_ad_title === "" ? item?.ad_title : item?.somali_ad_title :
+                                item?.ad_title}
                         </Text>
                         {
                             item?.label && <Text className="text-[14px] text-gray-500 ">{item?.label.split("/").join(" / ")}</Text>
@@ -632,18 +679,23 @@ const ChatsScreen = ({ navigation }) => {
                 <View style={{ flex: 1 }} >
                     {
                         cartItems?.length > 0 &&
-                        <FlatList ref={scrollViewRef}
+                        <FlatList
+                            ref={scrollViewRef}
                             data={cartItems}
                             keyExtractor={(item) => `${item?.uniquepid}${item?.label}`}
                             renderItem={renderItem}
-                            // contentContainerStyle={{ paddingHorizontal: Sizes.fixPadding + 1.0 }}
                             showsVerticalScrollIndicator={false}
                             ListFooterComponent={Cartdetails()}
+                            refreshControl={
+                                <RefreshControl
+                                    refreshing={refreshing}
+                                    onRefresh={onRefresh}
+                                />
+                            }
                         />
 
-
-
                     }
+
                     {
                         cartItems?.length > 0 ?
                             <View className="mb-[10px] border border-t-1 border-b-0 border-l-0 border-r-0 border-gray-300">
@@ -745,9 +797,6 @@ const ChatsScreen = ({ navigation }) => {
                                     <Text className="text-xl tracking-wider text-center font-semibold mb-6 ">{t("Your cart is empty!")}</Text>
                                 </View>
                                 <Exploremore />
-
-
-
                             </ScrollView>
                     }
                 </View>}

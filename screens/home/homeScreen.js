@@ -211,6 +211,7 @@ const HomeScreen = () => {
                 }
                 const data = await response.json()
 
+                console.log(data, 'data, cartttyyy');
                 dispatch(fetchcart(data))
 
             }

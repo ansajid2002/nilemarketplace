@@ -23,7 +23,7 @@ const AddMoney = ({ navigation }) => {
     { label: 'Request Wallet Statement', screen: 'DownloadStatement', icon: 'download' },
   ];
 
-  const [selectedOption, setSelectedOption] = useState('EVC');
+  const [selectedOption, setSelectedOption] = useState('eDahab');
 
   const handleOptionSelect = (option) => {
     setSelectedOption(option);
@@ -226,19 +226,6 @@ const AddMoney = ({ navigation }) => {
             <View>
               {/* Options for selecting EVC or eDahab */}
               <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 10 }}>
-                <TouchableOpacity
-                  style={{
-                    borderWidth: 1,
-                    borderColor: selectedOption === 'EVC' ? 'blue' : '#ccc',
-                    borderRadius: 5,
-                    padding: 10,
-                    width: '48%',
-                    alignItems: 'center',
-                  }}
-                  onPress={() => handleOptionSelect('EVC')}
-                >
-                  <Text style={{ color: selectedOption === 'EVC' ? 'blue' : 'black' }}>EVC</Text>
-                </TouchableOpacity>
 
                 <TouchableOpacity
                   style={{
@@ -253,6 +240,21 @@ const AddMoney = ({ navigation }) => {
                 >
                   <Text style={{ color: selectedOption === 'eDahab' ? 'blue' : 'black' }}>eDahab</Text>
                 </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={{
+                    borderWidth: 1,
+                    borderColor: selectedOption === 'EVC' ? 'blue' : '#ccc',
+                    borderRadius: 5,
+                    padding: 10,
+                    width: '48%',
+                    alignItems: 'center',
+                  }}
+                  onPress={() => handleOptionSelect('EVC')}
+                >
+                  <Text style={{ color: selectedOption === 'EVC' ? 'blue' : 'black' }}>EVC</Text>
+                </TouchableOpacity>
+
               </View>
             </View>
 

@@ -15,7 +15,7 @@ import { AdminUrl, HeaderBar } from '../../constant';
 import { StripeProvider } from '@stripe/stripe-react-native';
 import { useStripe } from '@stripe/stripe-react-native';
 import { Alert } from 'react-native';
-import { emptyCart } from '../../store/slices/cartSlice';
+import { addCarts, emptyCart, fetchcart } from '../../store/slices/cartSlice';
 import { addOrders } from '../../store/slices/myordersSlice';
 import { ActivityIndicator } from 'react-native';
 import { TextInput } from 'react-native';
@@ -27,10 +27,12 @@ import { formatCurrency } from '../wallet/Wallet';
 import { getwalletTotal } from '../../store/slices/walletSlice';
 import { productUrl } from '../../constant'
 import SlideToAction from '../../components/Slidetoaction';
+import { Button } from 'react-native';
 
 const CheckoutPreview = ({ route, navigation }) => {
   const [selectedPaymentMode, setSelectedPaymentMode] = useState('Wallet');
   const [showLoader, setshowLoader] = useState(false);
+  const [fullLoader, setFullLoader] = useState(false);
   const [couponCodeData, setCouponCodeData] = useState(null);
   const [status, setStatus] = useState(false);
 
@@ -56,15 +58,21 @@ const CheckoutPreview = ({ route, navigation }) => {
   const date = new Date();
   const order_date = date.toISOString();
 
+  console.log(couponCodeData, 'coponcode');
 
   useEffect(() => {
     if (cartItems?.length === 0) {
       navigation.navigate("Home");
     }
 
-    setDiscountPrice(((cartTotalMRP - cartTotalSellingPrice) / cartTotalMRP) * 100)
-    setTotalAmount((cartTotalSellingPrice - cartDiscount + shippingRate).toFixed(2))
-  }, [cartItems]);
+    const discountPercentageSimple = ((cartTotalMRP - cartTotalSellingPrice) / cartTotalMRP) * 100;
+
+    setDiscountPrice(discountPercentageSimple)
+    setTotalAmount((cartTotalSellingPrice - cartDiscount))
+  }, []);
+
+
+
 
   const handlePaymentModeChange = (mode) => {
     setSelectedPaymentMode(mode);
@@ -90,7 +98,7 @@ const CheckoutPreview = ({ route, navigation }) => {
         // Add other parameters as needed
       });
 
-      const response = await fetch(`${AdminUrl} / api / create - payment - intent`, {
+      const response = await fetch(`${AdminUrl}/api/create-payment-intent`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -205,13 +213,25 @@ const CheckoutPreview = ({ route, navigation }) => {
   // const cartDiscount = 0
 
   const calculateTotal = (property) => {
-    return cartItems?.map(item => item[property] * item?.added_quantity).reduce((prevValue, currValue) => prevValue + currValue, 0);
+    return cartItems?.map(item => {
+      let value;
+      if (property === 'sellingprice') {
+        value = (item.coupons && item.discountPrice && item.discountPrice > 0) ? item.discountPrice : item[property];
+        value = parseFloat(value); // Parse value as a float
+      } else {
+        value = parseFloat(item[property]); // Parse item[property] as a float
+      }
+
+      return value * item?.added_quantity;
+    }).reduce((prevValue, currValue) => prevValue + currValue, 0);
   };
 
   const TotalSellingPrice = calculateTotal('sellingprice');
   const TotalMRP = calculateTotal('mrp');
 
   const cartTotalSellingPrice = parseFloat(TotalSellingPrice?.toFixed(2));
+  console.log(cartTotalSellingPrice, 'cartTotalSellingPrice');
+
   const cartTotalMRP = parseFloat(TotalMRP?.toFixed(2));
 
   const calculateTotalShippingCharges = async (cartItems, destination) => {
@@ -252,7 +272,6 @@ const CheckoutPreview = ({ route, navigation }) => {
     return totalShippingCharges;
   };
 
-
   // Use the function in your component
   useEffect(() => {
     if (somalian_district && cartItems
@@ -276,7 +295,6 @@ const CheckoutPreview = ({ route, navigation }) => {
       if (coupon.discount_type === '%') {
         // Calculate the discount amount as a percentage of the total amount
         const discountAmount = ((cartTotalSellingPrice) * parseFloat(coupon.discount_amount)) / 100;
-        console.log(discountAmount);
         // Subtract the discount amount from the total amount
         const updatedTotalAmount = totalAmount + discountAmount;
         // Set the updated total amount
@@ -306,7 +324,7 @@ const CheckoutPreview = ({ route, navigation }) => {
         <View className="flex-row justify-between items-center items  ">
           <Text className="text-[14px]">{t("Discount")}</Text>
           <View className="flex-row gap-2 items-center">
-            {
+            {/* {
               couponCodeData && <View className="bg-gray-300 px-2 py-2 rounded-full flex-row  justify-center items-center">
                 <Text className="flex-col text-xs font-semibold"> {couponCodeData?.coupon_code}</Text>
                 <Feather
@@ -317,8 +335,8 @@ const CheckoutPreview = ({ route, navigation }) => {
                   style={{ marginLeft: 10 }}
                 />
               </View>
-            }
-            <Text className="text-[16px] text-green-600 font-medium">{`-${cartDiscount}`}</Text>
+            } */}
+            <Text className="text-[16px] text-green-600 font-medium">{`-${cartDiscount?.toFixed(2)}`}</Text>
           </View>
         </View>
 
@@ -338,12 +356,13 @@ const CheckoutPreview = ({ route, navigation }) => {
       setCouponCode(value);
     };
 
-    const handleApplyCoupon = () => {
-
+    const handleApplyCoupon = async () => {
       if (!couponCode.trim()) {
         Alert.alert('Error', 'Please enter a coupon code');
         return;
       }
+
+      setFullLoader(true);
 
       // Prepare the data to be sent in the request body
       const currentDate = new Date(); // Get the current date and time
@@ -356,53 +375,108 @@ const CheckoutPreview = ({ route, navigation }) => {
 
       if (!customerData?.[0]?.customer_id) return;
 
-      // Make a POST request to your backend endpoint
-      fetch(`${AdminUrl}/api/applyCoupon`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          // Add any other headers if required
-        },
-        body: JSON.stringify(data)
-      })
-        .then(response => {
-          if (response.ok) {
-            // Handle successful response
-            return response.json(); // Parse response body as JSON
-          } else {
-            // Handle error response
-            throw new Error('Failed to apply coupon');
-          }
-        })
-        .then(data => {
-          if (data?.success) {
-            const coupon = data?.couponData
-            console.log(coupon);
-            let updatedTotalAmount;
+      try {
+        // Make a POST request to your backend endpoint
+        const response = await fetch(`${AdminUrl}/api/applyCoupon`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            // Add any other headers if required
+          },
+          body: JSON.stringify(data)
+        });
 
-            if (coupon.discount_type === '%') {
-              const discount = (parseFloat(totalAmount) * parseFloat(coupon.discount_amount)) / 100;
-              updatedTotalAmount = parseFloat(totalAmount) - discount;
-            } else {
-              updatedTotalAmount = parseFloat(totalAmount) - parseFloat(coupon.discount_amount);
+        if (!response.ok) {
+          throw new Error('Failed to apply coupon');
+        }
+
+        const responseData = await response.json();
+
+        if (responseData.success) {
+          const coupon = responseData.couponData;
+
+          const associatedProducts = coupon.associated_products.map(item => JSON.parse(item).uniquepid); // Extract uniquepid from associated products
+          const coupons = {
+            coupon_code: coupon.coupon_code,
+            coupon_id: coupon.coupon_id,
+            discount_amount: coupon.discount_amount,
+            discount_type: coupon.discount_type,
+          };
+
+          setCouponCodeData(prevData => ({
+            ...prevData,
+            ...coupons
+          }));
+
+
+          // Create a new array with updated items containing coupons
+          const updatedCartItems = cartItems.map(item => {
+            if (associatedProducts.includes(item.uniquepid)) {
+              return { ...item, coupons }; // Append coupons to the item
+            }
+            return item; // Return item as is if no coupon is appended
+          });
+
+
+          const updatedPriceDiscount = updatedCartItems?.map(item => {
+            let updatedSellingPrice = item.sellingprice;
+
+            if (item.coupons) {
+              const { discount_amount, discount_type } = item.coupons;
+
+              if (discount_type === '%') {
+                // Calculate the discounted price based on percentage discount
+                updatedSellingPrice -= (item.sellingprice * discount_amount) / 100;
+              } else {
+                // Apply fixed amount discount
+                updatedSellingPrice -= parseFloat(discount_amount);
+              }
+
+              // Ensure the updated selling price is not less than 0
+              updatedSellingPrice = Math.max(updatedSellingPrice, 0);
             }
 
-            // Now, updatedTotalAmount contains the new total amount after applying the discount
-            setDiscountPrice((prev) => prev + parseFloat(coupon.discount_amount));
-            setCouponCodeData(coupon)
-            setTotalAmount(updatedTotalAmount);
-          } else {
-            Alert.alert('Error', `${data?.message || 'An unknown error occurred.'} `);
-          }
-        })
-        .catch(error => {
-          // Alert with error message
-          Alert.alert('Error', 'Failed to apply coupon');
-          console.error('Error occurred while applying coupon:', error);
-        });
-    };
+            // Calculate totalAmount for the item and update state
+            const itemTotalAmount = updatedSellingPrice * item.added_quantity;
 
-    console.log(couponCodeData, 'coupon');
+            return {
+              ...item,
+              discountPrice: updatedSellingPrice,
+              totalAmount: itemTotalAmount
+            };
+          });
+
+          // Calculate totalAmount for all items in updatedCartItems and update discountPrice
+          // Calculate totalAmount for all items in updatedCartItems and update discountPrice
+          const newTotalAmount = updatedPriceDiscount.reduce((prevValue, item) => {
+            // Calculate totalAmount for the item
+            const itemTotalAmount = item.discountPrice * item.added_quantity;
+
+            // Calculate the discount percentage relative to the original selling price
+            const discountPercentage = ((item.sellingprice - item.discountPrice) / item.sellingprice) * 100;
+
+            // Update the discountPrice state
+            setDiscountPrice(prevDiscountPrice => prevDiscountPrice + discountPercentage);
+
+            return prevValue + itemTotalAmount;
+          }, 0);
+
+          // Update the state with the new totalAmount
+          setTotalAmount(newTotalAmount.toFixed(2));
+
+          dispatch(fetchcart(updatedPriceDiscount));
+          // If you need to use the updatedCartItems somewhere, you can return it
+        } else {
+          Alert.alert('Error', `${responseData.message || 'An unknown error occurred.'} `);
+        }
+      } catch (error) {
+        // Alert with error message
+        Alert.alert('Error', 'Failed to apply coupon');
+        console.error('Error occurred while applying coupon:', error);
+      } finally {
+        setFullLoader(false);
+      }
+    };
 
 
     return (
@@ -414,7 +488,9 @@ const CheckoutPreview = ({ route, navigation }) => {
             className="flex-1 tracking-wider border border-gray-500 h-9 rounded-md pl-2 text-base"
             placeholder="Enter Coupon Code"
             onChangeText={(text) => handleCouponCodeChange(text)}
+            autoCapitalize="characters"
           />
+
           <TouchableOpacity
             className="border bg-gray-100 border-gray-400 h-full rounded-md flex-row items-center px-1.5"
             onPress={handleApplyCoupon}
@@ -425,6 +501,15 @@ const CheckoutPreview = ({ route, navigation }) => {
       </View>
     );
   };
+
+  const calculateDiscountPrice = (item) => {
+    if (item.coupons.discount_type === '%') {
+      return `${(parseFloat(item.sellingprice) * (100 - parseFloat(item.coupons.discount_amount)) / 100).toFixed(2)} `;
+    } else {
+      return `${(parseFloat(item.sellingprice) - parseFloat(item.coupons.discount_amount)).toFixed(2)} USD`;
+    }
+  };
+
 
   const renderItem = ({ item }) => {
     const discountPercentageSimple = ((item.mrp - item.sellingprice) / item.mrp) * 100;
@@ -466,7 +551,7 @@ const CheckoutPreview = ({ route, navigation }) => {
               )}
               <View className="flex-row items-center ">
                 <Text className="text-base ml-1.5 mr-0.5 font-medium">{`${c_symbol}`}</Text>
-                <Text className="text-gray-900 text-base" style={{ fontWeight: 'bold' }}>
+                <Text className={`text-gray-900 text-base  ${item.coupons && 'line-through'}`} style={{ fontWeight: 'bold' }}>
                   {`${item.sellingprice % 1 === 0 ? Math.trunc(item.sellingprice) : item.sellingprice}`}
                 </Text>
               </View>
@@ -475,11 +560,29 @@ const CheckoutPreview = ({ route, navigation }) => {
               discountPercentageSimple !== 0 &&
               <View className="flex-row items-center">
                 <Text className="text-gray-500 font-medium">{t("List Price: ")}</Text>
-                <Text style={styles.mrpPrice} className="font-medium">
+                <Text style={styles.mrpPrice} className={`font-medium ${item.coupons && 'line-through'}`}>
                   {`$${item.mrp % 1 === 0 ? Math.trunc(item.mrp) : item.mrp}`}
                 </Text>
               </View>
             }
+
+            {
+              item.coupons && (
+                <View className="mt-2 border-t border-gray-200 py-2">
+                  <View className="flex-row items-center">
+                    <Text className="text-gray-500 font-medium">{t("Coupon Code: ")}</Text>
+                    <Text className="font-medium">{item.coupons.coupon_code}</Text>
+                    <Text className="ml-3 text-xs bg-red-100 rounded-full text-red-600 font-semibold px-2 py-1">
+                      {item.coupons.discount_amount} {item.coupons.discount_type === '%' ? '%' : 'USD'}
+                    </Text>
+                  </View>
+                  <View>
+                    <Text>Discount Price: <Text className="font-semibold text-xl tracking-wide text-green-600">{calculateDiscountPrice(item)}</Text></Text>
+                  </View>
+                </View>
+              )
+            }
+
 
           </View>
 
@@ -526,7 +629,7 @@ const CheckoutPreview = ({ route, navigation }) => {
 
       dispatch(emptyCart());
       dispatch(addOrders(ordersWithShippingAddress))
-      if (selectedPaymentMode === 'Wallet') dispatch(getwalletTotal(walletTotal - (cartTotalSellingPrice - cartDiscount)))
+      if (selectedPaymentMode === 'Wallet') dispatch(getwalletTotal(walletTotal - (totalAmount + shippingRate)))
       await sendNotificationWithNavigation('🛍️ Order Placed', 'Your order has been successfully placed. Thank you for shopping with us!', 'My Orders');
       storeNotification(customerId, "ORDERPLACED", `🛍️ Order Placed', 'Your order has been successfully placed. Thank you for shopping with us!`, new Date().toISOString())
 
@@ -627,7 +730,6 @@ const CheckoutPreview = ({ route, navigation }) => {
     }, []);
 
   const hanleSwipe = (status) => {
-    console.log(status, 'status');
     status && handlePaymentSubmit()
   }
 
@@ -642,15 +744,14 @@ const CheckoutPreview = ({ route, navigation }) => {
       checkoutItems,
       order_date,
       shippingRate,
-      couponCodeData: couponCodeData
     }
   ]
 
-  console.log(couponCodeData, 's');
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: Colors.whiteColor }} className="">
       {
-        showLoader && <FullScreenLoader />
+        showLoader || fullLoader && <FullScreenLoader />
       }
       {/* <StripeProvider
         publishableKey="pk_test_51NyX2ELOvL7BZfFQr5Ie3hElBBFVYu8ML70jVRCOKMtrgfmd52QGW6hms6fgZyCrVNYRFQEQ9VtsZKNgwe8mkj31007MetaQ5I"
