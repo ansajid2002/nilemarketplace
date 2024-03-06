@@ -27,7 +27,6 @@ import { formatCurrency } from '../wallet/Wallet';
 import { getwalletTotal } from '../../store/slices/walletSlice';
 import { productUrl } from '../../constant'
 import SlideToAction from '../../components/Slidetoaction';
-import { Button } from 'react-native';
 
 const CheckoutPreview = ({ route, navigation }) => {
   const [selectedPaymentMode, setSelectedPaymentMode] = useState('Wallet');
@@ -51,6 +50,19 @@ const CheckoutPreview = ({ route, navigation }) => {
 
   const [cartDiscount, setDiscountPrice] = useState(0)
   const [totalAmount, setTotalAmount] = useState(0)
+  const [updatedPrice, setUpdatedPrice] = useState(0)
+  const [checkoutData, setCheckoutData] = useState([
+    {
+      orders: cartItems,
+      shipping_address: shippingAddress,
+      customerData: customerData[0],
+      paymentIntent: [],
+      selectedPaymentMode,
+      checkoutItems,
+      order_date,
+      shippingRate
+    }
+  ])
   const shippingAddress = route.params
   const { given_name_address = "", family_name_address = "", apt_address = "", subregion_address = "", city_address = "", country_address = "", region_address = "", zip_address = "", phone_address = "" } = shippingAddress || []
 
@@ -58,7 +70,6 @@ const CheckoutPreview = ({ route, navigation }) => {
   const date = new Date();
   const order_date = date.toISOString();
 
-  console.log(couponCodeData, 'coponcode');
 
   useEffect(() => {
     if (cartItems?.length === 0) {
@@ -68,10 +79,15 @@ const CheckoutPreview = ({ route, navigation }) => {
     const discountPercentageSimple = ((cartTotalMRP - cartTotalSellingPrice) / cartTotalMRP) * 100;
 
     setDiscountPrice(discountPercentageSimple)
-    setTotalAmount((cartTotalSellingPrice - cartDiscount))
+    const totalAmount = (cartTotalSellingPrice - cartDiscount);
+    setTotalAmount(totalAmount);
+    setUpdatedPrice(totalAmount);
+
+    // Add the deductAmount property to checkoutData
+    const updatedCheckoutData = [...checkoutData]; // Create a copy of checkoutData
+    updatedCheckoutData[0].deductAmount = totalAmount;
+
   }, []);
-
-
 
 
   const handlePaymentModeChange = (mode) => {
@@ -148,7 +164,7 @@ const CheckoutPreview = ({ route, navigation }) => {
     setshowLoader(true)
     // Alert.alert('Payment Successful', 'Your payment was successful. Thank you!');
     try {
-      const response = await fetch(`${AdminUrl} / api / Insertorders`, {
+      const response = await fetch(`${AdminUrl}/api/Insertorders`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -222,6 +238,7 @@ const CheckoutPreview = ({ route, navigation }) => {
         value = parseFloat(item[property]); // Parse item[property] as a float
       }
 
+
       return value * item?.added_quantity;
     }).reduce((prevValue, currValue) => prevValue + currValue, 0);
   };
@@ -230,7 +247,13 @@ const CheckoutPreview = ({ route, navigation }) => {
   const TotalMRP = calculateTotal('mrp');
 
   const cartTotalSellingPrice = parseFloat(TotalSellingPrice?.toFixed(2));
-  console.log(cartTotalSellingPrice, 'cartTotalSellingPrice');
+
+  useEffect(() => {
+    if (checkoutData[0] !== undefined) {
+      checkoutData[0].deductAmount = cartTotalSellingPrice;
+    }
+  }, [cartTotalSellingPrice]);
+
 
   const cartTotalMRP = parseFloat(TotalMRP?.toFixed(2));
 
@@ -289,27 +312,6 @@ const CheckoutPreview = ({ route, navigation }) => {
   }, [somalian_district, cartItems]);
 
   const Cartdetails = () => {
-    const handleCancel = (coupon) => {
-      // Check if the coupon discount type is a percentage (%)
-
-      if (coupon.discount_type === '%') {
-        // Calculate the discount amount as a percentage of the total amount
-        const discountAmount = ((cartTotalSellingPrice) * parseFloat(coupon.discount_amount)) / 100;
-        // Subtract the discount amount from the total amount
-        const updatedTotalAmount = totalAmount + discountAmount;
-        // Set the updated total amount
-        setTotalAmount(updatedTotalAmount.toFixed(2));
-      } else {
-        // For other discount types (e.g., fixed amount), directly subtract the discount amount
-        const updatedTotalAmount = parseFloat(totalAmount) + parseFloat(coupon.discount_amount);
-        // Set the updated total amount
-        setTotalAmount(updatedTotalAmount);
-      }
-      setDiscountPrice(prev => prev - coupon.discount_amount)
-
-      setCouponCodeData((prev) => prev.coupon_id !== coupon.coupon_id)
-    };
-
     return (
       <View className="m-1 p-2 mt-2 ">
         <Text className="text-[18px] font-medium mb-2">{t("Price Details")}</Text>
@@ -364,24 +366,21 @@ const CheckoutPreview = ({ route, navigation }) => {
 
       setFullLoader(true);
 
-      // Prepare the data to be sent in the request body
-      const currentDate = new Date(); // Get the current date and time
+      const currentDate = new Date();
       const data = {
         couponCode: couponCode,
         customerID: customerData?.[0]?.customer_id,
-        currentDate: currentDate.toISOString(), // Convert to ISO string format
-        cartItems: cartItems.map(item => item.uniquepid) // Extract product_uniquepid from cartItems
+        currentDate: currentDate.toISOString(),
+        cartItems: cartItems.map(item => item.uniquepid)
       };
 
       if (!customerData?.[0]?.customer_id) return;
 
       try {
-        // Make a POST request to your backend endpoint
         const response = await fetch(`${AdminUrl}/api/applyCoupon`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            // Add any other headers if required
           },
           body: JSON.stringify(data)
         });
@@ -395,7 +394,8 @@ const CheckoutPreview = ({ route, navigation }) => {
         if (responseData.success) {
           const coupon = responseData.couponData;
 
-          const associatedProducts = coupon.associated_products.map(item => JSON.parse(item).uniquepid); // Extract uniquepid from associated products
+          const associatedProducts = coupon.associated_products.map(item => JSON.parse(item).uniquepid);
+
           const coupons = {
             coupon_code: coupon.coupon_code,
             coupon_id: coupon.coupon_id,
@@ -408,15 +408,12 @@ const CheckoutPreview = ({ route, navigation }) => {
             ...coupons
           }));
 
-
-          // Create a new array with updated items containing coupons
           const updatedCartItems = cartItems.map(item => {
             if (associatedProducts.includes(item.uniquepid)) {
-              return { ...item, coupons }; // Append coupons to the item
+              return { ...item, coupons };
             }
-            return item; // Return item as is if no coupon is appended
+            return item;
           });
-
 
           const updatedPriceDiscount = updatedCartItems?.map(item => {
             let updatedSellingPrice = item.sellingprice;
@@ -425,18 +422,15 @@ const CheckoutPreview = ({ route, navigation }) => {
               const { discount_amount, discount_type } = item.coupons;
 
               if (discount_type === '%') {
-                // Calculate the discounted price based on percentage discount
                 updatedSellingPrice -= (item.sellingprice * discount_amount) / 100;
               } else {
-                // Apply fixed amount discount
                 updatedSellingPrice -= parseFloat(discount_amount);
               }
 
-              // Ensure the updated selling price is not less than 0
               updatedSellingPrice = Math.max(updatedSellingPrice, 0);
             }
 
-            // Calculate totalAmount for the item and update state
+
             const itemTotalAmount = updatedSellingPrice * item.added_quantity;
 
             return {
@@ -446,37 +440,41 @@ const CheckoutPreview = ({ route, navigation }) => {
             };
           });
 
-          // Calculate totalAmount for all items in updatedCartItems and update discountPrice
-          // Calculate totalAmount for all items in updatedCartItems and update discountPrice
           const newTotalAmount = updatedPriceDiscount.reduce((prevValue, item) => {
-            // Calculate totalAmount for the item
             const itemTotalAmount = item.discountPrice * item.added_quantity;
-
-            // Calculate the discount percentage relative to the original selling price
             const discountPercentage = ((item.sellingprice - item.discountPrice) / item.sellingprice) * 100;
 
-            // Update the discountPrice state
             setDiscountPrice(prevDiscountPrice => prevDiscountPrice + discountPercentage);
 
             return prevValue + itemTotalAmount;
           }, 0);
 
-          // Update the state with the new totalAmount
           setTotalAmount(newTotalAmount.toFixed(2));
-
+          setUpdatedPrice(newTotalAmount.toFixed(2));
           dispatch(fetchcart(updatedPriceDiscount));
-          // If you need to use the updatedCartItems somewhere, you can return it
+
+          setCheckoutData(() => {
+            if (checkoutData.length > 0) {
+              checkoutData[0].orders = updatedPriceDiscount
+              checkoutData[0].deductAmount = newTotalAmount.toFixed(2);
+            }
+            return checkoutData;
+          });
+
+
+
+
         } else {
           Alert.alert('Error', `${responseData.message || 'An unknown error occurred.'} `);
         }
       } catch (error) {
-        // Alert with error message
         Alert.alert('Error', 'Failed to apply coupon');
         console.error('Error occurred while applying coupon:', error);
       } finally {
         setFullLoader(false);
       }
     };
+
 
 
     return (
@@ -502,6 +500,8 @@ const CheckoutPreview = ({ route, navigation }) => {
     );
   };
 
+  console.log(cartItems, 'cart');
+
   const calculateDiscountPrice = (item) => {
     if (item.coupons.discount_type === '%') {
       return `${(parseFloat(item.sellingprice) * (100 - parseFloat(item.coupons.discount_amount)) / 100).toFixed(2)} `;
@@ -523,7 +523,7 @@ const CheckoutPreview = ({ route, navigation }) => {
               resizeMode="contain"
               source={
                 item.images
-                  ? { uri: `${productUrl} /${item.images[0]}` }
+                  ? { uri: `${productUrl}/${item.images[0]}` }
                   : require('../../assets/noimage.jpg')
               }
 
@@ -586,14 +586,15 @@ const CheckoutPreview = ({ route, navigation }) => {
 
           </View>
 
-        </TouchableOpacity >
+        </TouchableOpacity>
 
       </View >
     )
   }
+
+
   ////////////////FROM CART//////////////////////////////////////////////////////////
   const handlePaymentSubmit = async () => {
-
     setshowLoader(true)
     setStatus(true)
 
@@ -627,13 +628,13 @@ const CheckoutPreview = ({ route, navigation }) => {
       }));
 
 
+      dispatch(getwalletTotal(walletTotal - (totalAmount + shippingRate)))
       dispatch(emptyCart());
       dispatch(addOrders(ordersWithShippingAddress))
-      if (selectedPaymentMode === 'Wallet') dispatch(getwalletTotal(walletTotal - (totalAmount + shippingRate)))
       await sendNotificationWithNavigation('🛍️ Order Placed', 'Your order has been successfully placed. Thank you for shopping with us!', 'My Orders');
       storeNotification(customerId, "ORDERPLACED", `🛍️ Order Placed', 'Your order has been successfully placed. Thank you for shopping with us!`, new Date().toISOString())
 
-      navigation.push('Order Placed', responseData)
+      navigation.replace('Order Placed', responseData)
       setshowLoader(false)
 
       // Handle the response data as needed
@@ -708,6 +709,8 @@ const CheckoutPreview = ({ route, navigation }) => {
     </View>
   );
 
+
+
   const shouldRenderButton = selectedPaymentMode === 'Wallet' && walletTotal >= ((totalAmount + parseFloat(shippingRate)) - cartDiscount);
 
   const pickupItems = cartItems
@@ -732,20 +735,6 @@ const CheckoutPreview = ({ route, navigation }) => {
   const hanleSwipe = (status) => {
     status && handlePaymentSubmit()
   }
-
-
-  const checkoutData = [
-    {
-      orders: cartItems,
-      shipping_address: shippingAddress,
-      customerData: customerData[0],
-      paymentIntent: [],
-      selectedPaymentMode,
-      checkoutItems,
-      order_date,
-      shippingRate,
-    }
-  ]
 
 
   return (
