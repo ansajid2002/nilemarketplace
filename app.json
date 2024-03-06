@@ -31,7 +31,7 @@
       ]
     ],
     "assetBundlePatterns": [
-      "**/*"
+      "*/"
     ],
     "ios": {
       "infoPlist": {
@@ -42,13 +42,13 @@
         "NSPhotoLibraryAddUsageDescription": "Allow $(PRODUCT_NAME) to save photos"
       },
       "bundleIdentifier": "com.gsmash.nilegmp",
-      "buildNumber": "2",
+      "buildNumber": "3",
       "supportsTablet": true,
       "usesAppleSignIn": true
     },
     "android": {
       "package": "com.gsmash.nilegmp",
-      "versionCode": 1,
+      "versionCode": 4,
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/icon_new.png",
         "backgroundColor": "#FFFFFF"
@@ -67,10 +67,10 @@
     },
     "extra": {
       "eas": {
-        "projectId": "1f02609b-d2a2-42f9-9dfc-741db83d94ab"
+        "projectId": "6d967be9-80f6-4c34-8520-e8e53c626f9c"
       }
     },
     "scheme": "nile",
-    "owner": "skshadab1234"
+    "owner": "sajid.ansari"
   }
 }

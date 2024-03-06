@@ -8,8 +8,8 @@ import { useTranslation } from 'react-i18next';
 import { debounce } from 'lodash';
 
 // import Config from "react-native-config";
-// export const AdminUrl = "https://admin.nilegmp.com";
-export const AdminUrl = "http://192.168.1.5:3001";
+export const AdminUrl = "https://admin.nilegmp.com";
+// export const AdminUrl = "http://192.168.1.5:3001";
 // export const AdminUrl = "http://172.20.10.5:3001"; 
 export const productUrl = "https://ngmp-products.s3.us-east-005.backblazeb2.com"
 

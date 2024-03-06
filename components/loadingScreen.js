@@ -30,17 +30,16 @@ const LoadingScreen = ({ navigation }) => {
             console.error('Error:', error);
         } finally {
             const onboarding = await AsyncStorage.getItem('onboarding');
-            console.log(typeof(onboarding), "onboardingscreen newly updated");
-            
             const agreedAsync = await AsyncStorage.getItem('@agreed');
-            console.log(agreedAsync,"agreedAsync");
+            console.log(onboarding, "onboardingscreen newly updated");
 
             setTimeout(() => {
 
                 if (onboarding === "1" && agreedAsync) {
                     navigation.replace('Home');
-                } else if (onboarding === "1" && !agreedAsync)
-                navigation.replace('UserAgreement');
+                } else if (onboarding === "1" && !agreedAsync) {
+                    navigation.replace('UserAgreement');
+                }
                 else {
                     navigation.replace('Onboarding');
                 }
