@@ -51,6 +51,9 @@ const CheckoutPreview = ({ route, navigation }) => {
   const [cartDiscount, setDiscountPrice] = useState(0)
   const [totalAmount, setTotalAmount] = useState(0)
   const [updatedPrice, setUpdatedPrice] = useState(0)
+  const date = new Date();
+  const order_date = date.toISOString();
+
   const [checkoutData, setCheckoutData] = useState([
     {
       orders: cartItems,
@@ -67,8 +70,6 @@ const CheckoutPreview = ({ route, navigation }) => {
   const { given_name_address = "", family_name_address = "", apt_address = "", subregion_address = "", city_address = "", country_address = "", region_address = "", zip_address = "", phone_address = "" } = shippingAddress || []
 
   const customerId = customerData[0]?.customer_id;
-  const date = new Date();
-  const order_date = date.toISOString();
 
 
   useEffect(() => {
@@ -595,6 +596,8 @@ const CheckoutPreview = ({ route, navigation }) => {
 
   ////////////////FROM CART//////////////////////////////////////////////////////////
   const handlePaymentSubmit = async () => {
+
+    setFullLoader(true)
     setshowLoader(true)
     setStatus(true)
 
@@ -613,6 +616,7 @@ const CheckoutPreview = ({ route, navigation }) => {
       }
 
       const responseData = await response.json();
+      console.log(responseData, 'responseData');
       const shippingAddressMap = responseData.insertedAddress.reduce((map, address) => {
         if (!map[address.unique_order_id]) {
           map[address.unique_order_id] = [];
@@ -628,7 +632,7 @@ const CheckoutPreview = ({ route, navigation }) => {
       }));
 
 
-      dispatch(getwalletTotal(walletTotal - (totalAmount + shippingRate)))
+      dispatch(getwalletTotal(responseData?.walletamount))
       dispatch(emptyCart());
       dispatch(addOrders(ordersWithShippingAddress))
       await sendNotificationWithNavigation('🛍️ Order Placed', 'Your order has been successfully placed. Thank you for shopping with us!', 'My Orders');
@@ -636,12 +640,15 @@ const CheckoutPreview = ({ route, navigation }) => {
 
       navigation.replace('Order Placed', responseData)
       setshowLoader(false)
+      setFullLoader(false)
 
       // Handle the response data as needed
     } catch (error) {
       console.error('Error inserting order:', error);
       Alert.alert('Error', 'An error occurred while inserting the order.');
+      setFullLoader(false)
       setshowLoader(false)
+
       setStatus(false)
 
     }
@@ -740,7 +747,7 @@ const CheckoutPreview = ({ route, navigation }) => {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: Colors.whiteColor }} className="">
       {
-        showLoader || fullLoader && <FullScreenLoader />
+        fullLoader && <FullScreenLoader />
       }
       {/* <StripeProvider
         publishableKey="pk_test_51NyX2ELOvL7BZfFQr5Ie3hElBBFVYu8ML70jVRCOKMtrgfmd52QGW6hms6fgZyCrVNYRFQEQ9VtsZKNgwe8mkj31007MetaQ5I"

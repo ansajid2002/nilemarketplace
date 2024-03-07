@@ -51,6 +51,7 @@ const OrderStatusMessage = ({ orderData }) => {
 
 const OrderdetailsScreen = ({ route, navigation }) => {
   const orderData = route.params
+
   const { street_address = '', first_name = '', last_name = '', apartment = '', phone_number = '', selected_city = '', selected_state = '', selected_country = '', zip_code = '' } = orderData.shipping_address?.[0] || []
   const dateParts = orderData?.tentative_delivery_date && orderData.tentative_delivery_date?.split(" ");
   const { brand_name, vendorname, email, company_city, company_country, business_phone, company_state, company_zip_code, shipping_address } = orderData?.vendor_details
@@ -306,7 +307,44 @@ const OrderdetailsScreen = ({ route, navigation }) => {
             </Text>
             <Text className="text-sm tracking-wider text-gray-600">{orderData?.label || ''}</Text>
             <Text className="text-sm tracking-wider text-gray-600">Seller: {brand_name || vendorname}</Text>
-            <Text className="text-xl tracking-wider py-2 font-semibold">{formatCurrency(orderData?.total_amount)}</Text>
+            {
+              orderData?.coupon_id ? (
+                <View>
+                  <View className="flex-row gap-2">
+                    <Text className="text-lg tracking-wider py-2 font-medium line-through">{formatCurrency(orderData?.total_amount)}</Text>
+                    {orderData?.coupon_type === '%' ? (
+                      <Text className="text-xl tracking-wider py-2 text-green-600 font-semibold">{formatCurrency((orderData?.total_amount * orderData?.coupon_amount) / 100)}</Text>
+                    ) : <Text className="text-xl tracking-wider py-2 text-green-600 font-semibold">{formatCurrency(orderData?.total_amount - orderData?.coupon_amount)}</Text>
+                    }
+                  </View>
+
+                  <View className="bg-orange-500 flex-row justify-between items-center p-4 border-dashed outline-dashed border-2 border-white  mb-4">
+                    <View>
+                      <Text className="text-xs text-gray-100">Coudon Code</Text>
+                      <Text className="text-white text-xl font-semibold">{orderData?.coupon_code}</Text>
+                    </View>
+                    <View>
+                      {orderData?.coupon_type === '%' ? (
+                        <Text className="text-white text-xl font-semibold">-{orderData?.coupon_amount}%  OFF</Text>
+                      ) : (
+                        <Text className="text-white text-xl font-semibold">{formatCurrency(orderData?.coupon_amount)} OFF</Text>
+                      )}
+                    </View>
+                  </View>
+
+                  {/* <Text className='text-red-500'>Coupon Used</Text>
+                  <Text className='text-xs font-light mt-1'>Code: {orderData?.coupon_code}</Text>
+                  {orderData?.coupon_type === '%' ? (
+                    <Text className='text-xs font-bold mt-1'>Discount: -{formatCurrency((orderData?.total_amount * orderData?.coupon_amount) / 100)} ({orderData?.coupon_amount}% off on total amount)</Text>
+                  ) : (
+                    <Text className='text-xs font-bold mt-1'>Discount: -{formatCurrency(orderData?.coupon_amount)} off on total amount</Text>
+                  )} */}
+                </View>
+              ) : (
+                <Text className="text-xl tracking-wider py-2 font-semibold">{formatCurrency(orderData?.total_amount)}</Text>
+              )
+            }
+
             <Text className="text-sm tracking-widest text-gray-700">
               {message}
             </Text>

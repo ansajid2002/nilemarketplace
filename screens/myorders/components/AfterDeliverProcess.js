@@ -89,19 +89,27 @@ const AfterDeliverProcess = ({ status = "Return", uniqueid, callBACKBuySimilar, 
 
                     if (status === 'Ordered') {
                         message = `Hello ${product?.vendorInfo?.vendorname}, ${product?.vendorInfo?.brand_name},
-                    
-                    I have recently placed an order for the product "${productName}" with the order ID ${orderID}. I would like to inquire about the estimated delivery date. Could you please provide me with more information regarding the shipping status?
-                    
-                    Thank you,
-                   `;
+                        
+                        I have recently placed an order for the product "${productName}" with the order ID ${orderID}. I would like to inquire about the estimated delivery date. Could you please provide me with more information regarding the shipping status?
+                        
+                        Thank you,
+                        `;
                     } else if (status === 'Shipped') {
                         message = `Hello ${product?.vendorInfo?.vendorname}, ${product?.vendorInfo?.brand_name},
-                    
-                    I am writing to inquire about the status of my order with the ID ${orderID} for the product "${productName}". Could you please provide me with the tracking details and expected delivery date?
-                    
-                    Looking forward to your response.
-                    Best regards,
-                   `;
+                        
+                        I am writing to inquire about the status of my order with the ID ${orderID} for the product "${productName}". Could you please provide me with the tracking details and expected delivery date?
+                        
+                        Looking forward to your response.
+                        Best regards,
+                        `;
+                    } else if (status === 'Confirmed') {
+                        message = `Hello ${product?.vendorInfo?.vendorname}, ${product?.vendorInfo?.brand_name},
+                        
+                        I am writing to confirm the receipt of my order with the ID ${orderID} for the product "${productName}". Thank you for processing my order. 
+                        
+                        Looking forward to receiving the product soon.
+                        Best regards,
+                        `;
                     } else if (status === 'Out for Delivery') {
                         message = `Hello ${product?.vendorInfo?.vendorname}, ${product?.vendorInfo?.brand_name},
                     
