@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { TouchableOpacity, SafeAreaView, View, Image, ScrollView, StatusBar, Share, StyleSheet, Text, Alert, ActivityIndicator } from "react-native";
+import { TouchableOpacity, SafeAreaView, View, Image, ScrollView, StatusBar, Share, StyleSheet, Text, Alert, ActivityIndicator, Linking } from "react-native";
 import { Colors, Fonts, Sizes, } from "../../constants/styles";
 import { MaterialCommunityIcons, } from '@expo/vector-icons';
 
@@ -261,7 +261,6 @@ const ProductDetailScreen = ({ navigation, route }) => {
         }
     };
 
-
     let updatedAttributesSpecification = singleData?.attributes_specification;
 
     // Check if updatedAttributesSpecification exists and has the 'specificaitons' property
@@ -369,6 +368,7 @@ const ProductDetailScreen = ({ navigation, route }) => {
 
         </SafeAreaView>
     )
+
     function moreDetails() {
         return (
             <View className="m-4 ">
@@ -418,7 +418,7 @@ const ProductDetailScreen = ({ navigation, route }) => {
 
                     <View>
                         {
-                            singleData.quantity !== 0 ? <View>
+                            singleData?.quantity !== 0 ? <View>
                                 {
                                     singleData?.vendorInfo?.company_district ?
                                         <View>{
@@ -472,9 +472,18 @@ const ProductDetailScreen = ({ navigation, route }) => {
                     )}
 
                     {Object.entries(updatedAttributesSpecification)?.map(([key, value]) => (
-                        <View key={key} className="flex-row items-center  space-x-2">
+                        <View key={key} className="flex-row items-center space-x-2">
                             <Text className="capitalize font-bold py-2 text-gray-500">{key} : </Text>
-                            <Text className="text-left">{value}</Text>
+                            <Text className="text-left">
+                                {/* {value.text} Ensure that 'value.text' is rendered within a Text component */}
+                                {value.hyperlink && (
+                                    <TouchableOpacity onPress={() => Linking.openURL(value.hyperlink)}>
+                                        <Text style={{ color: 'blue', textDecorationLine: 'underline' }}>
+                                            {value.hyperlink}
+                                        </Text>
+                                    </TouchableOpacity>
+                                )}
+                            </Text>
                         </View>
                     ))}
                 </View>

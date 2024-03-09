@@ -28,13 +28,13 @@ Notifications.setNotificationHandler({
     }),
 });
 
-export const storeNotification = async (customerId, notificationType,  message, time) => {
+export const storeNotification = async (customerId, notificationType, message, time) => {
     await fetch(`${AdminUrl}/api/storeNotification`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ customerId, notification_type: notificationType,  message, timestamp:time }),
+        body: JSON.stringify({ customerId, notification_type: notificationType, message, timestamp: time }),
     });
 };
 
@@ -46,11 +46,11 @@ export async function sendNotificationWithNavigation(title, body, screenName) {
             data: {
                 screen: screenName, // Specify the screen to navigate to
             },
-       
+
         },
         trigger: { seconds: 2 },
     });
-  
+
 }
 
 
@@ -62,8 +62,8 @@ const NotificationExpo = () => {
     const navigation = useNavigation();
     const lastBackPressed = useRef(0);
     const [cartTotal, setCartTotal] = useState(null)
- 
-    const [langFetched,setLangfetched] = useState(false)
+
+    const [langFetched, setLangfetched] = useState(false)
 
     const { customerData } = useSelector((store) => store.userData)
     const customerId = customerData[0]?.customer_id
@@ -95,7 +95,7 @@ const NotificationExpo = () => {
             console.log("1");
             console.log("Fetching cart total...");
             let cartTotal = 0;
-    
+
             if (!customerId) {
                 console.log("No customer ID, checking local storage...");
                 const storedCartTotal = await AsyncStorage.getItem("cartTotal");
@@ -112,32 +112,32 @@ const NotificationExpo = () => {
                         'Content-Type': 'application/json',
                     },
                 };
-    
+
                 const response = await fetch(urlWithCustomerId, requestOptions);
-    
+
                 if (!response.ok) {
                     throw new Error(`HTTP error! Status: ${response.status}`);
                 }
-    
+
                 const data = await response.json();
                 cartTotal = data.total;
                 console.log("Cart total from server:", cartTotal);
-    
+
                 if (cartTotal === 0) {
                     console.log("Empty cart, sending notification...");
                     await sendNotificationWithNavigation('🛒 EMPTY CART  🙁', 'Your cart is empty. Add something to your cart and enjoy your shopping experience! 🛍️', '');
-                    storeNotification(customerId,"CART",`🛒 EMPTY CART  🙁', 'Your cart is empty. Add something to your cart and enjoy your shopping experience! 🛍️`,new Date().toISOString())
+                    storeNotification(customerId, "CART", `🛒 EMPTY CART  🙁', 'Your cart is empty. Add something to your cart and enjoy your shopping experience! 🛍️`, new Date().toISOString())
                 } else {
                     console.log("Cart has items, sending checkout notification...");
                     await sendNotificationWithNavigation('🛒 Checkout 🛍️', `You have ${cartTotal} items in your cart. Ready to complete your purchase? 💳`, '');
-                    storeNotification(customerId,"CHECKOUT",`🛒 Checdsgtrsrtgffvkout 🛍️ You have ${cartTotal} items in your cart. Ready to complete your purchase?  💳`,new Date().toISOString())
-               console.log("done 10")
+                    storeNotification(customerId, "CHECKOUT", `🛒 Checdsgtrsrtgffvkout 🛍️ You have ${cartTotal} items in your cart. Ready to complete your purchase?  💳`, new Date().toISOString())
+                    console.log("done 10")
                 }
-    
+
                 // Update local storage with the latest cart total
                 await AsyncStorage.setItem('cartTotal', JSON.stringify(cartTotal));
             }
-    
+
             // Update the state with the latest cart total
             setCartTotal(cartTotal);
         } catch (error) {
@@ -149,32 +149,32 @@ const NotificationExpo = () => {
             loadSelectedLang()
         }
         if (!cartTotal && langFetched) {
-      
+
             getCartTotaldata()
         }
-    }, [langFetched,customerId])
+    }, [langFetched, customerId])
 
     const loadSelectedLang = async () => {
         try {
-          const storedlangcode = await AsyncStorage.getItem('selectedLangcode');
-          if (storedlangcode !== null) {
-              changeLanguage(storedlangcode)
-              dispatch(setAppLang(storedlangcode));
-          }
-          const storedCountry = await AsyncStorage.getItem('selectedLangname');    
-          console.log(storedCountry,"seeee");        
-          if (storedCountry !== null) {
-            dispatch(setAppLangname(storedCountry));
-          }
+            const storedlangcode = await AsyncStorage.getItem('selectedLangcode');
+            if (storedlangcode !== null) {
+                changeLanguage(storedlangcode)
+                dispatch(setAppLang(storedlangcode));
+            }
+            const storedCountry = await AsyncStorage.getItem('selectedLangname');
+            console.log(storedCountry, "seeee");
+            if (storedCountry !== null) {
+                dispatch(setAppLangname(storedCountry));
+            }
         } catch (error) {
-          console.error('Error loading selected country from AsyncStorage:', error);
+            console.error('Error loading selected country from AsyncStorage:', error);
         }
         finally {
-          setLangfetched(true)
+            setLangfetched(true)
         }
-      };
+    };
 
-    
+
 
     useEffect(() => {
         const unsubscribe = navigation.addListener('state', () => {
@@ -203,7 +203,7 @@ const NotificationExpo = () => {
         const subscription = Notifications.addNotificationResponseReceivedListener((response) => {
             // Extract the screen name from the notification data
             const screenName = response.notification.request.content.data.screen;
-            console.log(screenName,"screennNNAmwe");
+            console.log(screenName, "screennNNAmwe");
             // Navigate to the specified screen
             if (screenName) {
                 navigation.navigate(screenName);
@@ -217,7 +217,7 @@ const NotificationExpo = () => {
 
 
     useEffect(() => {
-        registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
+        registerForPushNotificationsAsync();
 
         notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
         });
