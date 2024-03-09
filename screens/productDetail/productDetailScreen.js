@@ -480,6 +480,7 @@ const ProductDetailScreen = ({ navigation, route }) => {
                                     <TouchableOpacity onPress={() => Linking.openURL(value.hyperlink)}>
                                         <Text style={{ color: 'blue', textDecorationLine: 'underline' }}>
                                             {value.hyperlink}
+                                            {/* asa / */}
                                         </Text>
                                     </TouchableOpacity>
                                 )}
