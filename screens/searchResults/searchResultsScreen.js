@@ -19,7 +19,7 @@ const SearchResultsScreen = ({ navigation, route }) => {
     const [pageloading, setPageloading] = useState(true);
     const [VendorProductList, setVendorProductList] = useState(null);
     const [hasMore, setHasMore] = useState(true);
-    const [totalProducts,setTotalProducts] = useState(0)
+    const [totalProducts, setTotalProducts] = useState(0)
 
     const loadMoreProducts = () => {
         setPageloading(true);
@@ -53,7 +53,7 @@ const SearchResultsScreen = ({ navigation, route }) => {
                     setTotalProducts(data?.totalCount)
                     setHasMore(true); // If data is fetched and not an empty array, set hasMore to true
                 } else {
-                    !VendorProductList &&  setVendorProductList([])
+                    !VendorProductList && setVendorProductList([])
                     setHasMore(false); // If response is an empty array, set hasMore to false
                 }
             }
@@ -72,60 +72,60 @@ const SearchResultsScreen = ({ navigation, route }) => {
         <SafeAreaView style={{ flex: 1, backgroundColor: Colors.whiteColor }}>
             {header()}
             {
-                VendorProductList ? 
-            <>
-            <Text className="text-xl text-gray-600 font-medium mx-4 my-2">{`${totalProducts} ${t("Products Found")} `}</Text>
-            <FlatList
-                data={VendorProductList}
-                keyExtractor={(item) => `${item.uniquepid}`}
-                renderItem={renderItemOrSkeleton}
-                showsVerticalScrollIndicator={false}
-                numColumns={2}
-                onEndReached={VendorProductList?.length > 9 && loadMoreProducts}
-                onEndReachedThreshold={0.1}
-                ListFooterComponent={() => (
-                    <View className="">
-                        {
-                            (pageloading && hasMore) &&
-                            <View className="my-8">
-                                <ActivityIndicator size="large" color={"#00008b"} />
-                            </View>
-                        }
-                        {
-                            ( !hasMore && VendorProductList.length!==0) &&
-                                    <View className="flex-row items-center justify-center">
-                                        <Text className="text-xl my-10 text-gray-300 font-bold">{t("No More Products!")}</Text>
-                                    </View>
-                                }
-                        {
-                            VendorProductList?.length === 0 &&
-                            <View className="">
-                                <Image resizeMode="contain" className="h-[150px] w-[150px] mx-auto" source={require('../../assets/images/empty-folder.png')} />
-                                <Text className="text-center text-xl ">{t("No Product Found !")}</Text>
-                            </View>
-                        }
+                VendorProductList ?
+                    <>
+                        <Text className="text-xl text-gray-600 font-medium mx-4 my-2">{`${totalProducts} ${t("Products Found")} `}</Text>
+                        <FlatList
+                            data={VendorProductList}
+                            keyExtractor={(item) => `${item.uniquepid}`}
+                            renderItem={renderItemOrSkeleton}
+                            showsVerticalScrollIndicator={false}
+                            numColumns={2}
+                            onEndReached={VendorProductList?.length > 9 && loadMoreProducts}
+                            onEndReachedThreshold={0.1}
+                            ListFooterComponent={() => (
+                                <View className="">
+                                    {
+                                        (pageloading && hasMore) &&
+                                        <View className="my-8">
+                                            <ActivityIndicator size="large" color={"#00008b"} />
+                                        </View>
+                                    }
+                                    {
+                                        (!hasMore && VendorProductList.length !== 0) &&
+                                        <View className="flex-row items-center justify-center">
+                                            <Text className="text-xl my-10 text-gray-300 font-bold">{t("No More Products!")}</Text>
+                                        </View>
+                                    }
+                                    {
+                                        VendorProductList?.length === 0 &&
+                                        <View className="">
+                                            <Image resizeMode="contain" className="h-[150px] w-[150px] mx-auto" source={require('../../assets/images/empty-folder.png')} />
+                                            <Text className="text-center text-xl ">{t("No Product Found !")}</Text>
+                                        </View>
+                                    }
+                                </View>
+                            )}
+                        />
+                    </> :
+                    <View className="my-6">
+
+                        <FlatList
+                            data={[1, 2, 3, 4, 5, 6, 7, 8]}
+                            renderItem={() => (
+
+
+                                <View style={{ width: '50%' }}>
+                                    <ProductSkeleton />
+                                </View>
+                            )}
+                            keyExtractor={(item, index) => index.toString()}
+                            numColumns={2} // Adjust as needed
+                            showsVerticalScrollIndicator={false}
+
+
+                        />
                     </View>
-                )}
-            />
-            </> : 
-            <View className="my-6">
-
-            <FlatList
-               data={[1, 2, 3, 4, 5, 6, 7, 8]}
-                        renderItem={() => (
-
-
-                            <View style={{ width: '50%' }}>
-                                <ProductSkeleton />
-                            </View>
-                        )}
-                        keyExtractor={(item, index) => index.toString()}
-                        numColumns={2} // Adjust as needed
-                showsVerticalScrollIndicator={false}
-              
-               
-            /> 
-            </View>
             }
         </SafeAreaView>
     )

@@ -1,4 +1,4 @@
-import { View, Text, Image, KeyboardAvoidingView } from 'react-native';
+import { View, Text, Image, KeyboardAvoidingView, Platform } from 'react-native';
 import React, { useEffect } from 'react';
 import { AdminUrl, HeaderBar } from '../constant';
 import StarRating from '../components/FiveStarRating';
@@ -11,7 +11,6 @@ import { Button } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 // import { updateReviewlistener } from '../store/slices/reviewSlice';
 import * as ImagePicker from 'expo-image-picker';
-import { Ionicons } from '@expo/vector-icons';
 import FullPageLoader from '../components/FullPageLoader';
 import { debounce } from "lodash";
 import { SafeAreaView } from 'react-native';
@@ -374,7 +373,7 @@ const Reviews = ({ navigation, route }) => {
                                                                 borderRadius: 50,
                                                             }}
                                                         >
-                                                            <Ionicons name="md-close" size={20} color="white" />
+                                                            <AntDesign name="close" size={24} color="black" />
                                                         </TouchableOpacity>
                                                     </View>
                                                 ))}

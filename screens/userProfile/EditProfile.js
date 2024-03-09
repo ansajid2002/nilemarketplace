@@ -62,18 +62,20 @@ const EditProfile = ({ route, navigation }) => {
 
     useEffect(() => {
         if (picture) {
-            if (google_id && google_id.trim() !== "" || !picture.startsWith("https")) {
+            if (google_id && google_id.trim() !== "" && !picture.startsWith("https")) {
+                console.log('in');
                 setImage(`${AdminUrl}/uploads/customerProfileImages/${picture}`);
             } else {
+                console.log('out');
                 setImage(picture);
             }
         } else {
             setImage('../../assets/avatarplaceholder.png');
         }
-    }, [picture, google_id]);
+    }, [picture]);
 
 
-    console.log(profileImage, "profile image which is not displayed");
+    console.log(profileImage, 'profileImage');
     useEffect(() => {
         // Compare the current form values with the original values
         const hasFormValueChanged = !isEqual(userProfile, originalUserProfile);
@@ -82,14 +84,6 @@ const EditProfile = ({ route, navigation }) => {
         setFormValueChanged(hasFormValueChanged);
     }, [userProfile, originalUserProfile]);
 
-    // Updated image URL logic
-    useEffect(() => {
-        if (!google_id && picture) {
-            setImage(`${AdminUrl}/uploads/customerProfileImages/${picture}`)
-        } else if (picture) {
-            setImage(picture)
-        }
-    }, [])
 
     const handleProfileChange = (field, value) => {
         setUserProfile({

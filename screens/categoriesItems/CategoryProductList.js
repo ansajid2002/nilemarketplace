@@ -107,7 +107,7 @@ const CategoryProductList = ({ route, navigation }) => {
                                             >
                                                 <Image
                                                     source={{ uri: `${AdminUrl}/uploads/SubcategoryImages/${subcategoriesToShow[parseInt(route.key)].subcategory_image_url}` }}
-                                                    
+
                                                     style={{ resizeMode: 'cover', width: 80, height: 80 }}
                                                 />
                                             </View>

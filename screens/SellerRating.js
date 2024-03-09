@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { ActivityIndicator, Image, Text } from 'react-native'
+import { ActivityIndicator, Image, Platform, Text } from 'react-native'
 import defaultImage from "../assets/images/dummy-profile-pic.png"
 import { View } from 'react-native'
 import { AdminUrl } from '../constant'
@@ -394,7 +394,7 @@ const SellerRating = ({ vendor_id }) => {
                                             borderRadius: 50,
                                         }}
                                     >
-                                        <Ionicons name="md-close" size={20} color="white" />
+                                        <AntDesign name="close" size={24} color="white" />
                                     </TouchableOpacity>
                                 </View>
                             ))}
@@ -412,7 +412,7 @@ const SellerRating = ({ vendor_id }) => {
                                     <Text style={{ color: 'blue', marginTop: 8 }}>Skip</Text>
                                 </TouchableOpacity>
                             ) : (
-                                <Button title="Submit" onPress={debounce(handleSubmit, 500)} />
+                                ButtonLoading ? <ActivityIndicator /> : <Button title="Submit" onPress={debounce(handleSubmit, 500)} />
                             )}
                         </View>
                     </KeyboardAvoidingView>

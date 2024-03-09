@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
     SafeAreaView,
     View,
@@ -9,8 +9,6 @@ import {
     FlatList,
     ScrollView,
     StyleSheet,
-    TouchableWithoutFeedback,
-    Pressable,
 } from "react-native";
 import { debounce } from "lodash";
 import { useDispatch, useSelector } from "react-redux";
@@ -47,8 +45,6 @@ const SearchScreen = ({ navigation }) => {
                 if (!response.ok) {
                     throw new Error(`HTTP error! Status: ${response.status}`);
                 }
-
-                console.log('backend');
 
                 const data = await response.json();
 

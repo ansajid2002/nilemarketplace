@@ -69,14 +69,17 @@ const ChatsScreen = ({ navigation }) => {
                 const data = await response.json();
                 if (type === 'cart') {
                     setLoading(false)
-                    Alert.alert("Product Removed", `$ Removed from Cart`)
+                    Alert.alert("Product Removed", `${appLangcode === "so" ?
+                        item?.somali_ad_title === "" ? item?.ad_title : item?.somali_ad_title :
+                        item?.ad_title} Removed from Cart`)
 
                 }
                 else if (type === 'wishlist') {
                     setLoading(false)
                     Alert.alert("Added to Wishlist", `${appLangcode === "so" ?
                         item?.somali_ad_title === "" ? item?.ad_title : item?.somali_ad_title :
-                        item?.ad_title} Added to wishlist✅`)
+                        item?.ad_title
+                        } Added to wishlist✅`)
                 }
                 dispatch(decrementCartTotalremove(item.added_quantity))
                 dispatch(removeItem(item));
@@ -176,7 +179,7 @@ const ChatsScreen = ({ navigation }) => {
                 });
 
                 if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}`);
+                    throw new Error(`HTTP error! Status: ${response.status} `);
                 }
 
                 const responseData = await response.json();
@@ -210,11 +213,11 @@ const ChatsScreen = ({ navigation }) => {
 
             // Skip items with null origin
             if (origin) {
-                const vendorKey = `${vendorId}_${origin}`;
+                const vendorKey = `${vendorId}_${origin} `;
 
                 if (!processedVendors[vendorKey]) {
                     try {
-                        const response = await fetch(`${AdminUrl}/api/getShippingRate?origin=${origin}&destination=${destination}`);
+                        const response = await fetch(`${AdminUrl}/api/getShippingRate?origin=${origin}&destination=${destination} `);
 
                         if (response.ok) {
                             const data = await response.json();
@@ -296,7 +299,7 @@ const ChatsScreen = ({ navigation }) => {
                     });
 
                     if (!response.ok) {
-                        throw new Error(`HTTP error! Status: ${response.status}`);
+                        throw new Error(`HTTP error! Status: ${response.status} `);
                     }
 
                     const responseData = await response.json();
@@ -332,9 +335,9 @@ const ChatsScreen = ({ navigation }) => {
     const fetchExploreProducts = async () => {
         try {
             const newArrivalsResponse = await fetch(`${AdminUrl}/api/getexploreproducts?pageNumber=1&pageSize=10`);
-            // const newArrivalsResponse = await fetch(`${AdminUrl}/api/newArrivals/${'null'}`);
+            // const newArrivalsResponse = await fetch(`${ AdminUrl } /api/newArrivals / ${ 'null' } `);
             if (!newArrivalsResponse.ok) {
-                throw new Error(`HTTP error! Status: ${newArrivalsResponse.status}`);
+                throw new Error(`HTTP error! Status: ${newArrivalsResponse.status} `);
             }
             const newArrivalsData = await newArrivalsResponse.json();
             setExploreProducts(newArrivalsData?.AllProducts);
@@ -368,7 +371,7 @@ const ChatsScreen = ({ navigation }) => {
                 return
             }
             else {
-                const urlWithCustomerId = `${AdminUrl}/api/cart?customer_id=${customerId}`;
+                const urlWithCustomerId = `${AdminUrl}/api/cart?customer_id=${customerId} `;
                 const requestOptions = {
                     method: 'GET',
                     headers: {
@@ -379,7 +382,7 @@ const ChatsScreen = ({ navigation }) => {
                 const response = await fetch(urlWithCustomerId, requestOptions);
 
                 if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}`);
+                    throw new Error(`HTTP error! Status: ${response.status} `);
                 }
                 const data = await response.json()
                 dispatch(fetchcart(data))
@@ -399,6 +402,7 @@ const ChatsScreen = ({ navigation }) => {
     const onRefresh = useCallback(() => {
         setRefreshing(true);
         fetchCartData()
+        fetchExploreProducts()
         // Perform your data fetching or refreshing actions here
         // After data fetching is complete, setRefreshing(false)
         // to indicate that the refresh process is completed.
@@ -457,7 +461,7 @@ const ChatsScreen = ({ navigation }) => {
                                 </TouchableOpacity>
                             </View>
                         </View>
-                    </View>
+                    </View >
 
                     <View className="ml-4 " style={{ width: secondViewWidth }}>
 
@@ -506,7 +510,7 @@ const ChatsScreen = ({ navigation }) => {
 
                     </View>
 
-                </TouchableOpacity>
+                </TouchableOpacity >
                 <View className="flex-row border border-gray-300 border-l-0">
                     <TouchableOpacity className="flex-1 flex-row     justify-center items-center"
                         onPress={debounce(() => handleRemove(id, item, "cart"))}>
@@ -523,7 +527,7 @@ const ChatsScreen = ({ navigation }) => {
 
                     </TouchableOpacity>
                 </View>
-            </View>
+            </View >
         )
     }
 
@@ -640,7 +644,10 @@ const ChatsScreen = ({ navigation }) => {
                     <Text className="text-base font-medium">{t("Total Amount")}</Text>
                     <Text className="text-[16px] font-medium">{`${c_symbol} ${(cartTotalSellingPrice - cartDiscount + shippingRate).toFixed(2)}`}</Text>
                 </View>
-                <Text className="text-[16px] text-green-600 font-medium tracking-wider ">{` ${t("You will save")} ${c_symbol} ${(cartTotalMRP - cartTotalSellingPrice).toFixed(2)} ${t("on this order")}`}</Text>
+                {
+                    (cartTotalMRP - cartTotalSellingPrice) > 0 && <Text className="text-[16px] text-green-600 font-medium tracking-wider ">{` ${t("You will save")} ${c_symbol} ${(cartTotalMRP - cartTotalSellingPrice).toFixed(2)} ${t("on this order")}`}</Text>
+                }
+
             </View>
             <View>
 
@@ -791,7 +798,12 @@ const ChatsScreen = ({ navigation }) => {
                                 </View>
                             </View> :
 
-                            <ScrollView className="" showsVerticalScrollIndicator={false}>
+                            <ScrollView refreshControl={
+                                <RefreshControl
+                                    refreshing={refreshing}
+                                    onRefresh={onRefresh}
+                                />
+                            } className="" showsVerticalScrollIndicator={false}>
                                 <View className="mx-auto my-2 ">
                                     <Image resizeMode='contain' source={emptyCart} className="w-[300px] h-[300px]" />
                                     <Text className="text-xl tracking-wider text-center font-semibold mb-6 ">{t("Your cart is empty!")}</Text>
