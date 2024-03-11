@@ -12,11 +12,21 @@
       "backgroundColor": "#ffffff"
     },
     "plugins": [
+      "@react-native-firebase/app",
+      "@react-native-firebase/auth",
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "useFrameworks": "static"
+          }
+        }
+      ],
       [
         "expo-image-picker",
         {
           "photosPermission": "The app accesses your photos to let you share them with your friends."
-        }
+        } 
       ],
       "expo-apple-authentication",
       [
@@ -29,6 +39,7 @@
           ]
         }
       ]
+
     ],
     "assetBundlePatterns": [
       "*/"
@@ -42,18 +53,20 @@
         "NSPhotoLibraryAddUsageDescription": "Allow $(PRODUCT_NAME) to save photos"
       },
       "bundleIdentifier": "com.gsmash.nilegmp",
+      "googleServicesFile": "./GoogleService-Info.plist",
       "buildNumber": "3",
       "supportsTablet": true,
       "usesAppleSignIn": true
     },
     "android": {
       "package": "com.gsmash.nilegmp",
+      "googleServicesFile": "./google-services.json",
       "versionCode": 4,
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/icon_new.png",
         "backgroundColor": "#FFFFFF"
       },
-      "googleServicesFile": "./google-services.json",
+      
       "permissions": [
         "android.permission.RECEIVE_BOOT_COMPLETED",
         "android.permission.READ_EXTERNAL_STORAGE",

@@ -22,7 +22,9 @@ import { KeyboardAvoidingView } from 'react-native';
 import { NativeModules } from 'react-native';
 import { changeSomaliandistrict } from '../../store/slices/customerSlice';
 import { useTranslation } from 'react-i18next';
-
+import { AppleButton } from '@invertase/react-native-apple-authentication';
+import auth from '@react-native-firebase/auth';
+import { appleAuth } from '@invertase/react-native-apple-authentication';
 
 WebBrowser.maybeCompleteAuthSession()
 const Login = ({ navigation, route }) => {
@@ -54,10 +56,59 @@ const Login = ({ navigation, route }) => {
     useEffect(() => {
         handleSignInWithFacebook()
     }, [res])
+////////new apple sign in ///////////////////////////////
+
+function AppleSignIn() {
+    return (
+      <AppleButton
+        buttonStyle={AppleButton.Style.WHITE}
+        buttonType={AppleButton.Type.SIGN_IN}
+        style={{
+          width: 160,
+          height: 45,
+        }}
+        onPress={() => onAppleButtonPress().then(() => console.log('Apple sign-in complete!'))}
+      />
+    );
+  }
+
+  async function onAppleButtonPress() {
+    // Start the sign-in request
+    console.log("Process initiated for apple login--------------------ddd--");
+    const appleAuthRequestResponse = await appleAuth.performRequest({
+      requestedOperation: appleAuth.Operation.LOGIN,
+      // As per the FAQ of react-native-apple-authentication, the name should come first in the following array.
+      // See: https://github.com/invertase/react-native-apple-authentication#faqs
+      requestedScopes: [appleAuth.Scope.FULL_NAME, appleAuth.Scope.EMAIL],
+    });
+  console.log("------1-1--1-1-1-1--1--1-1-1-1-");
+    console.log(appleAuthRequestResponse,"appleAuthRequestResponse");
+    // Ensure Apple returned a user identityToken
+    if (!appleAuthRequestResponse.identityToken) {
+      throw new Error('Apple Sign-In failed - no identify token returned');
+    }
+  
+    // Create a Firebase credential from the response
+    const { identityToken, nonce } = appleAuthRequestResponse;
+    const appleCredential = auth.AppleAuthProvider.credential(identityToken, nonce);
+  if (appleCredential) {
+                sendAccessTokenToBackendApple(appleAuthRequestResponse,appleCredential)
+            }
+    // Sign the user in with the credential
+    return auth().signInWithCredential(appleCredential);
+  }
 
 
 
 
+
+
+
+
+////////new apple sign in ///////////////////////////////
+
+
+  
     async function handleSignInWithGoogle() {
         if (response?.type === "success") {
             const accessToken = response.authentication.accessToken;
@@ -102,14 +153,14 @@ const Login = ({ navigation, route }) => {
         }
     };
 
-    async function sendAccessTokenToBackendApple(credential) {
+    async function sendAccessTokenToBackendApple(appleAuthRequestResponse,appleCredential) {
         try {
             const response = await fetch(`${AdminUrl}/api/getAppleUserData`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(credential),
+                body: JSON.stringify({appleAuthRequestResponse,appleCredential}),
 
             });
             const data = await response.json()
@@ -773,7 +824,9 @@ const Login = ({ navigation, route }) => {
                         </Pressable>
                     </View>
                 </View>
-
+                            <View>
+                                {AppleSignIn()}
+                            </View>
             </SafeAreaView>
         </KeyboardAvoidingView>
     )

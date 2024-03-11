@@ -68,7 +68,7 @@ const HomeScreen = () => {
     };
 
 
-    console.log(customerId, "custttt");
+    console.log(customerId, "sajid");
     const getservicesData = async () => {
         try {
             const response = await fetch(`${AdminUrl}/api/getServicesData`);
