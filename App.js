@@ -79,6 +79,7 @@ import Addaddress from './screens/checkout/Addaddress';
 import UpdateNilePin from './screens/Settings/UpdateNilePin';
 import Settings from './screens/Settings';
 import UserAgreement from './screens/UserAgreement';
+import Deletemyaccount from './screens/Settings/Deletemyaccount';
 
 ///////////////////////////////////////FORM SCREENS///////////////////////////////////////
 
@@ -91,6 +92,8 @@ const Tab = createBottomTabNavigator();
 const App = () => {
   const [isConnected, setIsConnected] = useState(true);
   const { t } = useTranslation()
+
+
   function HomeTabs() {
     return (
       <>
@@ -165,6 +168,10 @@ const App = () => {
         </Tab.Navigator></>
     );
   }
+
+
+
+
   useEffect(() => {
 
     const unsubscribe = NetInfo.addEventListener((state) => {
@@ -250,6 +257,7 @@ const App = () => {
             <Stack.Screen name="CancelOrder" component={CancelOrder} />
             <Stack.Screen name="Settings" component={Settings} />
             <Stack.Screen name="UpdateNilePin" component={UpdateNilePin} />
+            <Stack.Screen name="DeleteMyAccount" component={Deletemyaccount} />
 
           </Stack.Navigator>
 

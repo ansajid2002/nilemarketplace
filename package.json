@@ -46,6 +46,7 @@
     "expo-splash-screen": "~0.26.4",
     "expo-status-bar": "~1.11.1",
     "expo-task-manager": "^11.7.2",
+    "expo-tracking-transparency": "^3.3.0",
     "expo-web-browser": "^12.8.2",
     "firebase": "^10.8.0",
     "formik": "^2.4.5",

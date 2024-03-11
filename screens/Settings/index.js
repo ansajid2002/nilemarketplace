@@ -11,13 +11,14 @@ const Settings = ({ navigation }) => {
     // Define an array of setting items
     const settings = [
         { title: "Update Nile Pin", icon: "chevron-small-right", route: "UpdateNilePin" },
+        { title: "Delete My Account", icon: "chevron-small-right", route: "DeleteMyAccount" },
         // Add more setting items as needed
     ];
 
     // Filter out "Update Nile Pin" setting if customerData is undefined or empty
-    const filteredSettings = customerData && customerData?.length > 0 ? settings : settings.filter(setting => setting.title !== "Update Nile Pin");
+    // const filteredSettings = customerData && customerData?.length > 0 ? settings : settings.filter(setting => setting.title !== "Update Nile Pin");
+    const filteredSettings = customerData && customerData?.length > 0 && settings  ;
 
-    console.log(customerData, 'customerData');
     // Function to handle navigation to the specified route
     const handleNavigation = (route) => {
         navigation.navigate(route);
@@ -30,7 +31,15 @@ const Settings = ({ navigation }) => {
 
             <View style={{ backgroundColor: '#fff', flex: 1, borderTopWidth: 1, borderTopColor: '#E5E7EB' }}>
                 {/* Map over the filteredSettings array to render each setting item */}
-                {filteredSettings.map((setting, index) => (
+
+
+            {
+                filteredSettings ? 
+
+
+                
+                <View>
+                {filteredSettings?.map((setting, index) => (
                     <TouchableOpacity key={index} onPress={() => handleNavigation(setting.route)}>
                         <View style={{ borderBottomWidth: 1, borderBottomColor: '#E5E7EB', padding: 16, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                             <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#374151' }}>{setting.title}</Text>
@@ -38,6 +47,16 @@ const Settings = ({ navigation }) => {
                         </View>
                     </TouchableOpacity>
                 ))}
+                                    </View>
+
+                 :
+                <View className="flex items-center justify-center my-auto ">
+                    <Text className="text-2xl text-gray-400 " >No data to show!</Text>
+                    <Text className="text-xl text-gray-400 " >Login to access more features</Text>
+
+                    </View>
+
+}
             </View>
         </SafeAreaView>
     );
