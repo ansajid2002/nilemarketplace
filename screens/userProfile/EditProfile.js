@@ -315,32 +315,6 @@ const EditProfile = ({ route, navigation }) => {
                         </View>
 
 
-                        <View className="m-2 border border-gray-200 bg-gray-100 p-3 rounded-md">
-                            <Text className="text-base text-justify mt-2">If you wish to delete your account and all related data from Nile Global Marketplace (NGMP), please send an email to our administrators at admin@nilegmp.com with the subject line "Account Deletion Request". Please include your account details and the reason for your request in the email.</Text>
-                            <Text className="text-base text-justify mt-2">
-                                Please note that account deletion is irreversible and will result in the permanent loss of all data associated with your account, including your profile information, posts, and any other data you have shared on NGMP. Once your account is deleted, you will not be able to recover it or access any of your data.
-                            </Text>
-                            <Text className="text-base text-justify mt-2">
-                                We will process your request as soon as possible, but please allow up to [7 days] for the complete deletion of your account and data from our systems.
-                            </Text>
-                            <Text className="text-base text-justify mt-2">
-                                If you have any questions or need further assistance, please feel free to contact us.
-                            </Text>
-                            <Text className="text-base text-justify mt-2">
-                                Thank you, Regards The Nile Global Marketplace Team
-                            </Text>
-                            <TouchableOpacity className="mt-2"
-                                style={{ backgroundColor: 'red', padding: 10, borderRadius: 5 }}
-                                onPress={() => setModalVisibledel(true)}
-                            >
-                                <Text className="text-center" style={{ color: 'white', fontWeight: 'bold' }}>Delete My Account</Text>
-                            </TouchableOpacity>
-                            <ConfirmationModal
-                                visible={modalVisibledel}
-                                onRequestClose={() => setModalVisibledel(false)}
-                                onConfirm={handleDeleteAccount}
-                            />
-                        </View>
                     </View>
 
                     {/* OTP Modal */}

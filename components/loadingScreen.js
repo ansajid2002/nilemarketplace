@@ -10,7 +10,7 @@ import { Image } from "react-native";
 import { useTranslation } from "react-i18next";
 
 
-
+console.log(AdminUrl,"AdminUrl");
 const LoadingScreen = ({ navigation }) => {
 
     const dispatch = useDispatch()

@@ -35,14 +35,14 @@ const AccountScreen = ({ navigation }) => {
     const { t } = useTranslation();
     const wishlistItems = useSelector((state) => state.wishlist.wishlistItems)
     const { family_name = '', given_name = '', city = '', state = '', picture = '', google_id = '', customer_id } = customerData?.[0] || {}
-    const [profileImage, setImage] = useState('../../assets/avatarplaceholder.png');
+    const [profileImage, setImage] = useState(null);
     const { appLangname } = useSelector((store) => store.selectedCurrency)
     useEffect(() => {
         setTimeout(() => {
             setLoading(false)
         }, 500);
     }, [])
-
+console.log(profileImage,"profileImageSAJID");
     useEffect(() => {
 
         console.log(google_id && google_id.trim() !== "" || !picture.startsWith("https"));
@@ -52,8 +52,6 @@ const AccountScreen = ({ navigation }) => {
             } else {
                 setImage(picture);
             }
-        } else {
-            setImage('../../assets/avatarplaceholder.png');
         }
     }, [customerData, picture, google_id]);
 
@@ -434,7 +432,7 @@ const AccountScreen = ({ navigation }) => {
                 <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
                     <Image
                         resizeMode="contain"
-                        source={profileImage ? { uri: profileImage } : { uri: avatarPlaceholder }}
+                        source={profileImage ? { uri: profileImage } : { uri: '../../assets/avatarplaceholder.png' }}
                         style={{
                             width: 50.0,
                             height: 50.0,

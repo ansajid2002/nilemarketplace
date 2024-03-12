@@ -22,7 +22,9 @@ import { KeyboardAvoidingView } from 'react-native';
 import { NativeModules } from 'react-native';
 import { changeSomaliandistrict } from '../../store/slices/customerSlice';
 import { useTranslation } from 'react-i18next';
-
+import { AppleButton } from '@invertase/react-native-apple-authentication';
+import auth from '@react-native-firebase/auth';
+import { appleAuth } from '@invertase/react-native-apple-authentication';
 
 WebBrowser.maybeCompleteAuthSession()
 const Login = ({ navigation, route }) => {
@@ -54,10 +56,53 @@ const Login = ({ navigation, route }) => {
     useEffect(() => {
         handleSignInWithFacebook()
     }, [res])
+////////new apple sign in ///////////////////////////////
+
+function AppleSignIn() {
+    return (
+      <AppleButton
+        buttonStyle={AppleButton.Style.BLACK}
+        buttonType={AppleButton.Type.SIGN_IN}
+        style={{
+        
+          width: '100%',
+          height: 45,
+        }}
+        onPress={() => onAppleButtonPress().then(() => console.log('Apple sign-in complete!'))}
+      />
+    );
+  }
+
+  async function onAppleButtonPress() {
+    // Start the sign-in request
+    const appleAuthRequestResponse = await appleAuth.performRequest({
+      requestedOperation: appleAuth.Operation.LOGIN,
+      // As per the FAQ of react-native-apple-authentication, the name should come first in the following array.
+      // See: https://github.com/invertase/react-native-apple-authentication#faqs
+      requestedScopes: [appleAuth.Scope.FULL_NAME, appleAuth.Scope.EMAIL],
+    });
+    // Ensure Apple returned a user identityToken
+    if (!appleAuthRequestResponse.identityToken) {
+      throw new Error('Apple Sign-In failed - no identify token returned');
+    }
+  
+    // Create a Firebase credential from the response
+    const { identityToken, nonce } = appleAuthRequestResponse;
+    const appleCredential = auth.AppleAuthProvider.credential(identityToken, nonce);
+  if (appleCredential) {
+                sendAccessTokenToBackendApple(appleAuthRequestResponse,appleCredential)
+            }
+            else {
+                Alert.alert("Error Validating Identity")
+            }
+    // Sign the user in with the credential
+    return auth().signInWithCredential(appleCredential);
+  }
+
+////////new apple sign in ///////////////////////////////
 
 
-
-
+  
     async function handleSignInWithGoogle() {
         if (response?.type === "success") {
             const accessToken = response.authentication.accessToken;
@@ -76,40 +121,15 @@ const Login = ({ navigation, route }) => {
         }
     }
 
-    const handleAppleSignIn = async () => {
-        try {
-            const credential = await AppleAuthentication.signInAsync({
-                requestedScopes: [
-                    AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
-                    AppleAuthentication.AppleAuthenticationScope.EMAIL,
-                ],
-            });
-            // Handle signed in user
-
-            if (credential.authorizationCode) {
-                sendAccessTokenToBackendApple(credential)
-            }
-            else {
-                Alert.alert("Login Failed", "Failed to log in using Apple ID")
-            }
-
-        } catch (e) {
-            if (e.code === 'ERR_REQUEST_CANCELED') {
-                // Handle canceled sign-in flow
-            } else {
-                // Handle other errors
-            }
-        }
-    };
-
-    async function sendAccessTokenToBackendApple(credential) {
+   
+    async function sendAccessTokenToBackendApple(appleAuthRequestResponse,appleCredential) {
         try {
             const response = await fetch(`${AdminUrl}/api/getAppleUserData`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(credential),
+                body: JSON.stringify({appleAuthRequestResponse,appleCredential}),
 
             });
             const data = await response.json()
@@ -184,7 +204,7 @@ const Login = ({ navigation, route }) => {
                 dispatch(updateCustomerData(data?.userdata))
                 updateCartData(data?.userdata?.customer_id)
                 await AsyncStorage.setItem('customerData', JSON.stringify(data.userdata));
-                console.log("SENDING NOTIFICATION FOR LOGGED IN USER");
+              
 
                 await sendNotificationWithNavigation(`Great, ${data?.userdata?.given_name}, You have logged in Successfully...✅`)
 
@@ -674,7 +694,7 @@ const Login = ({ navigation, route }) => {
                                 alignItems: 'center',
                                 justifyContent: 'center',
                                 flexDirection: 'row',
-                                height: 52,
+                                height: 45,
                                 borderWidth: 1,
                                 borderColor: COLORS.grey,
                                 marginRight: 4,
@@ -701,7 +721,7 @@ const Login = ({ navigation, route }) => {
                                 alignItems: 'center',
                                 justifyContent: 'center',
                                 flexDirection: 'row',
-                                height: 52,
+                                height: 45,
                                 borderWidth: 1,
                                 borderColor: COLORS.grey,
                                 marginRight: 4,
@@ -721,40 +741,16 @@ const Login = ({ navigation, route }) => {
                             <Text>Facebook</Text>
                         </TouchableOpacity>
 
-                        {/* ---------------------------------------------------------------------------------------------------------------------------- */}
-                        {Platform.OS === 'ios' && (
-                            <TouchableOpacity
-                                onPress={() => handleAppleSignIn()}
-                                style={{
-                                    flex: 1,
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    flexDirection: 'row',
-                                    height: 52,
-                                    borderWidth: 1,
-                                    borderColor: COLORS.grey,
-                                    marginRight: 4,
-                                    borderRadius: 10
-                                }}
-                            >
-                                <Image
-                                    source={require("../../assets/apple.png")}
-                                    style={{
-                                        height: 30,
-                                        width: 30,
-                                        marginRight: 8
-                                    }}
-                                    resizeMode='contain'
-                                />
-
-                                <Text>Apple</Text>
-                            </TouchableOpacity>
-                        )}
-                        {/* ---------------------------------------------------------------------------------------------------------------------------- */}
-
+                     
 
                     </View>
-
+                    {
+                        Platform.OS === "ios" &&
+                    
+                    <View className="mt-4">
+                                {AppleSignIn()}
+                            </View>
+}
                     <View style={{
                         flexDirection: "row",
                         justifyContent: "center",
@@ -773,7 +769,7 @@ const Login = ({ navigation, route }) => {
                         </Pressable>
                     </View>
                 </View>
-
+                            
             </SafeAreaView>
         </KeyboardAvoidingView>
     )
