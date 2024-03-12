@@ -339,7 +339,7 @@ console.log(profileImage,"profileImageSAJID");
 
                 <TouchableOpacity
                     style={{ flexDirection: 'row', alignItems: 'center', padding: Sizes.fixPadding * 2.0 }}
-                    onPress={() => navigation.navigate("WebviewComponent", { externalUri: 'https://stg.nilegmp.com/company/about-us' })}>
+                    onPress={() => navigation.navigate("WebviewComponent", { externalUri: 'https://nilegmp.com/company/about-us' })}>
                     {icon}
                     <View className="flex-row ">
                         <Text className="" style={{ marginLeft: Sizes.fixPadding, ...Fonts.blackColor14SemiBold }}>
@@ -354,7 +354,7 @@ console.log(profileImage,"profileImageSAJID");
 
                 <TouchableOpacity
                     style={{ flexDirection: 'row', alignItems: 'center', padding: Sizes.fixPadding * 2.0 }}
-                    onPress={() => navigation.navigate("WebviewComponent", { externalUri: 'https://stg.nilegmp.com/company/terms-conditions' })}>
+                    onPress={() => navigation.navigate("WebviewComponent", { externalUri: 'https://nilegmp.com/company/terms-conditions' })}>
                     {icon}
                     <View className="flex-row ">
                         <Text className="" style={{ marginLeft: Sizes.fixPadding, ...Fonts.blackColor14SemiBold }}>
@@ -369,7 +369,7 @@ console.log(profileImage,"profileImageSAJID");
 
                 <TouchableOpacity
                     style={{ flexDirection: 'row', alignItems: 'center', padding: Sizes.fixPadding * 2.0 }}
-                    onPress={() => navigation.navigate("WebviewComponent", { externalUri: 'https://stg.nilegmp.com/company/privacy-policy' })}>
+                    onPress={() => navigation.navigate("WebviewComponent", { externalUri: 'https://nilegmp.com/company/privacy-policy' })}>
                     {icon}
                     <View className="flex-row ">
                         <Text className="" style={{ marginLeft: Sizes.fixPadding, ...Fonts.blackColor14SemiBold }}>
@@ -383,7 +383,7 @@ console.log(profileImage,"profileImageSAJID");
             return (
                 <TouchableOpacity
                     style={{ flexDirection: 'row', alignItems: 'center', padding: Sizes.fixPadding * 2.0 }}
-                    onPress={() => navigation.navigate("WebviewComponent", { externalUri: 'https://stg.nilegmp.com/company/contact-us' })}>
+                    onPress={() => navigation.navigate("WebviewComponent", { externalUri: 'https://nilegmp.com/company/contact-us' })}>
                     {icon}
                     <View className="flex-row ">
                         <Text className="" style={{ marginLeft: Sizes.fixPadding, ...Fonts.blackColor14SemiBold }}>

@@ -129,7 +129,7 @@ const ProductDetailScreen = ({ navigation, route }) => {
             try {
                 const sharedMessage = `Check out this product: ${appLangcode === "so" ?
                     product?.somali_ad_title === "" ? product?.ad_title : product?.somali_ad_title :
-                    product?.ad_title}\n\nProduct URL: https://stg.nilegmp.com/product-detail?product=${product?.prod_slug}&uniqueid=${product.uniquepid}`;
+                    product?.ad_title}\n\nProduct URL: https://nilegmp.com/product-detail?product=${product?.prod_slug}&uniqueid=${product.uniquepid}`;
 
                 const result = await Share.share({
                     title: product.adtitle,

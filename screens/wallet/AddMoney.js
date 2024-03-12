@@ -60,7 +60,7 @@ const AddMoney = ({ navigation }) => {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ amount: parseFloat(amount), customerId, edahabNumber, returnUrl: 'https://www.stg.nilegmp.com' }),
+          body: JSON.stringify({ amount: parseFloat(amount), customerId, edahabNumber, returnUrl: 'https://www.nilegmp.com' }),
         });
 
         const data = await response.json();
