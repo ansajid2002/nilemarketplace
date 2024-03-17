@@ -174,7 +174,7 @@ const {appLangcode} = useSelector((store) => store.selectedCurrency)
 
                 <Text style={{ marginTop: Sizes.fixPadding - 8.0, marginBottom: Sizes.fixPadding }} className="text-[17px]">
                 {appLangcode === "so" ?  
-                    item?.somali_ad_title=== "" ? item?.ad_title : item?.somali_ad_title  :
+                    item?.somali_ad_title=== null ? item?.ad_title : item?.somali_ad_title  :
                      item?.ad_title}
                 </Text>
                 <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>

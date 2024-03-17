@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, SafeAreaView, StatusBar, TextInput, TouchableOpacity, Modal, Button, KeyboardAvoidingView, Platform, Alert } from 'react-native';
 import { AdminUrl, HeaderBar } from '../../constant';
 import { RadioButton } from 'react-native-paper';
-import DateTimePicker from '@react-native-community/datetimepicker';
+// import DateTimePicker from '@react-native-community/datetimepicker';
 import { useSelector } from 'react-redux';
 import { t } from 'i18next';
 import { useTranslation } from 'react-i18next';
@@ -62,27 +62,27 @@ const DownloadStatement = ({ navigation }) => {
             <TouchableOpacity onPress={() => setShowDatePicker(true)} className="mt-2 p-2">
               <Text>{fromDate.toLocaleDateString()}</Text>
             </TouchableOpacity>
-            {showDatePicker && (
+            {/* {showDatePicker && (
               <DateTimePicker
                 value={fromDate}
                 mode="date"
                 display="default"
                 onChange={handleFromDateChange}
               />
-            )}
+            )} */}
 
             <Text className="mt-2">{t("To Date:")}</Text>
             <TouchableOpacity onPress={() => setShowDatePicker(true)} className="mt-2 p-2">
               <Text>{toDate.toLocaleDateString()}</Text>
             </TouchableOpacity>
-            {showDatePicker && (
+            {/* {showDatePicker && (
               <DateTimePicker
                 value={toDate}
                 mode="date"
                 display="default"
                 onChange={handleToDateChange}
               />
-            )}
+            )} */}
 
             <Button title="Apply" onPress={applyCustomDates} />
           </View>

@@ -242,7 +242,7 @@ const Wallet = ({ navigation }) => {
                 </View>
 
                 {/* Recent Transactions Section */}
-                <View style={{ marginTop: 20, justifyContent: 'space-between' }}>
+                <View  style={{ marginTop: 20, justifyContent: 'space-between' }}>
                     <View className="flex-row justify-between px-4 py-2">
                         <Text style={{ fontSize: 18, fontWeight: 'bold', marginBottom: 10 }}>
                             {t("Recents")}
@@ -264,7 +264,7 @@ const Wallet = ({ navigation }) => {
                             />
                         </View>
                     ) : (
-                        <>
+                        <View>
                             {Object.keys(categorizedTransactions).map((category) => (
                                 <View key={category}>
                                     <Text className="p-4 bg-gray-200 font-semibold tracking-wide">{t(`${category}`)}</Text>
@@ -368,7 +368,7 @@ const Wallet = ({ navigation }) => {
                                     return null;
                                 })}
                             </View>
-                        </>
+                        </View>
                     )}
 
                 </View>

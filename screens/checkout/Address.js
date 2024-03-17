@@ -1,4 +1,4 @@
-import { View, Text, Alert } from 'react-native'
+import { View, Text, Alert, Image } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { ScrollView } from 'react-native'
 import { TouchableOpacity } from 'react-native'
@@ -101,8 +101,9 @@ const Address = ({ navigation }) => {
             <View>{
               customerAddressData.length === 0 ?
                 <View className="m-auto my-20">
-                  <Text className="text-2xl">{t("No Address Selected")}</Text>
-                  <TouchableOpacity className="bg-[#00008b] flex-row items-center justify-center mt-4 w-[200px] mx-auto" onPress={debounce(() => navigation.navigate("Add Address"), 1000)}><Text className="text-xl text-white  py-1">Add Address</Text></TouchableOpacity>
+                  <Image source={require("../../assets/Address.png")} className="w-72 h-72" />
+                  <Text className="text-2xl text-center">{t("No Address Selected")}</Text>
+                  <TouchableOpacity className="bg-[#00008b] py-1.5 rounded-full flex-row items-center justify-center mt-4 w-[200px] mx-auto" onPress={debounce(() => navigation.navigate("Add Address"), 1000)}><Text className="text-xl text-white font-bold  py-1">Add Address</Text></TouchableOpacity>
                 </View>
                 :
                 <View className="">

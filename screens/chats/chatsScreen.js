@@ -7,7 +7,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import { removeItem, incrementItem, decrementItem, addCheckoutItem, incrementCartTotal, decrementCartTotal, decrementCartTotalremove, removeCheckoutItem, fetchcart } from '../../store/slices/cartSlice';
 import { debounce } from 'lodash';
 import { AdminUrl, HeaderBar } from '../../constant';
-import emptyCart from "../../assets/images/icons/empty-cart.png"
+// import emptyCart from "../../assets/images/icons/empty-cart.png"
+import emptyCart from "../../assets/EmptyCart.jpg"
 import { useTranslation } from 'react-i18next';
 import { toggleFavouriteProductslice } from '../../store/slices/productSlice';
 import { addItemToWishlist } from '../../store/slices/wishlistSlice';

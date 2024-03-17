@@ -209,7 +209,7 @@ const Bottomsearch = ({ navigation }) => {
 
             <StatusBar translucent={false} backgroundColor={Colors.primaryColor} />
             {header()}
-            <ScrollView className="bg-white">
+            <ScrollView className="bg-white px-2">
                 {MatchingKeyword.length > 0 ? MatchingKeyword.map((keyword, index) => (
                     <TouchableOpacity key={index} onPress={debounce(() => handleKeywordPress(keyword), 1000)}>
                         <View style={styles.keywordContainer}>

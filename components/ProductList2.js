@@ -188,7 +188,7 @@ const ProductItem = ({ item }) => {
                         {item?.condition === "Refurbished" &&  `(${t("Refurbished")})`}
                         {item?.condition === "Used" && `(${t("Used")})`}
                         {appLangcode === "so" ?  
-                        item?.somali_ad_title=== "" ? item?.ad_title : item?.somali_ad_title  :
+                        item?.somali_ad_title=== null ? item?.ad_title : item?.somali_ad_title  :
                          item?.ad_title }
                     </Text>
 

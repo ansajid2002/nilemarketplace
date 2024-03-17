@@ -49,12 +49,19 @@
         "UIBackgroundModes": [
           "remote-notification"
         ],
-        "NSPhotoLibraryUsageDescription": "Allow $(PRODUCT_NAME) to access your photos",
-        "NSPhotoLibraryAddUsageDescription": "Allow $(PRODUCT_NAME) to save photos"
+        "NSPhotoLibraryUsageDescription": "Allow Nilemarketplace to access your photos",
+        "NSPhotoLibraryAddUsageDescription": "Allow Nilemarketplace to save photos",
+        "NSLocationWhenInUseUsageDescription": "Allow Nilemarketplace to access your location when open.",
+        "NSLocationUsageDescription": "Allow Nilemarketplace to access your location when open.",
+        "NSCameraUsageDescription": "This app uses the camera to scan barcodes on event tickets.",
+        "LSApplicationQueriesSchemes": ["nilegmp.com", "admin.nilegmp.com"]
+        ,"photosPermission": "Allow Nilemarketplace access your photos.",
+          "savePhotosPermission": "Allow Nilemarketplace to save photos."
+      
       },
       "bundleIdentifier": "com.gsmash.nilegmp",
       "googleServicesFile": "./GoogleService-Info.plist",
-      "buildNumber": "3",
+      "buildNumber": "7",
       "supportsTablet": true,
       "usesAppleSignIn": true
     },

@@ -35,6 +35,8 @@ import { changeSomaliandistrict } from "../../store/slices/customerSlice";
 import { setAppLang, setAppLangname, setAppcountry } from "../../store/slices/currencySlice";
 import { changeLanguage } from "../../services/i18next";
 
+console.log(AdminUrl);
+
 const { width } = Dimensions.get('window');
 const HomeScreen = () => {
     const dispatch = useDispatch()

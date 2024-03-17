@@ -162,7 +162,11 @@ const AddMoney = ({ navigation }) => {
         <View className="px-4">
 
         <Text className="text-center text-2xl font-medium mt-6 mb-4">Welcome back!</Text>
-        <Text className="text-lg text-gray-700 text-center">To recharge your wallet, please visit <Text className="font-bold text-[#00008b]">Nilegmp.com</Text>, Once your wallet is recharged, you can use the balance to purchase products, send Nile Tokens to your friends, and enjoy various services offered by the app.  </Text>
+        <Text className="text-lg text-gray-700 text-center">To recharge your wallet, please visit <Text className="font-semibold text-[#00008b]">Nilegmp.com</Text>, Once your wallet is recharged, you can use the balance to purchase products, send Nile Tokens to your friends, and enjoy various services offered by the app.  </Text>
+        <Text className="text-base text-gray-500 text-center mt-4">
+          
+If you are using your Apple ID to log in, ensure that your Apple ID is associated with a Gmail account to enable purchases.
+        </Text>
         </View>
 
       </SafeAreaView>

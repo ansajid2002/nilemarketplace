@@ -284,7 +284,7 @@ async function revokeSignInWithAppleToken() {
     );
   }
   
-
+console.log(customerData[0],"sssjsjsjjsjs");
 
     return (
         <SafeAreaView>
@@ -293,7 +293,7 @@ async function revokeSignInWithAppleToken() {
             <ScrollView className="p-2 mb-10 ">
                 <Text className="text-2xl m-2 font-bold text-[#00008b]">Deleting Your Nile Global Marketplace Account</Text>
                 <Text className="text-lg m-2">We're sorry to see you go. We'd like to know why you're deleting your account as we may be able to help with common issues</Text>
-                <View className="bg-white m-2 p-2 rounded-lg space-y-2.5">
+                <View className="bg-white shadow-md m-2 p-2 px-3 rounded-lg space-y-2.5">
                     {
                         deleteAccountReasons?.map((reason, index) => (
                             <TouchableOpacity key={index} onPress={() => handleReasonSelection(reason)} style={{ flexDirection: 'row', alignItems: 'center', marginVertical: 10 }}>
@@ -366,8 +366,12 @@ async function revokeSignInWithAppleToken() {
                                         verifyemail()
                                 }
                                 } className={` ${password?.length > 4 ? "bg-blue-500" : " bg-blue-200"}   rounded-full py-2`}><Text className="text-center text-xl text-white font-semibold">Continue</Text></TouchableOpacity>
+                                                            {
+                                                                customerData[0]?.password && (customerData[0]?.apple_id || customerData[0]?.google_id) ?
+                                                            
+                                                            
                                                             <Text className="text-center italic text-lg mt-4 mb-2 text-gray-400">Or continue with</Text>
-
+:<></>}
                                     </View>
                                     
                             }

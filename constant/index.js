@@ -7,10 +7,13 @@ import { Text } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { debounce } from 'lodash';
 
+
+
+// export const AdminUrl = "http://172.20.10.4:3001"; 
+
 // import Config from "react-native-config";
-// export const AdminUrl = "https://admin.nilegmp.com";
-export const AdminUrl = "http://192.168.1.20:3001";
-// export const AdminUrl = "http://192.168.43.246:3001"; 
+export const AdminUrl = "https://admin.nilegmp.com";
+// export const AdminUrl = "http://192.168.1.105:3001";
 export const  productUrl ="https://ngmp-products.s3.us-east-005.backblazeb2.com";
 
 export async function getVariantsOfCatSubcat(category, subcategory, uniquepid) {

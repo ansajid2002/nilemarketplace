@@ -45,9 +45,9 @@ const AccountScreen = ({ navigation }) => {
 console.log(profileImage,"profileImageSAJID");
     useEffect(() => {
 
-        console.log(google_id && google_id.trim() !== "" || !picture.startsWith("https"));
+        console.log(google_id && google_id.trim() !== "" || !picture?.startsWith("https"));
         if (picture) {
-            if (google_id && google_id.trim() !== "" && !picture.startsWith("https")) {
+            if (google_id && google_id.trim() !== "" && !picture?.startsWith("https")) {
                 setImage(`${AdminUrl}/uploads/customerProfileImages/${picture}`);
             } else {
                 setImage(picture);

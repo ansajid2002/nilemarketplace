@@ -15,7 +15,6 @@ import { MaterialCommunityIcons, } from '@expo/vector-icons';
 import * as WebBrowser from "expo-web-browser"
 import * as Google from "expo-auth-session/providers/google"
 import * as Facebook from "expo-auth-session/providers/facebook"
-import * as AppleAuthentication from 'expo-apple-authentication';
 import { debounce } from 'lodash';
 import { sendNotificationWithNavigation, storeNotification } from '../NotificationExpo';
 import { KeyboardAvoidingView } from 'react-native';
@@ -72,15 +71,18 @@ function AppleSignIn() {
       />
     );
   }
-
+console.log(AdminUrl,"AdminUrl");
   async function onAppleButtonPress() {
     // Start the sign-in request
+    console.log("SENDing apple reques again t");
+    console.log("s");
     const appleAuthRequestResponse = await appleAuth.performRequest({
       requestedOperation: appleAuth.Operation.LOGIN,
       // As per the FAQ of react-native-apple-authentication, the name should come first in the following array.
       // See: https://github.com/invertase/react-native-apple-authentication#faqs
       requestedScopes: [appleAuth.Scope.FULL_NAME, appleAuth.Scope.EMAIL],
     });
+    console.log("sa");
     // Ensure Apple returned a user identityToken
     if (!appleAuthRequestResponse.identityToken) {
       throw new Error('Apple Sign-In failed - no identify token returned');
@@ -89,14 +91,18 @@ function AppleSignIn() {
     // Create a Firebase credential from the response
     const { identityToken, nonce } = appleAuthRequestResponse;
     const appleCredential = auth.AppleAuthProvider.credential(identityToken, nonce);
-  if (appleCredential) {
-                sendAccessTokenToBackendApple(appleAuthRequestResponse,appleCredential)
-            }
-            else {
-                Alert.alert("Error Validating Identity")
-            }
+    console.log("sending access token to backend");
+ 
     // Sign the user in with the credential
-    return auth().signInWithCredential(appleCredential);
+    try {
+        
+        const userCredential = await auth().signInWithCredential(appleCredential);
+        const idToken = await userCredential.user.getIdToken()
+        console.log(userCredential,idToken,"sss");
+        await sendAccessTokenToBackendApple(idToken, { name: auth().currentUser.email, email: auth().currentUser.email })
+    } catch (e) {
+        Alert.alert("Error Validating Identity")
+    }
   }
 
 ////////new apple sign in ///////////////////////////////
@@ -122,18 +128,18 @@ function AppleSignIn() {
     }
 
    
-    async function sendAccessTokenToBackendApple(appleAuthRequestResponse,appleCredential) {
+    async function sendAccessTokenToBackendApple(idToken, userData) {
         try {
             const response = await fetch(`${AdminUrl}/api/getAppleUserData`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({appleAuthRequestResponse,appleCredential}),
+                body: JSON.stringify({idToken, userData}),
 
             });
             const data = await response.json()
-
+            console.log(data,"data from backend");
             if (data.status === 401) {
                 Alert.alert('Error', data.message)
                 setLoading(false); // Remove the activity indicator when component re-renders
@@ -148,7 +154,7 @@ function AppleSignIn() {
                 navigation.navigate('Home')
             }
         } catch (error) {
-
+            Alert.alert(error)
         }
     }
 
@@ -654,6 +660,7 @@ function AppleSignIn() {
                                     marginTop: 18,
                                     marginBottom: 4,
                                 }}
+
                                 // className={`${!isEmailValid() || !isPasswordValid() ? 'bg-red-500' : ''}`}
                                 onPress={!loading && handleLogin}
                                 disabled={!isEmailValid() || !isPasswordValid()}
@@ -704,8 +711,8 @@ function AppleSignIn() {
                             <Image
                                 source={require("../../assets/google.png")}
                                 style={{
-                                    height: 30,
-                                    width: 30,
+                                    height: 20,
+                                    width: 20,
                                     marginRight: 8
                                 }}
                                 resizeMode='contain'
@@ -713,7 +720,7 @@ function AppleSignIn() {
 
                             <Text>Google</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity
+                        {/* <TouchableOpacity
                             onPress={debounce(() => promptAsyncFacebook(), 500)}
 
                             style={{
@@ -739,7 +746,7 @@ function AppleSignIn() {
                             />
 
                             <Text>Facebook</Text>
-                        </TouchableOpacity>
+                        </TouchableOpacity> */}
 
                      
 
