@@ -2,40 +2,35 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>CFBundleGetInfoString</key>
-	<string></string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Allow Nilemarketplace to access your photos</string>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string></string>
-	<key>CFBundleDisplayName</key>
-	<string></string>
-	<key>NSLocationUsageDescription</key>
-	<string></string>
-	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>Allow Nilemarketplace to save photos</string>
 	<key>NSFileProviderDomainUsageDescription</key>
 	<string></string>
-	<key>LSApplicationCategoryType</key>
-	<string></string>
-	<key>NSAppleMusicUsageDescription</key>
-	<string>Allow Nilemarketplace to save photos</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>This application would want to access your location to ensure shipping of your desired item is eligible.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>This app would require access to your gallary, Files in order to upload profile photos and post reviews.</string>
 	<key>NSCameraUsageDescription</key>
-	<string>Allow Nilemarketplace to access your camera  for your profile</string>
+	<string>This app would require access to your camera to upload profile photos and post reviews.</string>
+	<key>LSApplicationQueriesSchemes</key>
+<array>
+    <string>nilegmp</string>
+    <string>admin.nilegmp</string>
+</array>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
 	<key>CFBundleDevelopmentRegion</key>
-	<string>English</string>
+	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.gsmash.nilegmp</string>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
 	<string>$(PRODUCT_NAME)</string>
 	<key>CFBundlePackageType</key>
 	<string>$(PRODUCT_BUNDLE_PACKAGE_TYPE)</string>
+	<key>CFBundleShortVersionString</key>
+	<string>1.0</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
@@ -65,7 +60,5 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
-	<key>CFBundleShortVersionString</key>
-	<string>1.0</string>
 </dict>
 </plist>

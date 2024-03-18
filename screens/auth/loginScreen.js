@@ -91,17 +91,20 @@ console.log(AdminUrl,"AdminUrl");
     // Create a Firebase credential from the response
     const { identityToken, nonce } = appleAuthRequestResponse;
     const appleCredential = auth.AppleAuthProvider.credential(identityToken, nonce);
+    console.log(appleCredential,"APPLECERED");
     console.log("sending access token to backend");
  
     // Sign the user in with the credential
     try {
-        
+        console.log("a1");
         const userCredential = await auth().signInWithCredential(appleCredential);
+        console.log("a2");
         const idToken = await userCredential.user.getIdToken()
         console.log(userCredential,idToken,"sss");
         await sendAccessTokenToBackendApple(idToken, { name: auth().currentUser.email, email: auth().currentUser.email })
     } catch (e) {
-        Alert.alert("Error Validating Identity")
+        console.log(e,"eerr");
+        Alert.alert("Error Validating Identity",e)
     }
   }
 
@@ -151,7 +154,7 @@ console.log(AdminUrl,"AdminUrl");
                 dispatch(updateCustomerData(data?.userdata))
                 setLoading(false)
                 NativeModules.DevSettings.reload();
-                navigation.navigate('Home')
+                navigation.replace('Home')
             }
         } catch (error) {
             Alert.alert(error)
@@ -182,7 +185,7 @@ console.log(AdminUrl,"AdminUrl");
                 dispatch(updateCustomerData(data?.userdata))
                 setLoading(false)
                 // NativeModules.DevSettings.reload();
-                navigation.navigate('Home')
+                navigation.replace('Home')
             }
         } catch (error) {
             console.error('Error while sending the access token:', error);
@@ -214,7 +217,7 @@ console.log(AdminUrl,"AdminUrl");
 
                 await sendNotificationWithNavigation(`Great, ${data?.userdata?.given_name}, You have logged in Successfully...✅`)
 
-                navigation.navigate('Home')
+                navigation.replace('Home')
                 setLoading(false)
             }
         } catch (error) {
@@ -481,11 +484,11 @@ console.log(AdminUrl,"AdminUrl");
 
                 if (data.customerData.customer_interest !== null && data.customerData.customer_interest !== undefined && data.customerData.customer_interest.length > 0) {
 
-                    navigation.navigate("Home")
+                    navigation.replace("Home")
                 } else {
                     // The customer_interest is null, undefined, or empty
                     // Handle this case or execute code accordingly
-                    navigation.navigate('Pick Interest')
+                    navigation.replace('Pick Interest')
                 }
                 console.log("SENDING NOTIFICATION FOR LOGGED IN USER");
                 await sendNotificationWithNavigation(`Great, ${data?.customerData?.given_name}`, 'You have logged in Successfully...✅')
@@ -499,7 +502,7 @@ console.log(AdminUrl,"AdminUrl");
                     ]);
                 } else if (data.status === 301) {
                     // Email sent for verification
-                    navigation.navigate('Verification', data?.user)
+                    navigation.replace('Verification', data?.user)
                 } else {
                     // Other error status codes
                     Alert.alert("Error", "An error occurred", [

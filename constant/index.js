@@ -13,7 +13,7 @@ import { debounce } from 'lodash';
 
 // import Config from "react-native-config";
 export const AdminUrl = "https://admin.nilegmp.com";
-// export const AdminUrl = "http://192.168.1.105:3001";
+// export const AdminUrl = "http://192.168.1.22:3001";
 export const  productUrl ="https://ngmp-products.s3.us-east-005.backblazeb2.com";
 
 export async function getVariantsOfCatSubcat(category, subcategory, uniquepid) {

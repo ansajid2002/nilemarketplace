@@ -25,7 +25,7 @@
       [
         "expo-image-picker",
         {
-          "photosPermission": "The app accesses your photos to let you share them with your friends."
+          "photosPermission": "Allow Nile Marketplace to access your media for profile pictures and review uploads."
         } 
       ],
       "expo-apple-authentication",
@@ -49,17 +49,13 @@
         "UIBackgroundModes": [
           "remote-notification"
         ],
-        "NSPhotoLibraryUsageDescription": "Allow Nilemarketplace to access your photos",
-        "NSPhotoLibraryAddUsageDescription": "Allow Nilemarketplace to save photos",
-        "NSLocationWhenInUseUsageDescription": "Allow Nilemarketplace to access your location when open.",
-        "NSLocationUsageDescription": "Allow Nilemarketplace to access your location when open.",
-        "NSCameraUsageDescription": "This app uses the camera to scan barcodes on event tickets.",
+        "NSPhotoLibraryUsageDescription": "This app would require access to your gallary, Files in order to upload profile photos and post reviews.",
+        "NSLocationWhenInUseUsageDescription": "This application would want to access your location to ensure shipping of your desired item is eligible.",
+        "NSCameraUsageDescription": "This app would require access to your camera to upload profile photos and post reviews.",
         "LSApplicationQueriesSchemes": ["nilegmp.com", "admin.nilegmp.com"]
-        ,"photosPermission": "Allow Nilemarketplace access your photos.",
-          "savePhotosPermission": "Allow Nilemarketplace to save photos."
       
       },
-      "bundleIdentifier": "com.gsmash.nilegmp",
+      "bundleIdentifier": "com.ngmp1.ios",
       "googleServicesFile": "./GoogleService-Info.plist",
       "buildNumber": "7",
       "supportsTablet": true,

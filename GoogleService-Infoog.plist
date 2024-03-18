@@ -3,17 +3,17 @@
 <plist version="1.0">
 <dict>
 	<key>API_KEY</key>
-	<string>AIzaSyDVTeNCz41DE-T2LlNSs_UGU4kHJmF5tmU</string>
+	<string>AIzaSyBrFKAPk8wvs-V7hcwve7_WMARXi6B-wcw</string>
 	<key>GCM_SENDER_ID</key>
-	<string>677086277667</string>
+	<string>662389992643</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.ngmp1.ios</string>
+	<string>com.gsmash.nilegmp</string>
 	<key>PROJECT_ID</key>
-	<string>ngmp1-ios</string>
+	<string>nile-marketplace</string>
 	<key>STORAGE_BUCKET</key>
-	<string>ngmp1-ios.appspot.com</string>
+	<string>nile-marketplace.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -25,6 +25,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:677086277667:ios:2d77eaf1084cbe4844c196</string>
+	<string>1:662389992643:ios:1a59ca078c311038764676</string>
 </dict>
 </plist>

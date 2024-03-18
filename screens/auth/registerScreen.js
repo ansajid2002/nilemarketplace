@@ -137,7 +137,7 @@ const RegisterScreen = ({ navigation }) => {
                 if (!data?.success) {
                     Alert.alert('Error', data?.message)
                 } else if (data?.success) {
-                    navigation.navigate('UserAgreement') //v , { customer_id: data?.insertedId }
+                    navigation.navigate('Verification',{ customer_id: data?.insertedId }) //v , { customer_id: data?.insertedId }
                 }
             })
             .catch(error => {
