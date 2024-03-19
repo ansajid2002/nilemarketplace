@@ -2,19 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>NSFileProviderDomainUsageDescription</key>
-	<string></string>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>This application would want to access your location to ensure shipping of your desired item is eligible.</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>This app would require access to your gallary, Files in order to upload profile photos and post reviews.</string>
-	<key>NSCameraUsageDescription</key>
-	<string>This app would require access to your camera to upload profile photos and post reviews.</string>
-	<key>LSApplicationQueriesSchemes</key>
-<array>
-    <string>nilegmp</string>
-    <string>admin.nilegmp</string>
-</array>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
 	<key>CFBundleDevelopmentRegion</key>
@@ -34,7 +21,12 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>1</string>
+	<string>15</string>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>nilegmp</string>
+		<string>admin.nilegmp</string>
+	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
@@ -44,20 +36,24 @@
 		<key>NSAllowsLocalNetworking</key>
 		<true/>
 	</dict>
+	<key>NSCameraUsageDescription</key>
+	<string>This app would require access to your camera to upload profile photos and post reviews.</string>
+	<key>NSFileProviderDomainUsageDescription</key>
+	<string></string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>This application would want to access your location to ensure shipping of your desired item is eligible.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>This app would require access to your gallary, Files in order to upload profile photos and post reviews.</string>
 	<key>UILaunchStoryboardName</key>
 	<string>SplashScreen</string>
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>
 		<string>armv7</string>
 	</array>
+	<key>UIRequiresFullScreen</key>
+	<true/>
 	<key>UIStatusBarStyle</key>
-	<string>UIStatusBarStyleDefault</string>
-	<key>UISupportedInterfaceOrientations</key>
-	<array>
-		<string>UIInterfaceOrientationPortrait</string>
-		<string>UIInterfaceOrientationLandscapeLeft</string>
-		<string>UIInterfaceOrientationLandscapeRight</string>
-	</array>
+	<string></string>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
 </dict>
