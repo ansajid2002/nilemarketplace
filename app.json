@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Nile Global Market place",
-    "slug": "nile-marketplace",
+    "slug": "gsmash-nilegmp",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon_new.png",
@@ -26,7 +26,7 @@
         "expo-image-picker",
         {
           "photosPermission": "Allow Nile Marketplace to access your media for profile pictures and review uploads."
-        } 
+        }
       ],
       "expo-apple-authentication",
       [
@@ -39,7 +39,6 @@
           ]
         }
       ]
-
     ],
     "assetBundlePatterns": [
       "*/"
@@ -49,15 +48,18 @@
         "UIBackgroundModes": [
           "remote-notification"
         ],
+        "NSMicrophoneUsageDescription":"This app would require access to a microphone to record audio while recording videos for reviews and feedback purposes.",
         "NSPhotoLibraryUsageDescription": "This app would require access to your gallary, Files in order to upload profile photos and post reviews.",
         "NSLocationWhenInUseUsageDescription": "This application would want to access your location to ensure shipping of your desired item is eligible.",
         "NSCameraUsageDescription": "This app would require access to your camera to upload profile photos and post reviews.",
-        "LSApplicationQueriesSchemes": ["nilegmp.com", "admin.nilegmp.com"]
-      
+        "LSApplicationQueriesSchemes": [
+          "nilegmp.com",
+          "admin.nilegmp.com"
+        ]
       },
-      "bundleIdentifier": "com.ngmp1.ios",
+      "bundleIdentifier": "com.gsmash.nilegmp",
       "googleServicesFile": "./GoogleService-Info.plist",
-      "buildNumber": "16",
+      "buildNumber": "27",
       "supportsTablet": true,
       "usesAppleSignIn": true
     },
@@ -69,13 +71,13 @@
         "foregroundImage": "./assets/images/icon_new.png",
         "backgroundColor": "#FFFFFF"
       },
-      
       "permissions": [
         "android.permission.RECEIVE_BOOT_COMPLETED",
         "android.permission.READ_EXTERNAL_STORAGE",
         "android.permission.WRITE_EXTERNAL_STORAGE",
         "android.permission.ACCESS_MEDIA_LOCATION",
-        "android.permission.CAMERA"
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO"
       ]
     },
     "web": {
@@ -83,10 +85,10 @@
     },
     "extra": {
       "eas": {
-        "projectId": "6d967be9-80f6-4c34-8520-e8e53c626f9c"
+        "projectId": "7a3f35d1-fe20-4f90-b12d-c488aa5fd1a4"
       }
     },
     "scheme": "nile",
-    "owner": "sajid.ansari"
+    "owner": "nilethebusiness"
   }
 }

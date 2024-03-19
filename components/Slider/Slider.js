@@ -6,17 +6,25 @@ import Pagination from './Pagination';
 import { AdminUrl } from '../../constant';
 import { Dimensions } from 'react-native';
 import { productUrl } from '../../constant'
+import { Video } from 'expo-av';
+import VideoComponent from '../VideoComponent';
 
 const { width, height } = Dimensions.get('window');
 
 const Slider = ({ singleData }) => {
     const [index, setIndex] = useState(0);
     const scrollX = useRef(new Animated.Value(0)).current;
-
+    let videos = singleData?.videourl || ""; // Remove all spaces from the string
+    videourl = videos.replace(/\s/g, '');
+    
+    // Split the string into an array of strings using comma as the delimiter
+    let videoArray = videourl === "" ? [] : videourl.split(',');
     const images = singleData.images?.[0] && singleData.images?.map((item, index) => ({
         id: index.toString(),
         url: `${productUrl}/${item}`,
     }));
+
+    console.log(videoArray,"videoArrayvideoArray");
 
     const handleOnScroll = event => {
         Animated.event(
@@ -36,19 +44,41 @@ const Slider = ({ singleData }) => {
     };
 
     const handleOnViewableItemsChanged = useRef(({ viewableItems }) => {
-        setIndex(viewableItems[0].index);
+        setIndex(viewableItems[0]?.index);
     }).current;
 
     const viewabilityConfig = useRef({
         itemVisiblePercentThreshold: 50,
     }).current;
-
+    const renderItem = ({ item, index }) => {
+        if (index < images?.length) {
+            return (
+                <SlideItem item={item} width={width} singleData={singleData} redirect="ImageSldier" heightCheck={height * 0.6} />
+            );
+        } else if (index === images?.length && videoArray?.length > 0) {
+            return (
+                // Render your video component here
+                <View className="flex-row flex-1 ">
+                    {
+                        videoArray?.map((v) => {
+                            console.log(v,"outer v");
+                            return (
+                                <VideoComponent vid={v} />
+                            )
+                        })
+                    }
+                </View>
+                
+            );
+        }
+        return null;
+    };
     return (
         <View >
             {/* <Text>Helo</Text> */}
             <FlatList
-                data={images || []}
-                renderItem={({ item }) => <SlideItem item={item || []} width={width} singleData={singleData || []} redirect="ImageSldier" heightCheck={height * 0.6} />}
+                data={[...images, ...(videoArray?.length > 0 ? [{}] : [])]}
+                renderItem={renderItem}
                 horizontal
                 pagingEnabled
                 snapToAlignment="center"
@@ -57,6 +87,7 @@ const Slider = ({ singleData }) => {
                 onViewableItemsChanged={handleOnViewableItemsChanged}
                 viewabilityConfig={viewabilityConfig}
             />
+            
             <Pagination data={images || []} scrollX={scrollX} index={index} />
         </View>
     );

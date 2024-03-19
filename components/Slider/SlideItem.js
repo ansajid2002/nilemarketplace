@@ -12,6 +12,9 @@ import { TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Image } from 'react-native';
 import { debounce } from 'lodash';
+import { ReactNativeZoomableView } from '@openspacelabs/react-native-zoomable-view'
+
+
 
 const SlideItem = ({ width, item, singleData, heightCheck, redirect }) => {
 
@@ -39,23 +42,39 @@ const SlideItem = ({ width, item, singleData, heightCheck, redirect }) => {
                     <TouchableOpacity onPress={debounce(handleImagePress, 500)}>
 
 
-                        <Image
-                            resizeMode="contain"
-                            source={
-          item?.url
-            ? { uri: item.url }
-            : require('../../assets/noimage.jpg') // fallback local image
-        }
-                            defaultSource={require('../../assets/noimage.jpg')}
+      <Image  source={{
+    uri: item?.url || "../../assets/noimage.jpg" // Use a placeholder image URL if item.url is undefined
+  }}
+  defaultSource={require('../../assets/noimage.jpg')}
+  style={{ width, height: "100%" }}
+  minScale={1}
+  maxScale={30}
 
-                            style={{ width, height: "100%" }}
-                        />
+  resizeMode="contain"
+/>
+
                     </TouchableOpacity> :
-                    <Animated.Image
-                        source={{ uri: item?.url }}
-                        resizeMode="contain"
-                        style={{ width, height: "100%" }}
-                    />
+                    <View  style={{  flex:1 ,  width: "100%" }}>
+
+                   <ReactNativeZoomableView
+                   maxZoom={30}
+                   // Give these to the zoomable view so it can apply the boundaries around the actual content.
+                   // Need to make sure the content is actually centered and the width and height are
+                   // dimensions when it's rendered naturally. Not the intrinsic size.
+                   // For example, an image with an intrinsic size of 400x200 will be rendered as 300x150 in this case.
+                   // Therefore, we'll feed the zoomable view the 300x150 size.
+                   contentWidth={300}
+                   contentHeight={150}
+                 >
+                   <Image
+                     style={{ width: '100%', height: '100%', resizeMode: 'contain' }}
+                     source={{
+                        uri: item?.url || "../../assets/noimage.jpg" // Use a placeholder image URL if item.url is undefined
+                      }}
+                      defaultSource={require('../../assets/noimage.jpg')}
+                   />
+                 </ReactNativeZoomableView>
+                 </View>
             }
 
 
