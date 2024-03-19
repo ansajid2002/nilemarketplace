@@ -57,7 +57,7 @@
       },
       "bundleIdentifier": "com.ngmp1.ios",
       "googleServicesFile": "./GoogleService-Info.plist",
-      "buildNumber": "7",
+      "buildNumber": "16",
       "supportsTablet": true,
       "usesAppleSignIn": true
     },
