@@ -155,7 +155,7 @@ const Bottomsearch = ({ navigation }) => {
     const renderSearchData = () => {
         return (
             <View>
-               <View>
+             
   {searchHistory && searchHistory.length > 0 ? (
     <>
       <Text className="px-2 py-4 text-gray-700">Recent searches</Text>
@@ -174,7 +174,7 @@ const Bottomsearch = ({ navigation }) => {
   ) : (
     <Text className="px-2 py-4 text-gray-700">No Recent searches</Text>
   )}
-</View>
+
 <View>
   {popularSearches && popularSearches.length > 0 ? (
     <>

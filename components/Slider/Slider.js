@@ -18,14 +18,12 @@ const Slider = ({ singleData }) => {
     videourl = videos.replace(/\s/g, '');
     
     // Split the string into an array of strings using comma as the delimiter
-    let videoArray = videourl === "" ? [] : videourl.split(',');
-    const images = singleData.images?.[0] && singleData.images?.map((item, index) => ({
+    const videoArray = videourl.trim() === "" ? [] : videourl.split(',');
+    const images = (singleData.images || []).map((item, index) => ({
         id: index.toString(),
         url: `${productUrl}/${item}`,
     }));
-
-    console.log(videoArray,"videoArrayvideoArray");
-
+    
     const handleOnScroll = event => {
         Animated.event(
             [
@@ -62,9 +60,12 @@ const Slider = ({ singleData }) => {
                     {
                         videoArray?.map((v) => {
                             console.log(v,"outer v");
+                            if (v !== "None") {
+
+                            
                             return (
                                 <VideoComponent vid={v} />
-                            )
+                            )}
                         })
                     }
                 </View>
@@ -75,7 +76,6 @@ const Slider = ({ singleData }) => {
     };
     return (
         <View >
-            {/* <Text>Helo</Text> */}
             <FlatList
                 data={[...images, ...(videoArray?.length > 0 ? [{}] : [])]}
                 renderItem={renderItem}
