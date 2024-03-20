@@ -20,7 +20,7 @@ import { addOrders } from '../../store/slices/myordersSlice';
 import { ActivityIndicator } from 'react-native';
 import { TextInput } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { sendNotificationWithNavigation, storeNotification } from '../NotificationExpo';
+// import { sendNotificationWithNavigation, storeNotification } from '../NotificationExpo';
 import { debounce } from 'lodash';
 import { SafeAreaView } from 'react-native';
 import { formatCurrency } from '../wallet/Wallet';
@@ -196,8 +196,8 @@ const CheckoutPreview = ({ route, navigation }) => {
 
       dispatch(emptyCart());
       dispatch(addOrders(ordersWithShippingAddress))
-      await sendNotificationWithNavigation(`🛍️ Order Placed', 'Your order has been successfully placed.Thank you for shopping with us!`, 'My Orders');
-      storeNotification(customerId, "ORDERPLACED", `🛍️ Order Placed', 'Your order has been successfully placed.Thank you for shopping with us!`, new Date().toISOString())
+      // await sendNotificationWithNavigation(`🛍️ Order Placed', 'Your order has been successfully placed.Thank you for shopping with us!`, 'My Orders');
+      // storeNotification(customerId, "ORDERPLACED", `🛍️ Order Placed', 'Your order has been successfully placed.Thank you for shopping with us!`, new Date().toISOString())
       setStatus(false)
 
       navigation.push('Order Placed', responseData)
@@ -635,8 +635,8 @@ const CheckoutPreview = ({ route, navigation }) => {
       dispatch(getwalletTotal(responseData?.walletamount))
       dispatch(emptyCart());
       dispatch(addOrders(ordersWithShippingAddress))
-      await sendNotificationWithNavigation('🛍️ Order Placed', 'Your order has been successfully placed. Thank you for shopping with us!', 'My Orders');
-      storeNotification(customerId, "ORDERPLACED", `🛍️ Order Placed', 'Your order has been successfully placed. Thank you for shopping with us!`, new Date().toISOString())
+      // await sendNotificationWithNavigation('🛍️ Order Placed', 'Your order has been successfully placed. Thank you for shopping with us!', 'My Orders');
+      // storeNotification(customerId, "ORDERPLACED", `🛍️ Order Placed', 'Your order has been successfully placed. Thank you for shopping with us!`, new Date().toISOString())
 
       navigation.replace('Order Placed', responseData)
       setshowLoader(false)

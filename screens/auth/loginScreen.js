@@ -16,7 +16,7 @@ import * as WebBrowser from "expo-web-browser"
 import * as Google from "expo-auth-session/providers/google"
 import * as Facebook from "expo-auth-session/providers/facebook"
 import { debounce } from 'lodash';
-import { sendNotificationWithNavigation, storeNotification } from '../NotificationExpo';
+// import { sendNotificationWithNavigation, storeNotification } from '../NotificationExpo';
 import { KeyboardAvoidingView } from 'react-native';
 import { NativeModules } from 'react-native';
 import { changeSomaliandistrict } from '../../store/slices/customerSlice';
@@ -215,7 +215,7 @@ console.log(AdminUrl,"AdminUrl");
                 await AsyncStorage.setItem('customerData', JSON.stringify(data.userdata));
               
 
-                await sendNotificationWithNavigation(`Great, ${data?.userdata?.given_name}, You have logged in Successfully...✅`)
+                // await sendNotificationWithNavigation(`Great, ${data?.userdata?.given_name}, You have logged in Successfully...✅`)
 
                 navigation.replace('Home')
                 setLoading(false)
@@ -491,7 +491,7 @@ console.log(AdminUrl,"AdminUrl");
                     navigation.replace('Pick Interest')
                 }
                 console.log("SENDING NOTIFICATION FOR LOGGED IN USER");
-                await sendNotificationWithNavigation(`Great, ${data?.customerData?.given_name}`, 'You have logged in Successfully...✅')
+                // await sendNotificationWithNavigation(`Great, ${data?.customerData?.given_name}`, 'You have logged in Successfully...✅')
 
             } else {
                 // Handle the error based on the status code in data.status

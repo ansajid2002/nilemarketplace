@@ -29,25 +29,25 @@
         }
       ],
       "expo-apple-authentication",
-      [
-        "expo-notifications",
-        {
-          "icon": "./assets/images/icon_new.png",
-          "color": "#ffffff",
-          "sounds": [
-            "./assets/ss.mp3"
-          ]
-        }
-      ]
+      // [
+      //   "expo-notifications",
+      //   {
+      //     "icon": "./assets/images/icon_new.png",
+      //     "color": "#ffffff",
+      //     "sounds": [
+      //       "./assets/ss.mp3"
+      //     ]
+      //   }
+      // ]
     ],
     "assetBundlePatterns": [
       "*/"
     ],
     "ios": {
       "infoPlist": {
-        "UIBackgroundModes": [
-          "remote-notification"
-        ],
+        // "UIBackgroundModes": [
+        //   "remote-notification"
+        // ],
         "NSMicrophoneUsageDescription": "This app would require access to a microphone to record audio while recording videos for reviews and feedback purposes.",
         "NSPhotoLibraryUsageDescription": "This app would require access to your gallery, Files in order to upload profile photos and post reviews.",
         "NSLocationWhenInUseUsageDescription": "This application would want to access your location to ensure shipping of your desired item is eligible.",
@@ -83,7 +83,7 @@
       },
       "bundleIdentifier": "com.gsmash.ngmp",
       "googleServicesFile": "./GoogleService-Info.plist",
-      "buildNumber": "27",
+      "buildNumber": "28",
       "supportsTablet": true,
       "usesAppleSignIn": true
     }
