@@ -1,4 +1,4 @@
-package com.nileglobalmarketplace
+package com.gsmash.ngmp
 
 import android.os.Build
 import android.os.Bundle

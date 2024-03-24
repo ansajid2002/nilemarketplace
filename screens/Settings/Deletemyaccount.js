@@ -12,8 +12,6 @@ import {
 } from '@gorhom/bottom-sheet';
 import { Colors } from '../../constants/styles';
 import { TextInput } from 'react-native';
-// import logo from "../../assets/images/icon-delete.png.png"
-import logo from "../../assets/images/icon-delete.png"
 import { Image } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { debounce } from 'lodash';
@@ -330,7 +328,7 @@ console.log(customerData[0],"sssjsjsjjsjs");
                             >
 
                                 <Image
-                                    source={require('../../assets/images/icon-delete.png')}
+                                    source={require('../../assets/images/icon_new.png')}
                                     className="w-40 h-40 mx-auto -mt-8"
                                 />
                                 <Text style={{ fontSize: 18, fontWeight: 'bold' }} className="my-4">For your security, please authenticate your identity to continue</Text>
