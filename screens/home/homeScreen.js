@@ -298,7 +298,11 @@ const HomeScreen = () => {
         loadSelectedCountry();
     }, []);
 
+    const f = async() => {
+        console.log( await AsyncStorage.getItem("@agreed"),"by asyncagreement");
 
+    }
+    f()
     return (
         <SafeAreaView
             className=""

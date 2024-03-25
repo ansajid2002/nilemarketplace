@@ -1,61 +1,15 @@
-import { FlatList, Animated, View, TouchableOpacity } from 'react-native';
+import { FlatList, Animated, View, TouchableOpacity, Image } from 'react-native';
 import React, { useRef, useState } from 'react';
-import SlideItem from './SlideItem';
-import Pagination from './Pagination';
-import { AdminUrl } from '../../constant';
-import { Dimensions } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { debounce } from 'lodash';
 import { SafeAreaView } from 'react-native';
-import { Colors } from '../../constants/styles';
-import { productUrl } from '../../constant';
-
+import { ReactNativeZoomableView } from '@openspacelabs/react-native-zoomable-view';
 
 const ImageSlider = ({ route, navigation }) => {
-    const { singleData } = route.params;
-    const [index, setIndex] = useState(0);
-    const scrollX = useRef(new Animated.Value(0)).current;
-    const { height } = Dimensions.get('window');
-
-    let images;
-    if (singleData[0]?.url) {
-        images = singleData;
-    } else {
-        images = singleData.images.map((item, index) => ({
-            id: index.toString(),
-            url: `${productUrl}/${item}`,
-        }));
-    }
-
-    const handleOnScroll = event => {
-        Animated.event(
-            [
-                {
-                    nativeEvent: {
-                        contentOffset: {
-                            x: scrollX,
-                        },
-                    },
-                },
-            ],
-            {
-                useNativeDriver: false, // Make sure to set useNativeDriver to false
-            },
-        )(event);
-    };
-
-    const handleOnViewableItemsChanged = useRef(({ viewableItems }) => {
-        setIndex(viewableItems[0].index);
-    }).current;
-
-    const viewabilityConfig = useRef({
-        itemVisiblePercentThreshold: 50,
-    }).current;
-
+    const { item } = route.params;
     return (
-        <SafeAreaView className="mt-8 " style={{ flex: 1, }}>
+        <SafeAreaView className="mt-8 " style={{ flex: 1}}>
             
-            {/* Header with back button */}
             <TouchableOpacity
                 onPress={debounce(() => navigation.goBack(), 500)}
                 style={{
@@ -71,21 +25,21 @@ const ImageSlider = ({ route, navigation }) => {
             >
                 <Ionicons name="arrow-back" size={30} color="black" />
             </TouchableOpacity>
-                
-            <FlatList
-                data={images}
-                renderItem={({ item }) => <SlideItem item={item} heightCheck={height} redirect={''} />}
-                horizontal
-                pagingEnabled
-                snapToAlignment="center"
-                showsHorizontalScrollIndicator={false}
-                onScroll={handleOnScroll}
-                onViewableItemsChanged={handleOnViewableItemsChanged}
-                viewabilityConfig={viewabilityConfig}
-            />
-            <Pagination data={images} scrollX={scrollX} index={index} />
+            <View  style={{  flex:1 ,  width: "100%" }}>
+
+                   <ReactNativeZoomableView
+                   maxZoom={10} zoomStep={0.5}
+                 >
+                   <Image
+                     style={{ width: '100%', height: '100%', resizeMode: 'contain' }}
+                     source={{
+                        uri: item?.url || "../../assets/noimage.jpg" // Use a placeholder image URL if item.url is undefined
+                      }}
+                      defaultSource={require('../../assets/noimage.jpg')}
+                   />
+                 </ReactNativeZoomableView>
+                 </View>
         </SafeAreaView>
     );
 };
-
 export default ImageSlider;

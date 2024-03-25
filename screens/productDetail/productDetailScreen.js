@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { TouchableOpacity, SafeAreaView, View, Image, ScrollView, StatusBar, Share, StyleSheet, Text, Alert, ActivityIndicator, Linking } from "react-native";
 import { Colors, Fonts, Sizes, } from "../../constants/styles";
 import { MaterialCommunityIcons, } from '@expo/vector-icons';
-
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { addItem, decrementItem, decrementCartTotal, incrementCartTotal, incrementItem, removeItem } from "../../store/slices/cartSlice";
@@ -11,15 +10,11 @@ import { AdminUrl, getVariantsOfCatSubcat } from "../../constant";
 import { useEffect } from "react";
 import Slider from "../../components/Slider/Slider";
 import ReviewComponent from "../../components/ReviewsComponent";
-import { changeSearchFocus, changetabbarIndex } from "../../store/slices/counterslice";
+import { changeSearchFocus } from "../../store/slices/counterslice";
 import Icon from 'react-native-vector-icons/Ionicons';
 import search from "../../assets/images/icons/search-interface-symbol.png"
 import shareimg from "../../assets/images/icons/share.png"
 import { t } from "i18next";
-import { Picker } from "@react-native-picker/picker";
-import { changeSomaliandistrict } from "../../store/slices/customerSlice";
-import { productUrl } from "../../constant/index"
-
 
 
 const ProductDetailScreen = ({ navigation, route }) => {
@@ -43,12 +38,8 @@ const ProductDetailScreen = ({ navigation, route }) => {
     const { c_symbol, appLangcode } = useSelector((store) => store.selectedCurrency)
     const cartItems = useSelector((state) => state.cart.cartItems);
     const wishlistItems = useSelector((state) => state.wishlist.wishlistItems)
-
     const { somalian_district } = useSelector((store) => store.customerAddress)
-
     const [shippingrate, setShippingrate] = useState("")
-
-
 
     useEffect(() => {
         // Check if there's an item in wishlistItems with a matching uniquepid
@@ -201,7 +192,6 @@ const ProductDetailScreen = ({ navigation, route }) => {
                     throw new Error(`HTTP error! Status: ${response.status}`);
                 }
 
-                const responseData = await response.json();
             }
 
         } catch (error) {

@@ -1,78 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, SafeAreaView, StatusBar, ScrollView, TouchableOpacity } from 'react-native';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { AdminUrl } from '../constant';
-import { updateCustomerData } from '../store/slices/customerData';
+import { Image } from 'react-native';
 
-export const sendAgreetoDb = async (customerId) => {
-    try {
-        if (!customerId) {
-            await AsyncStorage.setItem('@agreed', JSON.stringify(true));
-            return null;
-        }
-
-        // Construct the request body with the customer ID
-        const requestBody = JSON.stringify({ customerId });
-
-        const response = await fetch(`${AdminUrl}/api/setUserAgreement`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: requestBody,
-        });
-
-        if (!response.ok) {
-            throw new Error('Failed to send agreement to the server');
-        }
-
-        const data = await response.json();
-        await AsyncStorage.setItem('@agreed', JSON.stringify(true));
-
-        return data?.customer;
-    } catch (error) {
-        console.error('Error sending agreement:', error);
-        throw error;
-    }
-};
 
 const UserAgreement = ({ navigation }) => {
-    const [isLoading, setIsLoading] = useState(true);
-    const dispatch = useDispatch()
     useEffect(() => {
         const checkAgreement = async () => {
             try {
-                const customerDataAsync = await AsyncStorage.getItem('customerData');
                 const agreedAsync = await AsyncStorage.getItem('@agreed');
-                const customerData = JSON.parse(customerDataAsync);
                 console.log(agreedAsync, 'agreedAsync');
 
-
-                if (agreedAsync) {
-                    if (customerData && customerData.customer_term_accepted) {
-                        const data = await sendAgreetoDb(customerData?.customer_id); // Call sendAgreetoDb function with customer_id
-                        if (data) dispatch(updateCustomerData(data))
-                        setIsLoading(false);
-
-                        return
-                    }
-                    setIsLoading(false);
-
-                }
-
-                else if (customerData && customerData.customer_term_accepted) {
-                    const data = await sendAgreetoDb(customerData?.customer_id); // Call sendAgreetoDb function with customer_id
-                    if (data) dispatch(updateCustomerData(data))
-                    setIsLoading(false);
-
-                }
-
-                setIsLoading(false);
+              
 
             } catch (error) {
                 console.error('Error checking agreement:', error);
-                setIsLoading(false);
             }
         };
 
@@ -81,35 +24,25 @@ const UserAgreement = ({ navigation }) => {
 
     const handleContinue = async () => {
         try {
-            const customerDataAsync = await AsyncStorage.getItem('customerData');
-            const customerData = JSON.parse(customerDataAsync);
-            const customer_id = customerData?.customer_id;
-
-            const data = await sendAgreetoDb(customer_id); // Call sendAgreetoDb function with customer_id
-            if (data) dispatch(updateCustomerData(data))
-
-
+            await AsyncStorage.setItem("@agreed","1")
             navigation.replace('Home');
         } catch (error) {
             console.error('Error setting agreement:', error);
         }
     };
 
-    if (isLoading) {
-        return (
-            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                <Text>Loading...</Text>
-            </View>
-        );
-    }
+  
 
 
     return (
         <SafeAreaView style={styles.container}>
             <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
-            <ScrollView style={styles.contentContainer}>
-                <View style={{ paddingHorizontal: 16 }}>
-                    <Text className="text-xl my-2 mt-4" >USER AGREEMENT</Text>
+            <ScrollView style={styles.contentContainer} showsVerticalScrollIndicator={false}>
+                <View style={{ paddingHorizontal: 12 }}>
+                    <Image source={require("../assets/images/icon_new.png")} className="w-20 h-20 mx-auto mt-10 rounded-lg" />
+                    <Text className="text-base text-center mt-4" >Welcome to </Text>
+                    <Text className="text-xl text-center mb-6 font-semibold tracking-wider" >Nile Global Marketplace</Text>
+
                     <Text className="text-base" style={{ marginBottom: 10 }}>
                         We are committed to ensuring that the app is as useful and efficient as possible. For that reason, we reserve the right to make changes to the app or to charge for its services, at any time and for any reason. We will never charge you for the app or its services without making it very clear to you exactly what you’re paying for.
                     </Text>
@@ -127,9 +60,9 @@ const UserAgreement = ({ navigation }) => {
                     </Text>
                 </View>
             </ScrollView>
-            <View >
-                <TouchableOpacity onPress={handleContinue} className="bg-[#ff5722] py-2 mx-2 rounded-full " >
-                    <Text className="text-center mx-4" style={styles.buttonText}>Accept and Continue</Text>
+            <View className="pt-4" >
+                <TouchableOpacity onPress={handleContinue} className="bg-[#ff5722] py-2.5 mx-14 rounded-full " >
+                    <Text className="text-center mx-4" style={styles.buttonText}>Agree and Continue</Text>
                 </TouchableOpacity>
             </View>
         </SafeAreaView>
