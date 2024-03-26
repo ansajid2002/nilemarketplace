@@ -33,9 +33,8 @@ const Login = ({ navigation, route }) => {
 
 
     const [request, response, promptAsync] = Google.useAuthRequest({  //nilemarketplace7@gmail.com
-        androidClientId: "216641462687-7mv9inako2l7n3rmp5gq72qu8lquvnn0.apps.googleusercontent.com",
-        iosClientId: "216641462687-0vgml3eh21399khfqk6avahgmis7sgo2.apps.googleusercontent.com",
-        expoClientId: "216641462687-a2ut20irksvqdes9n9gfgs21p8hp1kq4.apps.googleusercontent.com"
+        androidClientId: "831224318905-l5nn1q87t9s6q69hu69qp42u69nnq1ms.apps.googleusercontent.com",
+        iosClientId: "831224318905-1tkvpbkqm6u3eegv32qlt6rsjr023qmi.apps.googleusercontent.com",    
     })
 
     const [req, res, promptAsyncFacebook] = Facebook.useAuthRequest({  //nilemarketplace7@gmail.com

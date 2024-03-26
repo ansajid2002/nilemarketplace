@@ -3,17 +3,17 @@
 <plist version="1.0">
 <dict>
 	<key>API_KEY</key>
-	<string>AIzaSyBrFKAPk8wvs-V7hcwve7_WMARXi6B-wcw</string>
+	<string>AIzaSyCtR5G1GF0zAwvG6a-UieSqSyIYnhBUupo</string>
 	<key>GCM_SENDER_ID</key>
-	<string>662389992643</string>
+	<string>683678803080</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.gsmash.nilegmp</string>
+	<string>com.ibinibiso.app</string>
 	<key>PROJECT_ID</key>
-	<string>nile-marketplace</string>
+	<string>ibinibiso</string>
 	<key>STORAGE_BUCKET</key>
-	<string>nile-marketplace.appspot.com</string>
+	<string>ibinibiso.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -25,6 +25,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:662389992643:ios:1a59ca078c311038764676</string>
+	<string>1:683678803080:ios:e5ff20507557dc1e836b3d</string>
 </dict>
 </plist>

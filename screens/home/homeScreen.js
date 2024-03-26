@@ -516,7 +516,7 @@ const HomeScreen = () => {
                                                                 resizeMode="cover"
                                                                 source={{ uri: `${AdminUrl}/uploads/CatgeoryImages/${item.category_image_url}` }}
                                                                 style={{ width: 90.0, height: 90.0 }}
-                                                                className="rounded-full"
+                                                                className="rounded-2xl"
                                                             />
                                                         </TouchableOpacity>
                                                         <Text numberOfLines={2} style={styles.categoryText} className="mt-4">
