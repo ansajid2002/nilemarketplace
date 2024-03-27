@@ -60,7 +60,7 @@ const OnboardingScreen = ({ navigation }) => {
                     {
                         backgroundColor: '#00008b',
                         image: <Image source={require('../../assets/images/onboardings/onboarding1.png')} />,
-                        title: 'Welcome to Nile Marketplace!',
+                        title: 'Welcome!',
                         subtitle: 'Elevate Your Shopping Experience: Discover, Buy, and Sell with Confidence!',
                     },
                     {

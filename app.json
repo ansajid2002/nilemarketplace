@@ -1,13 +1,16 @@
 {
   "expo": {
-    "name": "ibinibiso Market place",
+    // "name": "ibinibiso Market place",    //for ANDROID
+    "name": "Nile Global Marketplace",   //for IOS
     "slug": "ibinibiso-app",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon_new.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/images/mainlogovertical.png",
+      "image": "./assets/images/mainlogovertical.png",  //for IOS
+
+      // "image": "./assets/images/mainlogovertical.png",  //for ANDROID
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -25,7 +28,7 @@
       [
         "expo-image-picker",
         {
-          "photosPermission": "Allow Nile Marketplace to access your media for profile pictures and review uploads."
+          "photosPermission": "This app wants to access your media for profile pictures and review uploads."
         }
       ],
       "expo-apple-authentication",
@@ -113,7 +116,8 @@
         "projectId": "1bf7869c-a36c-47bc-a630-9c1ff6cf6bf3"
       }
     },
-    "scheme": "nile",
+    "scheme": "nile", //for IOS
+    // "scheme": "ibinibiso",  //for ANDROID
     "owner": "maazgsmash"
   }
 }
