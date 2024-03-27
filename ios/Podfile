@@ -37,7 +37,7 @@ elsif podfile_properties.key?('ios.flipper') then
   end
 end
 
-target 'NileGlobalMarketplace' do
+target 'Ibibniniso' do
   use_expo_modules!
   use_modular_headers!
   config = use_native_modules!
