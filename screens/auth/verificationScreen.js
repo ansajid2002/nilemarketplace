@@ -6,7 +6,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 
 // import OTPTextView from 'react-native-otp-textinput';
 import { Image } from "react-native";
-import { AdminUrl } from "../../constant";
+import { AdminUrl, appName } from "../../constant";
 import { Alert } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { updateCustomerData } from "../../store/slices/customerData";
@@ -197,7 +197,7 @@ const VerificationScreen = ({ navigation, route }) => {
             // </Text>
             <View className="h-20 ml-3 ">
                 <Image
-                    source={require('../../assets/images/mainlogo.png')}
+                    source={appName}
                     style={{ width: 120.0, height: 50.0, borderRadius: 10.0, }}
                     className="my-auto"
 

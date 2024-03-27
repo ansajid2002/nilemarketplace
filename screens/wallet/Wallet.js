@@ -1,7 +1,6 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { View, Text, TouchableOpacity, Image, StatusBar, ScrollView, RefreshControl, Alert, SafeAreaView } from 'react-native';
 import { AntDesign, FontAwesome5, MaterialIcons } from '@expo/vector-icons';
-import mainlogovertical from "../../assets/images/mainlogo.png";
 import notranscation from "../../assets/no-transaction.png";
 import WalletTab from '../../components/WalletTab';
 import { BottomSheet } from '@rneui/base';
@@ -200,12 +199,8 @@ const Wallet = ({ navigation }) => {
                             <AntDesign name="arrowleft" size={24} color="#013766" />
                         </TouchableOpacity>
                         <View style={{ alignItems: 'center' }}>
-                            <Image
-                                resizeMode='contain'
-                                source={mainlogovertical}
-                                style={{ width: 200.0, height: 100, borderRadius: 20.0 }}
-                            />
-                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                            
+                            <View className="mt-4" style={{ flexDirection: 'row', alignItems: 'center' }}>
                                 <WalletTab size={22} color={'#013766'} count={0} showLabel={false} />
                                 <Text style={{ fontSize: 22, fontWeight: 'bold', marginLeft: 2, color: '#013766' }}>{t(" Wallet")}</Text>
                             </View>

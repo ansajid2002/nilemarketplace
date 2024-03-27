@@ -3,14 +3,15 @@ import { View, Text, SafeAreaView, StatusBar, ScrollView, TouchableOpacity } fro
 import { useDispatch } from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Image } from 'react-native';
+import { appLogo, appName } from '../constant';
 
-
+console.log(appLogo,"APPLLOOGO");
 const UserAgreement = ({ navigation }) => {
     useEffect(() => {
         const checkAgreement = async () => {
             try {
                 const agreedAsync = await AsyncStorage.getItem('@agreed');
-                console.log(agreedAsync, 'agreedAsync');
+      
 
               
 
@@ -39,9 +40,9 @@ const UserAgreement = ({ navigation }) => {
             <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
             <ScrollView style={styles.contentContainer} showsVerticalScrollIndicator={false}>
                 <View style={{ paddingHorizontal: 12 }}>
-                    <Image source={require("../assets/images/icon_new.png")} className="w-20 h-20 mx-auto mt-10 rounded-lg" />
+                    <Image source={appLogo} className="w-20 h-20 mx-auto mt-10 rounded-lg" />
                     <Text className="text-base text-center mt-4" >Welcome to </Text>
-                    <Text className="text-xl text-center mb-6 font-semibold tracking-wider" >Nile Global Marketplace</Text>
+                    <Text className="text-xl text-center mb-6 font-semibold tracking-wider" >{appName}</Text>
 
                     <Text className="text-base" style={{ marginBottom: 10 }}>
                         We are committed to ensuring that the app is as useful and efficient as possible. For that reason, we reserve the right to make changes to the app or to charge for its services, at any time and for any reason. We will never charge you for the app or its services without making it very clear to you exactly what you’re paying for.

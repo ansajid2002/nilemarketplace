@@ -8,11 +8,19 @@ import { useTranslation } from 'react-i18next';
 import { debounce } from 'lodash';
 
 
+export const appLogo = require("../assets/images/icon_new.png") //for IOS
+// export const productPlaceholder = require("../assets/noimage.jpg") //for IOS
+export const appName = "Nile Global Marketplace"   //for IOS
+
+// export const appLogo = require("../assets/images/icon_new.png") //for ANDROID
+// export const productPlaceholder = require("../assets/noimage.jpg") //for ANDROID
+// export const appName = "Ibinibiso Marketplace"  //for ANDROID
+
 
 // export const AdminUrl = "http://172.20.10.4:3001"; 
 
 // import Config from "react-native-config";
-export const AdminUrl = "https://admin.nilegmp.com";
+export const AdminUrl = "https://admin.nilegmp.com";  // this has to be changed once new backend updated
 // export const AdminUrl = "http://192.168.1.22:3001";
 export const  productUrl ="https://ngmp-products.s3.us-east-005.backblazeb2.com";
 
