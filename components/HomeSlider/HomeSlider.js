@@ -1,6 +1,5 @@
 import { Animated, ScrollView, StyleSheet, Text, View, TextInput } from 'react-native';
 import React, { useRef, useState } from 'react';
-import HomeSlideItem from './HomeSlideItem';
 import CategoryList from './CategoryList';
 import { useSelector } from 'react-redux';
 import { SafeAreaView } from 'react-native';

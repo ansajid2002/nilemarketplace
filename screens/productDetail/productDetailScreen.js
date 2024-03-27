@@ -439,7 +439,7 @@ const ProductDetailScreen = ({ navigation, route }) => {
                 {
                     singleData?.additionaldescription && singleData?.additionaldescription.length > 0 ? <View >
                         <Text className="font-bold text-xl mb-2">{t("Description")}</Text>
-                        <Text className="leading-5">
+                        <Text className="leading-6 tracking-wide">
                             {appLangcode === "so" ?
                                 singleData?.somali_additionaldescription === "" ? singleData?.additionaldescription : singleData?.somali_additionaldescription :
                                 singleData?.additionaldescription}
@@ -449,7 +449,7 @@ const ProductDetailScreen = ({ navigation, route }) => {
                 {
                     singleData?.keyfeatures && <View >
                         <Text className="font-bold text-xl py-4">{t("Key Features")}</Text>
-                        <Text>
+                        <Text className="text-sm tracking-wide leading-6">
                             {singleData.keyfeatures}
                         </Text>
                     </View>

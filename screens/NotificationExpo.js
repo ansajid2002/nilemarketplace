@@ -1,12 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
-// import { Platform, Text } from 'react-native';
 import * as TaskManager from 'expo-task-manager';
-// import * as Device from 'expo-device';
-// import * as Notifications from 'expo-notifications';
 import { useDispatch, useSelector } from 'react-redux';
-// import { useNavigation } from '@react-navigation/core';
-// import Toast from 'react-native-toast-message';
-// import { BackHandler } from 'react-native';
 import { AdminUrl } from '../constant';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { setAppLang, setAppLangname } from '../store/slices/currencySlice';

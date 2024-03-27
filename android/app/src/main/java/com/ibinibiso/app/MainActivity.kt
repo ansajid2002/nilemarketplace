@@ -1,4 +1,4 @@
-package com.gsmash.ngmp
+package com.ibinibiso.app
 
 import android.os.Build
 import android.os.Bundle

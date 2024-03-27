@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "Nile Global Market place",
-    "slug": "gsmash-nilegmp",
+    "name": "ibinibiso Market place",
+    "slug": "ibinibiso-app",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon_new.png",
@@ -81,7 +81,7 @@
           ]
         }
       },
-      "bundleIdentifier": "com.gsmash.ngmp",
+      "bundleIdentifier": "com.ibinibiso.app",
       "googleServicesFile": "./GoogleService-Info.plist",
       "buildNumber": "28",
       "supportsTablet": true,
@@ -89,7 +89,7 @@
     }
 ,    
     "android": {
-      "package": "com.gsmash.ngmp",
+      "package": "com.ibinibiso.app",
       "googleServicesFile": "./google-services.json",
       "versionCode": 4,
       "adaptiveIcon": {
@@ -110,10 +110,10 @@
     },
     "extra": {
       "eas": {
-        "projectId": "7a3f35d1-fe20-4f90-b12d-c488aa5fd1a4"
+        "projectId": "1bf7869c-a36c-47bc-a630-9c1ff6cf6bf3"
       }
     },
     "scheme": "nile",
-    "owner": "nilethebusiness"
+    "owner": "maazgsmash"
   }
 }
