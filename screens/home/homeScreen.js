@@ -70,7 +70,6 @@ const HomeScreen = () => {
     };
 
 
-    console.log(customerId, "sajid");
     const getservicesData = async () => {
         try {
             const response = await fetch(`${AdminUrl}/api/getServicesData`);
@@ -213,7 +212,6 @@ const HomeScreen = () => {
                 }
                 const data = await response.json()
 
-                console.log(data, 'data, cartttyyy');
                 dispatch(fetchcart(data))
 
             }
@@ -298,11 +296,7 @@ const HomeScreen = () => {
         loadSelectedCountry();
     }, []);
 
-    const f = async() => {
-        console.log( await AsyncStorage.getItem("@agreed"),"by asyncagreement");
-
-    }
-    f()
+ 
     return (
         <SafeAreaView
             className=""

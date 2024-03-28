@@ -10,11 +10,11 @@ import { debounce } from 'lodash';
 
 export const appLogo = require("../assets/images/icon_new.png") //for IOS
 // export const productPlaceholder = require("../assets/noimage.jpg") //for IOS
-export const appName = "Nile Global Marketplace"   //for IOS
+// export const appName = "Nile Global Marketplace"   //for IOS
 
 // export const appLogo = require("../assets/images/icon_new.png") //for ANDROID
 // export const productPlaceholder = require("../assets/noimage.jpg") //for ANDROID
-// export const appName = "Ibinibiso Marketplace"  //for ANDROID
+export const appName = "Ibinibiso Marketplace"  //for ANDROID
 
 
 // export const AdminUrl = "http://172.20.10.4:3001"; 

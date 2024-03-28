@@ -7,21 +7,7 @@ import { appLogo, appName } from '../constant';
 
 console.log(appLogo,"APPLLOOGO");
 const UserAgreement = ({ navigation }) => {
-    useEffect(() => {
-        const checkAgreement = async () => {
-            try {
-                const agreedAsync = await AsyncStorage.getItem('@agreed');
-      
-
-              
-
-            } catch (error) {
-                console.error('Error checking agreement:', error);
-            }
-        };
-
-        checkAgreement();
-    }, [navigation]);
+   
 
     const handleContinue = async () => {
         try {
@@ -31,9 +17,6 @@ const UserAgreement = ({ navigation }) => {
             console.error('Error setting agreement:', error);
         }
     };
-
-  
-
 
     return (
         <SafeAreaView style={styles.container}>
@@ -62,7 +45,7 @@ const UserAgreement = ({ navigation }) => {
                 </View>
             </ScrollView>
             <View className="pt-4" >
-                <TouchableOpacity onPress={handleContinue} className="bg-[#ff5722] py-2.5 mx-14 rounded-full " >
+                <TouchableOpacity onPress={handleContinue} className="bg-[#ff5722] py-2.5 mx-14 rounded-full mb-2 " >
                     <Text className="text-center mx-4" style={styles.buttonText}>Agree and Continue</Text>
                 </TouchableOpacity>
             </View>

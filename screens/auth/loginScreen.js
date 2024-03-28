@@ -1,4 +1,4 @@
-import {SafeAreaView, View, Text, Image, Pressable, TextInput, TouchableOpacity, BackHandler, Alert, Platform } from 'react-native'
+import { SafeAreaView, View, Text, Image, Pressable, TextInput, TouchableOpacity, BackHandler, Alert, Platform } from 'react-native'
 import React, { useCallback, useEffect, useState } from 'react'
 
 import { Ionicons } from "@expo/vector-icons";
@@ -6,7 +6,7 @@ import Button from '../../components/Button'
 import { COLORS } from './registerScreen';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchcart, getCartTotal } from '../../store/slices/cartSlice';
-import { AdminUrl } from '../../constant';
+import { AdminUrl, appName } from '../../constant';
 import { useFocusEffect } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { updateCustomerData } from '../../store/slices/customerData';
@@ -29,12 +29,12 @@ WebBrowser.maybeCompleteAuthSession()
 const Login = ({ navigation, route }) => {
     const [isPasswordShown, setIsPasswordShown] = useState(true);
     const { somalian_district } = useSelector((store) => store.customerAddress)
-    const {t} = useTranslation()
+    const { t } = useTranslation()
 
 
     const [request, response, promptAsync] = Google.useAuthRequest({  //nilemarketplace7@gmail.com
         androidClientId: "831224318905-l5nn1q87t9s6q69hu69qp42u69nnq1ms.apps.googleusercontent.com",
-        iosClientId: "831224318905-1tkvpbkqm6u3eegv32qlt6rsjr023qmi.apps.googleusercontent.com",    
+        iosClientId: "831224318905-1tkvpbkqm6u3eegv32qlt6rsjr023qmi.apps.googleusercontent.com",
     })
 
     const [req, res, promptAsyncFacebook] = Facebook.useAuthRequest({  //nilemarketplace7@gmail.com
@@ -45,7 +45,7 @@ const Login = ({ navigation, route }) => {
     useEffect(() => {
         setLoading(false); // Remove the activity indicator when component re-renders
     }, []);
-   
+
 
     useEffect(() => {
         handleSignInWithGoogle();
@@ -54,63 +54,63 @@ const Login = ({ navigation, route }) => {
     useEffect(() => {
         handleSignInWithFacebook()
     }, [res])
-////////new apple sign in ///////////////////////////////
+    ////////new apple sign in ///////////////////////////////
 
-function AppleSignIn() {
-    return (
-      <AppleButton
-        buttonStyle={AppleButton.Style.BLACK}
-        buttonType={AppleButton.Type.SIGN_IN}
-        style={{
-        
-          width: '100%',
-          height: 45,
-        }}
-        onPress={() => onAppleButtonPress().then(() => console.log('Apple sign-in complete!'))}
-      />
-    );
-  }
-console.log(AdminUrl,"AdminUrl");
-  async function onAppleButtonPress() {
-    // Start the sign-in request
-    console.log("SENDing apple reques again t");
-    console.log("s");
-    const appleAuthRequestResponse = await appleAuth.performRequest({
-      requestedOperation: appleAuth.Operation.LOGIN,
-      // As per the FAQ of react-native-apple-authentication, the name should come first in the following array.
-      // See: https://github.com/invertase/react-native-apple-authentication#faqs
-      requestedScopes: [appleAuth.Scope.FULL_NAME, appleAuth.Scope.EMAIL],
-    });
-    console.log("sa");
-    // Ensure Apple returned a user identityToken
-    if (!appleAuthRequestResponse.identityToken) {
-      throw new Error('Apple Sign-In failed - no identify token returned');
+    function AppleSignIn() {
+        return (
+            <AppleButton
+                buttonStyle={AppleButton.Style.BLACK}
+                buttonType={AppleButton.Type.SIGN_IN}
+                style={{
+
+                    width: '100%',
+                    height: 45,
+                }}
+                onPress={() => onAppleButtonPress().then(() => console.log('Apple sign-in complete!'))}
+            />
+        );
     }
-  
-    // Create a Firebase credential from the response
-    const { identityToken, nonce } = appleAuthRequestResponse;
-    const appleCredential = auth.AppleAuthProvider.credential(identityToken, nonce);
-    console.log(appleCredential,"APPLECERED");
-    console.log("sending access token to backend");
- 
-    // Sign the user in with the credential
-    try {
-        console.log("a1");
-        const userCredential = await auth().signInWithCredential(appleCredential);
-        console.log("a2");
-        const idToken = await userCredential.user.getIdToken()
-        console.log(userCredential,idToken,"sss");
-        await sendAccessTokenToBackendApple(idToken, { name: auth().currentUser.email, email: auth().currentUser.email })
-    } catch (e) {
-        console.log(e,"eerr");
-        Alert.alert("Error Validating Identity",e)
+    console.log(AdminUrl, "AdminUrl");
+    async function onAppleButtonPress() {
+        // Start the sign-in request
+        console.log("SENDing apple reques again t");
+        console.log("s");
+        const appleAuthRequestResponse = await appleAuth.performRequest({
+            requestedOperation: appleAuth.Operation.LOGIN,
+            // As per the FAQ of react-native-apple-authentication, the name should come first in the following array.
+            // See: https://github.com/invertase/react-native-apple-authentication#faqs
+            requestedScopes: [appleAuth.Scope.FULL_NAME, appleAuth.Scope.EMAIL],
+        });
+        console.log("sa");
+        // Ensure Apple returned a user identityToken
+        if (!appleAuthRequestResponse.identityToken) {
+            throw new Error('Apple Sign-In failed - no identify token returned');
+        }
+
+        // Create a Firebase credential from the response
+        const { identityToken, nonce } = appleAuthRequestResponse;
+        const appleCredential = auth.AppleAuthProvider.credential(identityToken, nonce);
+        console.log(appleCredential, "APPLECERED");
+        console.log("sending access token to backend");
+
+        // Sign the user in with the credential
+        try {
+            console.log("a1");
+            const userCredential = await auth().signInWithCredential(appleCredential);
+            console.log("a2");
+            const idToken = await userCredential.user.getIdToken()
+            console.log(userCredential, idToken, "sss");
+            await sendAccessTokenToBackendApple(idToken, { name: auth().currentUser.email, email: auth().currentUser.email })
+        } catch (e) {
+            console.log(e, "eerr");
+            Alert.alert("Error Validating Identity", e)
+        }
     }
-  }
 
-////////new apple sign in ///////////////////////////////
+    ////////new apple sign in ///////////////////////////////
 
 
-  
+
     async function handleSignInWithGoogle() {
         if (response?.type === "success") {
             const accessToken = response.authentication.accessToken;
@@ -129,7 +129,7 @@ console.log(AdminUrl,"AdminUrl");
         }
     }
 
-   
+
     async function sendAccessTokenToBackendApple(idToken, userData) {
         try {
             const response = await fetch(`${AdminUrl}/api/getAppleUserData`, {
@@ -137,11 +137,11 @@ console.log(AdminUrl,"AdminUrl");
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({idToken, userData}),
+                body: JSON.stringify({ idToken, userData }),
 
             });
             const data = await response.json()
-            console.log(data,"data from backend");
+            console.log(data, "data from backend");
             if (data.status === 401) {
                 Alert.alert('Error', data.message)
                 setLoading(false); // Remove the activity indicator when component re-renders
@@ -212,7 +212,7 @@ console.log(AdminUrl,"AdminUrl");
                 dispatch(updateCustomerData(data?.userdata))
                 updateCartData(data?.userdata?.customer_id)
                 await AsyncStorage.setItem('customerData', JSON.stringify(data.userdata));
-              
+
 
                 // await sendNotificationWithNavigation(`Great, ${data?.userdata?.given_name}, You have logged in Successfully...✅`)
 
@@ -232,84 +232,84 @@ console.log(AdminUrl,"AdminUrl");
             if (cartItems?.length === 0) {
                 const fetchCartTotal = async () => {
                     try {
-                      const urlWithCustomerId = `${AdminUrl}/api/cartTotal?customer_id=${customerId}`;
-                      const requestOptions = {
-                        method: 'GET',
-                        headers: {
-                          'Content-Type': 'application/json',
-                        },
-                      };
-                  
-                      const response = await fetch(urlWithCustomerId, requestOptions);
-                  
-                      if (!response.ok) {
-                        throw new Error(`HTTP error! Status: ${response.status}`);
-                      }
-                  
-                      const data = await response.json();
-                      dispatch(getCartTotal(data.total));
+                        const urlWithCustomerId = `${AdminUrl}/api/cartTotal?customer_id=${customerId}`;
+                        const requestOptions = {
+                            method: 'GET',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                        };
+
+                        const response = await fetch(urlWithCustomerId, requestOptions);
+
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! Status: ${response.status}`);
+                        }
+
+                        const data = await response.json();
+                        dispatch(getCartTotal(data.total));
                     } catch (error) {
-                      console.error('Error fetching cart total:', error);
-                      // Handle error as needed
+                        console.error('Error fetching cart total:', error);
+                        // Handle error as needed
                     }
-                  };
-                  
-                  const fetchCartData = async () => {
+                };
+
+                const fetchCartData = async () => {
                     try {
-                      const urlWithCustomerId = `${AdminUrl}/api/cart?customer_id=${customerId}`;
-                      const requestOptions = {
-                        method: 'GET',
-                        headers: {
-                          'Content-Type': 'application/json',
-                        },
-                      };
-                  
-                      const response = await fetch(urlWithCustomerId, requestOptions);
-                  
-                      if (!response.ok) {
-                        throw new Error(`HTTP error! Status: ${response.status}`);
-                      }
-                  
-                      const data = await response.json();
-                      dispatch(fetchcart(data));
-                      dispatch(changeSomaliandistrict());
+                        const urlWithCustomerId = `${AdminUrl}/api/cart?customer_id=${customerId}`;
+                        const requestOptions = {
+                            method: 'GET',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                        };
+
+                        const response = await fetch(urlWithCustomerId, requestOptions);
+
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! Status: ${response.status}`);
+                        }
+
+                        const data = await response.json();
+                        dispatch(fetchcart(data));
+                        dispatch(changeSomaliandistrict());
                     } catch (error) {
-                      console.error('Error fetching cart data:', error);
-                      // Handle error as needed
+                        console.error('Error fetching cart data:', error);
+                        // Handle error as needed
                     }
-                  };
-                  
-                  const fetchMogadishuDistrict = async () => {
+                };
+
+                const fetchMogadishuDistrict = async () => {
                     try {
                         const response = await fetch(`${AdminUrl}/api/getmogadishudistrict`, {
                             method: 'POST',
                             headers: {
-                              'Content-Type': 'application/json',
+                                'Content-Type': 'application/json',
                             },
                             body: JSON.stringify({
-                              customer_id: customerId,
-                              district:somalian_district,
+                                customer_id: customerId,
+                                district: somalian_district,
                             }),
-                          });
-                          console.log(response,"response");
-                          if (!response.ok) {
+                        });
+                        console.log(response, "response");
+                        if (!response.ok) {
                             throw new Error(`HTTP error! Status: ${response.status}`);
-                          }
-                    
-                          const responseData = await response.json();
-                          // Handle the response data as needed
-                          dispatch(changeSomaliandistrict(responseData.customer));
+                        }
+
+                        const responseData = await response.json();
+                        // Handle the response data as needed
+                        dispatch(changeSomaliandistrict(responseData.customer));
                     } catch (error) {
                         console.log(error);
                     }
-                    
-                  };
-            
-                  
-                  // Usage
-                  await fetchCartTotal();
-                  await fetchCartData();
-                  await fetchMogadishuDistrict();
+
+                };
+
+
+                // Usage
+                await fetchCartTotal();
+                await fetchCartData();
+                await fetchMogadishuDistrict();
             }
 
             for (const singleCartItem of cartItems) {
@@ -327,7 +327,7 @@ console.log(AdminUrl,"AdminUrl");
                     quantity: 1,
                     variantlabel: label,
                     added_quantity: added_quantity,
-                 
+
                 };
 
                 const response = await fetch(`${AdminUrl}/api/addProductcartlogin`, {
@@ -368,37 +368,37 @@ console.log(AdminUrl,"AdminUrl");
             };
 
             const response = await fetch(urlWithCustomerId, requestOptions);
-              
+
             const fetchMogadishuDistrict = async () => {
                 try {
                     const response = await fetch(`${AdminUrl}/api/getmogadishudistrict`, {
                         method: 'POST',
                         headers: {
-                          'Content-Type': 'application/json',
+                            'Content-Type': 'application/json',
                         },
                         body: JSON.stringify({
-                          customer_id: customerId,
-                          district:somalian_district,
+                            customer_id: customerId,
+                            district: somalian_district,
                         }),
-                      });
-                      if (!response.ok) {
+                    });
+                    if (!response.ok) {
                         throw new Error(`HTTP error! Status: ${response.status}`);
-                      }
-                
-                      const responseData = await response.json();
-                      // Handle the response data as needed
-                      console.log("DISPATCHING FROM CART ) LOGIN ");
-                      dispatch(changeSomaliandistrict(responseData.customer));
+                    }
+
+                    const responseData = await response.json();
+                    // Handle the response data as needed
+                    console.log("DISPATCHING FROM CART ) LOGIN ");
+                    dispatch(changeSomaliandistrict(responseData.customer));
                 } catch (error) {
                     console.log(error);
                 }
-                
-              };
-              fetchMogadishuDistrict()
+
+            };
+            fetchMogadishuDistrict()
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }
-           
+
             else {
                 const data3 = await response.json();
                 dispatch(fetchcart(data3));
@@ -532,24 +532,23 @@ console.log(AdminUrl,"AdminUrl");
             style={{ flex: 1 }}
         >
             <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.white }}>
+                
                 <View style={{ flex: 1, marginHorizontal: 22 }}>
+                <View className="flex-row items-start">
+
                     <View style={{ marginVertical: 22 }}>
                         <View className="flex-row items-center">
                             <Text style={{
-                                fontSize: 22,
+                                fontSize: 20,
                                 fontWeight: 'bold',
-                                marginVertical: 12,
+                                
                                 color: COLORS.black,
-
+                                
                             }}
-                                className="flex-1">
-                                {t("Hi Welcome Back ! 👋")}
+                            className="flex-1 mb-2">
+                                {t(`Welcome to ${appName}`)}
                             </Text>
-                            <TouchableOpacity onPress={debounce(() => {
-                                navigation.replace("Home")
-                            }, 500)}>
-                                <MaterialCommunityIcons name="close" size={25} color={"black"} />
-                            </TouchableOpacity>
+
 
 
                         </View>
@@ -557,8 +556,15 @@ console.log(AdminUrl,"AdminUrl");
                         <Text style={{
                             fontSize: 16,
                             color: COLORS.black
-                        }}>{t("Hello again you have been missed!")}</Text>
+                        }}>{t("Step into a World of Possibilities: Login to Your Marketplace Adventure!")}</Text>
                     </View>
+                    <TouchableOpacity className="flex-row items-end  justify-end mt-4 mr-2" onPress={debounce(() => {
+                    navigation.replace("Home")
+                }, 500)}>
+                    <MaterialCommunityIcons name="close" size={25} color={"black"} />
+                </TouchableOpacity>
+
+                        </View>
 
                     <View style={{ marginBottom: 12 }}>
                         <Text style={{
@@ -750,16 +756,16 @@ console.log(AdminUrl,"AdminUrl");
                             <Text>Facebook</Text>
                         </TouchableOpacity> */}
 
-                     
+
 
                     </View>
                     {
                         Platform.OS === "ios" &&
-                    
-                    <View className="mt-4">
-                                {AppleSignIn()}
-                            </View>
-}
+
+                        <View className="mt-4">
+                            {AppleSignIn()}
+                        </View>
+                    }
                     <View style={{
                         flexDirection: "row",
                         justifyContent: "center",
@@ -778,7 +784,7 @@ console.log(AdminUrl,"AdminUrl");
                         </Pressable>
                     </View>
                 </View>
-                            
+
             </SafeAreaView>
         </KeyboardAvoidingView>
     )

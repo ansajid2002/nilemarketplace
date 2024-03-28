@@ -1,16 +1,14 @@
 {
   "expo": {
-    // "name": "ibinibiso Market place",    //for ANDROID
-    "name": "Nile Global Marketplace",   //for IOS
+    "name": "Ibinibiso",
+   
     "slug": "ibinibiso-app",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon_new.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/images/mainlogovertical.png",  //for IOS
-
-      // "image": "./assets/images/mainlogovertical.png",  //for ANDROID
+      "image": "./assets/images/mainlogovertical.png",  
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -32,25 +30,25 @@
         }
       ],
       "expo-apple-authentication",
-      // [
-      //   "expo-notifications",
-      //   {
-      //     "icon": "./assets/images/icon_new.png",
-      //     "color": "#ffffff",
-      //     "sounds": [
-      //       "./assets/ss.mp3"
-      //     ]
-      //   }
-      // ]
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/images/icon_new.png",
+          "color": "#ffffff",
+          "sounds": [
+            "./assets/ss.mp3"
+          ]
+        }
+      ]
     ],
     "assetBundlePatterns": [
       "*/"
     ],
     "ios": {
       "infoPlist": {
-        // "UIBackgroundModes": [
-        //   "remote-notification"
-        // ],
+        "UIBackgroundModes": [
+          "remote-notification"
+        ],
         "NSMicrophoneUsageDescription": "This app would require access to a microphone to record audio while recording videos for reviews and feedback purposes.",
         "NSPhotoLibraryUsageDescription": "This app would require access to your gallery, Files in order to upload profile photos and post reviews.",
         "NSLocationWhenInUseUsageDescription": "This application would want to access your location to ensure shipping of your desired item is eligible.",
@@ -116,8 +114,8 @@
         "projectId": "1bf7869c-a36c-47bc-a630-9c1ff6cf6bf3"
       }
     },
-    "scheme": "nile", //for IOS
-    // "scheme": "ibinibiso",  //for ANDROID
+    "scheme": "ibinibiso", 
     "owner": "maazgsmash"
   }
 }
+

@@ -1,7 +1,7 @@
 import { View, Text, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform, Alert, Modal } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { SafeAreaView } from 'react-native'
-import { HeaderBar } from '../../constant'
+import { HeaderBar, appLogo, appName } from '../../constant'
 import { useCallback, useMemo, useRef } from 'react';
 import { StyleSheet, Button } from 'react-native';
 import {
@@ -289,7 +289,7 @@ console.log(customerData[0],"sssjsjsjjsjs");
             <HeaderBar navigation={navigation} goback={true} title="" cartEnable={false} searchEnable={false} />
 
             <ScrollView className="p-2 mb-10 ">
-                <Text className="text-2xl m-2 font-bold text-[#00008b]">Deleting Your Nile Global Marketplace Account</Text>
+                <Text className="text-2xl m-2 font-bold text-[#00008b]">Deleting Your {appName} Account</Text>
                 <Text className="text-lg m-2">We're sorry to see you go. We'd like to know why you're deleting your account as we may be able to help with common issues</Text>
                 <View className="bg-white shadow-md m-2 p-2 px-3 rounded-lg space-y-2.5">
                     {
@@ -328,7 +328,7 @@ console.log(customerData[0],"sssjsjsjjsjs");
                             >
 
                                 <Image
-                                    source={require('../../assets/images/icon_new.png')}
+                                    source={appLogo}
                                     className="w-40 h-40 mx-auto -mt-8"
                                 />
                                 <Text style={{ fontSize: 18, fontWeight: 'bold' }} className="my-4">For your security, please authenticate your identity to continue</Text>
